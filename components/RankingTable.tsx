@@ -173,15 +173,26 @@ export default function RankingTable({ participants }: RankingTableProps) {
 function PodiumCard({ participant }: { participant: RankingParticipant }) {
   const placeLabel =
     participant.position === 1 ? "Líder" : participant.position === 2 ? "Escolta" : "Podio";
+  const tone =
+    participant.position === 1
+      ? "border-amber-200/35 bg-gradient-to-br from-amber-300/20 via-white/[0.055] to-emerald-300/10 shadow-amber-950/20"
+      : participant.position === 2
+        ? "border-cyan-200/25 bg-gradient-to-br from-cyan-300/14 via-white/[0.045] to-white/[0.035] shadow-cyan-950/15"
+        : "border-emerald-200/25 bg-gradient-to-br from-emerald-300/15 via-white/[0.045] to-amber-300/10 shadow-emerald-950/15";
+  const badgeTone =
+    participant.position === 1
+      ? "border-amber-200/45 bg-amber-300/20 text-amber-50"
+      : "border-cyan-200/35 bg-cyan-300/10 text-cyan-50";
 
   return (
-    <article className="rounded-lg border border-amber-200/20 bg-gradient-to-br from-amber-300/15 to-white/[0.04] p-4">
+    <article className={`relative overflow-hidden rounded-lg border p-4 shadow-2xl ${tone}`}>
+      <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.18em] text-amber-100">{placeLabel}</p>
           <h2 className="mt-2 text-2xl font-black text-white">{participant.name}</h2>
         </div>
-        <span className="rounded-full border border-amber-200/35 bg-amber-300/15 px-3 py-1 text-sm font-black text-amber-100">
+        <span className={`rounded-full border px-3 py-1 text-sm font-black ${badgeTone}`}>
           #{participant.position}
         </span>
       </div>

@@ -74,7 +74,10 @@ export default function MatchCard({ match }: MatchCardProps) {
           : "";
 
   return (
-    <article className="rounded-lg border border-white/10 bg-white/[0.06] p-4 shadow-xl shadow-black/10">
+    <article className="relative overflow-hidden rounded-lg border border-cyan-200/15 bg-[linear-gradient(135deg,rgba(255,255,255,0.075),rgba(255,255,255,0.035))] p-4 shadow-xl shadow-cyan-950/10">
+      <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-cyan-200/45 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-4 top-20 h-px bg-[repeating-linear-gradient(90deg,rgba(255,255,255,0.08)_0_20px,transparent_20px_34px)]" />
+
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200">
@@ -84,20 +87,22 @@ export default function MatchCard({ match }: MatchCardProps) {
             {match.kickoffLabel ?? formatMatchTime(match.kickoffUtc)}
           </p>
         </div>
-        <span className="w-fit rounded-full border border-emerald-300/25 bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-100">
+        <span className="w-fit rounded-full border border-emerald-300/30 bg-emerald-400/15 px-3 py-1 text-xs font-black text-emerald-50 shadow-[0_0_20px_rgba(52,211,153,0.12)]">
           {getStatusLabel(match)}
         </span>
       </div>
 
       <div className="mt-5 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
         <TeamBlock align="left" flagEmoji={match.homeTeam.flagEmoji} name={match.homeTeam.name} />
-        <div className="flex min-w-12 items-center justify-center">
+        <div className="flex min-w-14 items-center justify-center">
           {match.status === "final" ? (
-            <span className="rounded-md bg-white/10 px-2 py-1 font-black text-white">
+            <span className="rounded-md border border-white/10 bg-white/10 px-3 py-1 font-black text-white">
               {match.homeScore} - {match.awayScore}
             </span>
           ) : (
-            <span className="text-sm font-black text-cyan-200">VS</span>
+            <span className="rounded-full border border-cyan-200/25 bg-cyan-300/10 px-3 py-2 text-sm font-black text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.12)]">
+              VS
+            </span>
           )}
         </div>
         <TeamBlock align="right" flagEmoji={match.awayTeam.flagEmoji} name={match.awayTeam.name} />
@@ -118,14 +123,14 @@ export default function MatchCard({ match }: MatchCardProps) {
       <div className="mt-5 flex flex-col gap-2 sm:flex-row">
         {isOpen ? (
           <Link
-            className="inline-flex min-h-11 flex-1 items-center justify-center rounded-md bg-cyan-300 px-4 py-2 text-sm font-black text-slate-950 transition hover:bg-cyan-200"
+            className="inline-flex min-h-11 flex-[1.35] items-center justify-center rounded-md bg-cyan-300 px-4 py-2 text-sm font-black text-slate-950 shadow-lg shadow-cyan-950/25 transition hover:bg-cyan-200"
             href={predictHref}
           >
             Pronosticar
           </Link>
         ) : (
           <button
-            className="min-h-11 flex-1 rounded-md border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-slate-500"
+            className="min-h-11 flex-[1.35] rounded-md border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-slate-500"
             disabled
             type="button"
           >
@@ -133,7 +138,7 @@ export default function MatchCard({ match }: MatchCardProps) {
           </button>
         )}
         <button
-          className="min-h-11 flex-1 rounded-md border border-white/15 bg-white/10 px-4 py-2 text-sm font-bold text-white transition hover:bg-white/15"
+          className="min-h-11 flex-1 rounded-md border border-white/15 bg-white/10 px-4 py-2 text-sm font-bold text-white transition hover:border-emerald-200/25 hover:bg-white/15"
           onClick={handleShare}
           type="button"
         >
