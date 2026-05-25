@@ -17,7 +17,7 @@ export default function Home() {
   ];
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(52,211,153,0.12),transparent_28%),radial-gradient(circle_at_82%_18%,rgba(251,191,36,0.09),transparent_24%),#07111f] text-white">
+    <main className="min-h-screen bg-[#07111f] text-white">
       <section className="px-5 py-8 md:px-10">
         <div className="mx-auto max-w-6xl">
           <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

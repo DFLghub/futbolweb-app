@@ -175,10 +175,16 @@ function PodiumCard({ participant }: { participant: RankingParticipant }) {
     participant.position === 1 ? "Líder" : participant.position === 2 ? "Escolta" : "Podio";
   const tone =
     participant.position === 1
-      ? "border-amber-200/40 bg-gradient-to-br from-amber-300/20 via-slate-950/90 to-emerald-300/15 shadow-amber-950/25"
+      ? "border-amber-200/40 bg-slate-950 shadow-amber-950/25"
       : participant.position === 2
-        ? "border-cyan-200/30 bg-gradient-to-br from-cyan-300/15 via-slate-950/90 to-[#07111f] shadow-cyan-950/20"
-        : "border-emerald-200/30 bg-gradient-to-br from-emerald-300/15 via-slate-950/90 to-amber-300/10 shadow-emerald-950/20";
+        ? "border-cyan-200/30 bg-slate-950 shadow-cyan-950/20"
+        : "border-emerald-200/30 bg-slate-950 shadow-emerald-950/20";
+  const accentLine =
+    participant.position === 1
+      ? "via-amber-200/50"
+      : participant.position === 2
+        ? "via-cyan-200/45"
+        : "via-emerald-200/45";
   const badgeTone =
     participant.position === 1
       ? "border-amber-200/45 bg-amber-300/20 text-amber-50"
@@ -186,7 +192,7 @@ function PodiumCard({ participant }: { participant: RankingParticipant }) {
 
   return (
     <article className={`relative overflow-hidden rounded-lg border p-4 shadow-2xl ${tone}`}>
-      <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+      <div className={`pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent to-transparent ${accentLine}`} />
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.18em] text-amber-100">{placeLabel}</p>

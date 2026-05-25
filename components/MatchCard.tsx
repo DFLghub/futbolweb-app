@@ -74,9 +74,8 @@ export default function MatchCard({ match }: MatchCardProps) {
           : "";
 
   return (
-    <article className="relative overflow-hidden rounded-lg border border-cyan-200/20 bg-[linear-gradient(135deg,rgba(15,23,42,0.94),rgba(7,17,31,0.98))] p-4 shadow-xl shadow-black/25">
+    <article className="relative overflow-hidden rounded-lg border border-cyan-200/20 bg-slate-950 p-4 shadow-xl shadow-black/25">
       <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-cyan-200/45 to-transparent" />
-      <div className="pointer-events-none absolute inset-x-4 top-20 h-px bg-[repeating-linear-gradient(90deg,rgba(255,255,255,0.08)_0_20px,transparent_20px_34px)]" />
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>

@@ -9,7 +9,7 @@ export default function TodayPage() {
   });
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_20%_0%,rgba(34,211,238,0.1),transparent_28%),radial-gradient(circle_at_88%_12%,rgba(251,191,36,0.08),transparent_24%),#07111f] px-5 py-6 text-white md:px-10 md:py-8">
+    <main className="min-h-screen bg-[#07111f] px-5 py-6 text-white md:px-10 md:py-8">
       <div className="mx-auto max-w-5xl">
         <BrandHeader className="mb-3" />
         <div className="mb-5 border-b border-white/10 pb-4">
