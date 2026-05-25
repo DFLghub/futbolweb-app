@@ -37,7 +37,7 @@ function formatPoints(points: number): string {
 
 export default function RankingTable({ participants }: RankingTableProps) {
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
-  const clearFeedbackTimeout = useRef<ReturnType<typeof window.setTimeout> | null>(null);
+  const clearFeedbackTimeout = useRef<number | null>(null);
   const topThree = participants.slice(0, 3);
   const redZone = participants.filter((participant) => participant.status === "red");
 
