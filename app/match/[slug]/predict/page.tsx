@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BrandHeader from "@/components/BrandHeader";
 import SimpleNav from "@/components/SimpleNav";
 
 type PredictPageProps = {
@@ -22,6 +23,7 @@ export default async function PredictPage({ params }: PredictPageProps) {
   return (
     <main className="min-h-screen bg-[#07111f] px-5 py-8 text-white md:px-10">
       <div className="mx-auto max-w-4xl">
+        <BrandHeader className="mb-4" />
         <SimpleNav />
 
         <div className="flex min-h-[calc(100vh-8rem)] items-center">

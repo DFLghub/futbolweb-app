@@ -1,3 +1,4 @@
+import BrandHeader from "@/components/BrandHeader";
 import MatchCard from "@/components/MatchCard";
 import SimpleNav from "@/components/SimpleNav";
 import { mockMatches } from "@/lib/mock-football-data";
@@ -12,6 +13,7 @@ export default function TodayPage() {
   return (
     <main className="min-h-screen bg-[#07111f] px-5 py-8 text-white md:px-10">
       <div className="mx-auto max-w-5xl">
+        <BrandHeader className="mb-4" />
         <SimpleNav />
 
         <header className="flex flex-col gap-5 border-b border-white/10 pb-8 md:flex-row md:items-end md:justify-between">

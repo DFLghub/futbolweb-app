@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BrandHeader from "@/components/BrandHeader";
 import SimpleNav from "@/components/SimpleNav";
 
 const sections = [
@@ -104,6 +105,7 @@ export default function RulesPage() {
   return (
     <main className="min-h-screen bg-[#07111f] px-5 py-8 text-white md:px-10">
       <div className="mx-auto max-w-5xl">
+        <BrandHeader className="mb-4" />
         <SimpleNav />
 
         <header className="border-b border-white/10 pb-8">

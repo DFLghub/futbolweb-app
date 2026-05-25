@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BrandHeader from "@/components/BrandHeader";
 import SimpleNav from "@/components/SimpleNav";
 
 export default function Home() {
@@ -19,13 +20,8 @@ export default function Home() {
     <main className="min-h-screen bg-[#07111f] text-white">
       <section className="px-5 py-8 md:px-10">
         <div className="mx-auto max-w-6xl">
-          <header className="flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-blue-400/50 bg-blue-500/10 font-black">
-                FW
-              </div>
-              <span className="font-semibold">futbolweb.app</span>
-            </div>
+          <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <BrandHeader className="sm:flex-1" />
             <SimpleNav compact />
           </header>
 
