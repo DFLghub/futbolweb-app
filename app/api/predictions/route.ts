@@ -15,6 +15,34 @@ function friendlyError(message: string, status = 400) {
   return Response.json({ ok: false, message }, { status });
 }
 
+function errorMessage(error: unknown) {
+  return error instanceof Error ? error.message : String(error);
+}
+
+function errorName(error: unknown) {
+  if (!(error instanceof Error)) {
+    return undefined;
+  }
+
+  return error.name || error.constructor.name;
+}
+
+function logSupabaseError(error: {
+  message: string;
+  code?: unknown;
+  details?: unknown;
+  hint?: unknown;
+  status?: unknown;
+}) {
+  console.error("[predictions-api] supabase error", {
+    message: error.message,
+    ...(error.code !== undefined ? { code: error.code } : {}),
+    ...(error.details !== undefined ? { details: error.details } : {}),
+    ...(error.hint !== undefined ? { hint: error.hint } : {}),
+    ...(error.status !== undefined ? { status: error.status } : {}),
+  });
+}
+
 function cleanText(value: string) {
   return value
     .replace(/[\u0000-\u001F\u007F]/g, " ")
@@ -144,6 +172,15 @@ export async function POST(request: Request) {
   }
 
   try {
+    console.log("[predictions-api] insert attempt", {
+      hasSupabaseUrl: Boolean(process.env.SUPABASE_URL),
+      hasSupabaseServiceRoleKey: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
+      match_slug: prediction.match_slug,
+      alias_length: prediction.alias.length,
+      score_a: prediction.score_a,
+      score_b: prediction.score_b,
+    });
+
     const supabase = createSupabaseServerClient();
     const { data, error } = await supabase
       .from("prediction_intake")
@@ -158,6 +195,8 @@ export async function POST(request: Request) {
       .single();
 
     if (error) {
+      logSupabaseError(error);
+
       return friendlyError(
         "No pudimos guardar el pronóstico ahora mismo. Intenta de nuevo en unos minutos.",
         500,
@@ -165,7 +204,12 @@ export async function POST(request: Request) {
     }
 
     return Response.json({ ok: true, prediction: data });
-  } catch {
+  } catch (error) {
+    console.error("[predictions-api] unhandled error", {
+      message: errorMessage(error),
+      ...(errorName(error) ? { name: errorName(error) } : {}),
+    });
+
     return friendlyError(
       "No pudimos guardar el pronóstico ahora mismo. Intenta de nuevo en unos minutos.",
       500,
