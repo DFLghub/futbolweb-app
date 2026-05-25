@@ -74,7 +74,7 @@ export default function MatchCard({ match }: MatchCardProps) {
           : "";
 
   return (
-    <article className="relative overflow-hidden rounded-lg border border-cyan-200/15 bg-[linear-gradient(135deg,rgba(255,255,255,0.075),rgba(255,255,255,0.035))] p-4 shadow-xl shadow-cyan-950/10">
+    <article className="relative overflow-hidden rounded-lg border border-cyan-200/20 bg-[linear-gradient(135deg,rgba(15,23,42,0.94),rgba(7,17,31,0.98))] p-4 shadow-xl shadow-black/25">
       <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-cyan-200/45 to-transparent" />
       <div className="pointer-events-none absolute inset-x-4 top-20 h-px bg-[repeating-linear-gradient(90deg,rgba(255,255,255,0.08)_0_20px,transparent_20px_34px)]" />
 
@@ -83,7 +83,7 @@ export default function MatchCard({ match }: MatchCardProps) {
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200">
             {match.stage} · {match.groupCode}
           </p>
-          <p className="mt-1 text-sm text-slate-300">
+          <p className="mt-1 text-sm font-medium text-slate-200">
             {match.kickoffLabel ?? formatMatchTime(match.kickoffUtc)}
           </p>
         </div>
@@ -96,7 +96,7 @@ export default function MatchCard({ match }: MatchCardProps) {
         <TeamBlock align="left" flagEmoji={match.homeTeam.flagEmoji} name={match.homeTeam.name} />
         <div className="flex min-w-14 items-center justify-center">
           {match.status === "final" ? (
-            <span className="rounded-md border border-white/10 bg-white/10 px-3 py-1 font-black text-white">
+            <span className="rounded-md border border-white/15 bg-slate-950/80 px-3 py-1 font-black text-white">
               {match.homeScore} - {match.awayScore}
             </span>
           ) : (
@@ -108,13 +108,13 @@ export default function MatchCard({ match }: MatchCardProps) {
         <TeamBlock align="right" flagEmoji={match.awayTeam.flagEmoji} name={match.awayTeam.name} />
       </div>
 
-      <div className="mt-5 rounded-md border border-white/10 bg-black/20 px-3 py-2 text-sm text-slate-300">
+      <div className="mt-5 rounded-md border border-white/10 bg-slate-950/80 px-3 py-2 text-sm text-slate-200">
         <span className="font-semibold text-slate-100">{match.venueName}</span>
-        <span className="text-slate-500"> · </span>
+        <span className="text-slate-400"> · </span>
         <span>{getTimezoneLabel(match.venueTimezone)}</span>
         {match.sourceLabel ? (
           <>
-            <span className="text-slate-500"> · </span>
+            <span className="text-slate-400"> · </span>
             <span>{match.sourceLabel}</span>
           </>
         ) : null}
@@ -123,14 +123,14 @@ export default function MatchCard({ match }: MatchCardProps) {
       <div className="mt-5 flex flex-col gap-2 sm:flex-row">
         {isOpen ? (
           <Link
-            className="inline-flex min-h-11 flex-[1.35] items-center justify-center rounded-md bg-cyan-300 px-4 py-2 text-sm font-black text-slate-950 shadow-lg shadow-cyan-950/25 transition hover:bg-cyan-200"
+            className="inline-flex min-h-11 flex-[1.35] items-center justify-center rounded-md bg-cyan-300 px-4 py-2 text-sm font-black text-slate-950 shadow-lg shadow-cyan-300/20 ring-1 ring-cyan-100/40 transition hover:bg-cyan-200 active:bg-cyan-100"
             href={predictHref}
           >
             Pronosticar
           </Link>
         ) : (
           <button
-            className="min-h-11 flex-[1.35] rounded-md border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-slate-500"
+            className="min-h-11 flex-[1.35] rounded-md border border-white/10 bg-slate-900/70 px-4 py-2 text-sm font-bold text-slate-400"
             disabled
             type="button"
           >
@@ -138,7 +138,7 @@ export default function MatchCard({ match }: MatchCardProps) {
           </button>
         )}
         <button
-          className="min-h-11 flex-1 rounded-md border border-white/15 bg-white/10 px-4 py-2 text-sm font-bold text-white transition hover:border-emerald-200/25 hover:bg-white/15"
+          className="min-h-11 flex-1 rounded-md border border-white/20 bg-slate-900 px-4 py-2 text-sm font-bold text-white shadow-md shadow-black/15 transition hover:border-emerald-200/35 hover:bg-slate-800 active:bg-slate-700"
           onClick={handleShare}
           type="button"
         >

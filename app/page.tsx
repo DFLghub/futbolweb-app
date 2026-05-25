@@ -17,7 +17,7 @@ export default function Home() {
   ];
 
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(52,211,153,0.16),transparent_34%),radial-gradient(circle_at_82%_18%,rgba(251,191,36,0.12),transparent_30%),#07111f] text-white">
+    <main className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(52,211,153,0.12),transparent_28%),radial-gradient(circle_at_82%_18%,rgba(251,191,36,0.09),transparent_24%),#07111f] text-white">
       <section className="px-5 py-8 md:px-10">
         <div className="mx-auto max-w-6xl">
           <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -40,18 +40,18 @@ export default function Home() {
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link className="rounded-2xl bg-cyan-300 px-6 py-4 text-center font-black text-slate-950 shadow-lg shadow-cyan-950/30 transition hover:bg-cyan-200" href="/today">
+                <Link className="rounded-md bg-cyan-300 px-6 py-4 text-center font-black text-slate-950 shadow-lg shadow-cyan-300/20 ring-1 ring-cyan-100/40 transition hover:bg-cyan-200 active:bg-cyan-100" href="/today">
                   Participar →
                 </Link>
-                <Link className="rounded-2xl border border-white/15 bg-white/5 px-6 py-4 text-center font-bold text-white transition hover:border-emerald-200/30 hover:bg-white/10" href="/today">
+                <Link className="rounded-md border border-white/20 bg-slate-950/70 px-6 py-4 text-center font-bold text-white shadow-lg shadow-black/15 transition hover:border-emerald-200/35 hover:bg-slate-900" href="/today">
                   Ver demo
                 </Link>
-                <Link className="rounded-2xl border border-white/15 bg-white/5 px-6 py-4 text-center font-bold text-white transition hover:border-amber-200/30 hover:bg-white/10" href="/rules">
+                <Link className="rounded-md border border-white/20 bg-slate-950/70 px-6 py-4 text-center font-bold text-white shadow-lg shadow-black/15 transition hover:border-amber-200/35 hover:bg-slate-900" href="/rules">
                   Cómo funciona
                 </Link>
               </div>
 
-              <p className="mt-4 text-sm text-slate-400">
+              <p className="mt-4 text-sm text-slate-300">
                 Sin ruido. Solo fútbol, amigos y gloria deportiva.
                 <Link className="ml-2 font-semibold text-cyan-100 hover:text-white" href="/ranking">
                   Ver ranking
@@ -62,10 +62,10 @@ export default function Home() {
               </p>
             </div>
 
-            <div id="demo" className="rounded-[2rem] border border-emerald-200/15 bg-white/10 p-5 shadow-2xl shadow-emerald-950/20">
+            <div id="demo" className="rounded-lg border border-emerald-200/20 bg-slate-950/70 p-5 shadow-2xl shadow-black/25">
               <div className="mb-5 flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-400">Grupo</p>
+                  <p className="text-sm text-slate-300">Grupo</p>
                   <h2 className="text-2xl font-black">Quiniela Mundial</h2>
                 </div>
                 <div className="rounded-2xl border border-emerald-200/25 bg-emerald-400/15 px-3 py-2 text-sm font-black text-emerald-100">
@@ -73,12 +73,12 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="rounded-3xl border border-white/10 bg-[#07111f]/80 p-4 shadow-inner shadow-cyan-950/20">
+              <div className="rounded-lg border border-white/10 bg-[#07111f] p-4 shadow-inner shadow-black/25">
                 <p className="mb-3 text-sm font-semibold text-slate-200">Hoy se juega con amigos</p>
                 <div className="space-y-3">
                   {matches.map((m, i) => (
-                    <div key={i} className="rounded-2xl border border-white/10 bg-white/[0.065] px-4 py-3 text-sm">
-                      <div className="mb-2 flex justify-between text-xs text-slate-400">
+                    <div key={i} className="rounded-lg border border-white/10 bg-slate-900/80 px-4 py-3 text-sm">
+                      <div className="mb-2 flex justify-between text-xs text-slate-300">
                         <span>{m[0]}</span>
                         <span>{m[3]}</span>
                       </div>
@@ -87,19 +87,19 @@ export default function Home() {
                         <span className="rounded-full bg-cyan-300/10 px-2 text-xs font-black text-cyan-100">VS</span>
                         <span className="text-right font-semibold">{m[2]}</span>
                       </div>
-                      <p className="mt-2 text-center text-xs text-slate-500">{m[4]}</p>
+                      <p className="mt-2 text-center text-xs text-slate-400">{m[4]}</p>
                     </div>
                   ))}
                 </div>
-                <p className="mt-3 text-xs text-slate-500">Hora Miami / ET para esta vista previa.</p>
+                <p className="mt-3 text-xs text-slate-400">Hora Miami / ET para esta vista previa.</p>
               </div>
 
-              <div className="mt-4 rounded-3xl border border-amber-200/10 bg-[#07111f]/80 p-4">
+              <div className="mt-4 rounded-lg border border-amber-200/15 bg-[#07111f] p-4">
                 <p className="mb-3 text-sm font-semibold text-amber-100">Vista previa del ranking</p>
                 <div className="space-y-2">
                   {ranking.map((row) => (
-                    <div key={row[0]} className="grid grid-cols-4 rounded-2xl border border-white/5 bg-white/5 px-3 py-2 text-sm">
-                      <span className={row[0] === "1" ? "font-black text-amber-100" : "font-bold text-slate-400"}>#{row[0]}</span>
+                    <div key={row[0]} className="grid grid-cols-4 rounded-lg border border-white/10 bg-slate-900/80 px-3 py-2 text-sm">
+                      <span className={row[0] === "1" ? "font-black text-amber-100" : "font-bold text-slate-300"}>#{row[0]}</span>
                       <span>{row[1]}</span>
                       <span className="text-right text-slate-300">{row[2]}</span>
                       <span className="text-right font-bold text-cyan-200">{row[3]}</span>
@@ -117,14 +117,14 @@ export default function Home() {
               ["Rankings", "Compite y avanza. Todos ven quién sube y quién se queda atrás."],
               ["Listo para WhatsApp", "Pensado para compartirse y vivir la conversación desde tus grupos."],
             ].map((item) => (
-              <div key={item[0]} className="rounded-3xl border border-white/10 bg-white/[0.055] p-5 transition hover:border-cyan-200/20 hover:bg-white/[0.075]">
+              <div key={item[0]} className="rounded-lg border border-white/10 bg-slate-950/65 p-5 shadow-lg shadow-black/10 transition hover:border-cyan-200/25 hover:bg-slate-900/90">
                 <h3 className="font-black">{item[0]}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-400">{item[1]}</p>
+                <p className="mt-2 text-sm leading-6 text-slate-300">{item[1]}</p>
               </div>
             ))}
           </section>
 
-          <section id="join" className="my-14 rounded-3xl border border-emerald-200/15 bg-gradient-to-br from-emerald-950/50 via-slate-900 to-amber-950/35 p-8">
+          <section id="join" className="my-14 rounded-lg border border-emerald-200/20 bg-gradient-to-br from-emerald-950/70 via-slate-950 to-amber-950/50 p-8 shadow-2xl shadow-black/20">
             <h2 className="text-3xl font-black">Elige marcador. Reta al grupo. Comparte por WhatsApp.</h2>
             <p className="mt-3 max-w-2xl text-slate-300">
               La primera versión mantiene la energía del fútbol sin encerrarse en un solo país.
@@ -132,7 +132,7 @@ export default function Home() {
             </p>
           </section>
 
-          <footer className="border-t border-white/10 py-8 text-center text-sm text-slate-500">
+          <footer className="border-t border-white/10 py-8 text-center text-sm text-slate-400">
             futbolweb.app — MVP social del Mundial · Powered by amOS
           </footer>
         </div>

@@ -5,7 +5,7 @@ import { mockRankingParticipants } from "@/lib/mock-ranking-data";
 
 export default function RankingPage() {
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_18%_0%,rgba(251,191,36,0.14),transparent_30%),radial-gradient(circle_at_88%_10%,rgba(34,211,238,0.09),transparent_28%),#07111f] px-5 py-8 text-white md:px-10">
+    <main className="min-h-screen bg-[radial-gradient(circle_at_18%_0%,rgba(251,191,36,0.1),transparent_26%),radial-gradient(circle_at_88%_10%,rgba(34,211,238,0.08),transparent_24%),#07111f] px-5 py-8 text-white md:px-10">
       <div className="mx-auto max-w-6xl">
         <BrandHeader className="mb-4" />
         <SimpleNav />

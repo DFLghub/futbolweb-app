@@ -24,11 +24,11 @@ const statusClasses: Record<RankingStatus, string> = {
 };
 
 const rowClasses: Record<RankingStatus, string> = {
-  gold: "border-amber-200/30 bg-amber-300/10",
-  green: "border-white/10 bg-white/[0.055]",
-  yellow: "border-yellow-200/25 bg-yellow-300/5",
-  purple: "border-violet-300/30 bg-violet-400/10",
-  red: "border-rose-300/35 bg-rose-500/10",
+  gold: "border-amber-200/35 bg-amber-300/15",
+  green: "border-white/10 bg-slate-950/70",
+  yellow: "border-yellow-200/30 bg-yellow-300/10",
+  purple: "border-violet-300/35 bg-violet-400/15",
+  red: "border-rose-300/40 bg-rose-500/15",
 };
 
 function formatPoints(points: number): string {
@@ -99,8 +99,8 @@ export default function RankingTable({ participants }: RankingTableProps) {
         ))}
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-lg border border-white/10 bg-white/[0.04] shadow-2xl shadow-black/10">
-        <div className="hidden grid-cols-[80px_1.25fr_100px_130px_140px_190px] gap-3 border-b border-white/10 px-4 py-3 text-xs font-bold uppercase tracking-[0.14em] text-slate-400 md:grid">
+      <div className="mt-6 overflow-hidden rounded-lg border border-white/10 bg-slate-950/80 shadow-2xl shadow-black/20">
+        <div className="hidden grid-cols-[80px_1.25fr_100px_130px_140px_190px] gap-3 border-b border-white/10 bg-[#07111f] px-4 py-3 text-xs font-bold uppercase tracking-[0.14em] text-slate-300 md:grid">
           <span>Pos.</span>
           <span>Nombre</span>
           <span>Puntos</span>
@@ -116,7 +116,7 @@ export default function RankingTable({ participants }: RankingTableProps) {
               key={participant.position}
             >
               <div className="flex items-center justify-between gap-3 md:block">
-                <span className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500 md:hidden">
+                <span className="text-xs font-bold uppercase tracking-[0.14em] text-slate-400 md:hidden">
                   Posición
                 </span>
                 <span className="font-black text-slate-100">#{participant.position}</span>
@@ -138,7 +138,7 @@ export default function RankingTable({ participants }: RankingTableProps) {
               <Stat label="Resultados acertados" value={participant.correctResults} />
 
               <div className="flex items-center justify-between gap-3 md:block">
-                <span className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500 md:hidden">
+                <span className="text-xs font-bold uppercase tracking-[0.14em] text-slate-400 md:hidden">
                   Estado
                 </span>
                 <StatusBadge status={participant.status} />
@@ -150,7 +150,7 @@ export default function RankingTable({ participants }: RankingTableProps) {
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
         <button
-          className="min-h-11 rounded-md bg-cyan-300 px-5 py-2 text-sm font-black text-slate-950 transition hover:bg-cyan-200"
+          className="min-h-11 rounded-md bg-cyan-300 px-5 py-2 text-sm font-black text-slate-950 shadow-lg shadow-cyan-300/20 ring-1 ring-cyan-100/40 transition hover:bg-cyan-200 active:bg-cyan-100"
           onClick={handleCopySummary}
           type="button"
         >
@@ -175,10 +175,10 @@ function PodiumCard({ participant }: { participant: RankingParticipant }) {
     participant.position === 1 ? "Líder" : participant.position === 2 ? "Escolta" : "Podio";
   const tone =
     participant.position === 1
-      ? "border-amber-200/35 bg-gradient-to-br from-amber-300/20 via-white/[0.055] to-emerald-300/10 shadow-amber-950/20"
+      ? "border-amber-200/40 bg-gradient-to-br from-amber-300/20 via-slate-950/90 to-emerald-300/15 shadow-amber-950/25"
       : participant.position === 2
-        ? "border-cyan-200/25 bg-gradient-to-br from-cyan-300/14 via-white/[0.045] to-white/[0.035] shadow-cyan-950/15"
-        : "border-emerald-200/25 bg-gradient-to-br from-emerald-300/15 via-white/[0.045] to-amber-300/10 shadow-emerald-950/15";
+        ? "border-cyan-200/30 bg-gradient-to-br from-cyan-300/15 via-slate-950/90 to-[#07111f] shadow-cyan-950/20"
+        : "border-emerald-200/30 bg-gradient-to-br from-emerald-300/15 via-slate-950/90 to-amber-300/10 shadow-emerald-950/20";
   const badgeTone =
     participant.position === 1
       ? "border-amber-200/45 bg-amber-300/20 text-amber-50"
@@ -197,7 +197,7 @@ function PodiumCard({ participant }: { participant: RankingParticipant }) {
         </span>
       </div>
       <p className="mt-4 text-3xl font-black text-white">{formatPoints(participant.points)}</p>
-      <p className="mt-1 text-sm text-slate-300">
+      <p className="mt-1 text-sm text-slate-200">
         {participant.exactScores} exactos · {participant.correctResults} resultados
       </p>
     </article>
@@ -215,7 +215,7 @@ function Stat({
 }) {
   return (
     <div className="flex items-center justify-between gap-3 md:block">
-      <span className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500 md:hidden">
+      <span className="text-xs font-bold uppercase tracking-[0.14em] text-slate-400 md:hidden">
         {label}
       </span>
       <span className={strong ? "font-black text-white" : "font-semibold text-slate-200"}>{value}</span>
