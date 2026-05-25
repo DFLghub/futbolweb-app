@@ -1,14 +1,12 @@
 import BrandHeader from "@/components/BrandHeader";
 import MatchCard from "@/components/MatchCard";
 import SimpleNav from "@/components/SimpleNav";
-import { mockMatches } from "@/lib/mock-football-data";
+import { worldCup2026Matches } from "@/lib/world-cup-2026-matches";
 
 export default function TodayPage() {
-  const matches = [...mockMatches]
-    .sort((left, right) => {
-      return new Date(left.kickoffUtc).getTime() - new Date(right.kickoffUtc).getTime();
-    })
-    .slice(0, 6);
+  const matches = [...worldCup2026Matches].sort((left, right) => {
+    return new Date(left.kickoffUtc).getTime() - new Date(right.kickoffUtc).getTime();
+  });
 
   return (
     <main className="min-h-screen bg-[#07111f] px-5 py-8 text-white md:px-10">
@@ -27,9 +25,12 @@ export default function TodayPage() {
             <p className="mt-3 max-w-2xl text-base leading-7 text-slate-300">
               Elige tus pronósticos antes del cierre y comparte el reto con tu grupo.
             </p>
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+              Partidos reales cargados como subset inicial. Calendario completo en preparación.
+            </p>
           </div>
           <div className="w-fit rounded-md border border-amber-200/25 bg-amber-300/10 px-3 py-2 text-sm font-bold text-amber-100">
-            Demo local — datos de prueba
+            Calendario inicial — subset oficial
           </div>
         </header>
 

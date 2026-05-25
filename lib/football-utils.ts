@@ -7,9 +7,12 @@ export type FootballTeam = {
 
 export type FootballMatch = {
   id: string;
+  slug?: string;
   homeTeam: FootballTeam;
   awayTeam: FootballTeam;
   kickoffUtc: string;
+  kickoffLabel?: string;
+  kickoffET?: string;
   venueName: string;
   venueTimezone: string;
   stage: string;
@@ -17,6 +20,8 @@ export type FootballMatch = {
   status: MatchStatus;
   homeScore?: number;
   awayScore?: number;
+  sourceLabel?: string;
+  sourceCheckedAt?: string;
 };
 
 const HOUR_MS = 60 * 60 * 1000;
@@ -74,10 +79,12 @@ export function getStatusLabel(match: FootballMatch): string {
 }
 
 export function buildWhatsAppShareText(match: FootballMatch): string {
+  const slug = match.slug ?? match.id;
+
   return [
     "🔥 Modo Mundial",
     `${match.homeTeam.name} vs ${match.awayTeam.name}`,
-    `Hora: ${formatMatchTime(match.kickoffUtc)}`,
-    `Pronostica aquí: https://www.futbolweb.app/match/${match.id}/predict`,
+    `Hora: ${match.kickoffLabel ?? formatMatchTime(match.kickoffUtc)}`,
+    `Pronostica aquí: https://www.futbolweb.app/match/${slug}/predict`,
   ].join("\n");
 }

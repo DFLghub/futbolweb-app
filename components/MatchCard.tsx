@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import {
   buildWhatsAppShareText,
@@ -18,26 +19,17 @@ export default function MatchCard({ match }: MatchCardProps) {
   const [shareFeedback, setShareFeedback] = useState<"idle" | "copied" | "shared" | "error">(
     "idle",
   );
-  const [predictFeedback, setPredictFeedback] = useState(false);
   const isOpen = canPredict(match);
   const shareText = buildWhatsAppShareText(match);
+  const predictHref = `/match/${match.slug ?? match.id}/predict`;
 
   function clearFeedbackLater() {
     window.setTimeout(() => {
       setShareFeedback("idle");
-      setPredictFeedback(false);
     }, 2200);
   }
 
-  function handlePredictClick() {
-    setPredictFeedback(true);
-    setShareFeedback("idle");
-    clearFeedbackLater();
-  }
-
   async function handleShare() {
-    setPredictFeedback(false);
-
     try {
       if (navigator.share) {
         await navigator.share({ text: shareText });
@@ -72,9 +64,8 @@ export default function MatchCard({ match }: MatchCardProps) {
     }
   }
 
-  const feedbackMessage = predictFeedback
-    ? "Formulario de predicción próximamente"
-    : shareFeedback === "copied"
+  const feedbackMessage =
+    shareFeedback === "copied"
       ? "Copiado para WhatsApp"
       : shareFeedback === "shared"
         ? "Compartido"
@@ -89,7 +80,9 @@ export default function MatchCard({ match }: MatchCardProps) {
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-emerald-200">
             {match.stage} · {match.groupCode}
           </p>
-          <p className="mt-1 text-sm text-slate-300">{formatMatchTime(match.kickoffUtc)}</p>
+          <p className="mt-1 text-sm text-slate-300">
+            {match.kickoffLabel ?? formatMatchTime(match.kickoffUtc)}
+          </p>
         </div>
         <span className="w-fit rounded-full border border-emerald-300/25 bg-emerald-400/10 px-3 py-1 text-xs font-bold text-emerald-100">
           {getStatusLabel(match)}
@@ -114,17 +107,22 @@ export default function MatchCard({ match }: MatchCardProps) {
         <span className="font-semibold text-slate-100">{match.venueName}</span>
         <span className="text-slate-500"> · </span>
         <span>{getTimezoneLabel(match.venueTimezone)}</span>
+        {match.sourceLabel ? (
+          <>
+            <span className="text-slate-500"> · </span>
+            <span>{match.sourceLabel}</span>
+          </>
+        ) : null}
       </div>
 
       <div className="mt-5 flex flex-col gap-2 sm:flex-row">
         {isOpen ? (
-          <button
-            className="min-h-11 flex-1 rounded-md bg-cyan-300 px-4 py-2 text-sm font-black text-slate-950 transition hover:bg-cyan-200"
-            onClick={handlePredictClick}
-            type="button"
+          <Link
+            className="inline-flex min-h-11 flex-1 items-center justify-center rounded-md bg-cyan-300 px-4 py-2 text-sm font-black text-slate-950 transition hover:bg-cyan-200"
+            href={predictHref}
           >
             Pronosticar
-          </button>
+          </Link>
         ) : (
           <button
             className="min-h-11 flex-1 rounded-md border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-slate-500"
