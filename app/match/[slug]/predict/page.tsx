@@ -1,6 +1,7 @@
-import Link from "next/link";
 import BrandHeader from "@/components/BrandHeader";
+import PredictDemoForm from "@/components/PredictDemoForm";
 import SimpleNav from "@/components/SimpleNav";
+import { worldCup2026Matches } from "@/lib/world-cup-2026-matches";
 
 type PredictPageProps = {
   params: Promise<{
@@ -8,72 +9,80 @@ type PredictPageProps = {
   }>;
 };
 
-function formatDemoSlug(slug: string) {
-  return slug
+function titleCase(value: string) {
+  return value
+    .split(" ")
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function formatMatchLabel(slug: string) {
+  const knownMatch = worldCup2026Matches.find((match) => match.slug === slug);
+
+  if (knownMatch) {
+    return `${knownMatch.homeTeam.name} vs ${knownMatch.awayTeam.name} (${knownMatch.kickoffET})`;
+  }
+
+  const normalized = slug
     .replace(/[-_]+/g, " ")
     .replace(/\s+/g, " ")
     .trim()
     .toLowerCase();
+
+  if (!normalized) {
+    return "Partido Mundial";
+  }
+
+  const dateMatch = normalized.match(/\b(20\d{2})\s+(\d{2})\s+(\d{2})\b/);
+  const dateLabel = dateMatch
+    ? `${dateMatch[1]}-${dateMatch[2]}-${dateMatch[3]}`
+    : "";
+  const teamsText = dateMatch
+    ? normalized.slice(0, dateMatch.index).trim()
+    : normalized;
+  const teams = teamsText.split(" ").filter(Boolean);
+
+  if (teams.length >= 2) {
+    const midpoint = Math.ceil(teams.length / 2);
+    const firstTeam = titleCase(teams.slice(0, midpoint).join(" "));
+    const secondTeam = titleCase(teams.slice(midpoint).join(" "));
+    return dateLabel
+      ? `${firstTeam} vs ${secondTeam} (${dateLabel})`
+      : `${firstTeam} vs ${secondTeam}`;
+  }
+
+  return titleCase(normalized);
 }
 
 export default async function PredictPage({ params }: PredictPageProps) {
   const { slug } = await params;
-  const demoMatch = formatDemoSlug(slug);
+  const matchLabel = formatMatchLabel(slug);
 
   return (
-    <main className="min-h-screen bg-[#07111f] px-5 py-8 text-white md:px-10">
-      <div className="mx-auto max-w-4xl">
-        <BrandHeader className="mb-4" />
-        <SimpleNav />
-
-        <div className="flex min-h-[calc(100vh-8rem)] items-center">
-          <section className="w-full rounded-lg border border-white/10 bg-white/[0.06] p-6 shadow-xl shadow-black/10 md:p-8">
-            <div className="mb-6 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-sm font-semibold text-cyan-100">
-              Modo Mundial demo
-            </div>
-
-            <h1 className="text-4xl font-black tracking-tight md:text-5xl">
-              Pronóstico en preparación
-            </h1>
-
-            <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300">
-              Este partido todavía está en modo demo. Por ahora puedes entrar al Modo Mundial,
-              ver los partidos disponibles y revisar el ranking del grupo.
-            </p>
-
-            <div className="mt-6 rounded-md border border-white/10 bg-black/20 px-4 py-3 text-sm text-slate-300">
-              <span className="font-semibold text-slate-100">Partido demo:</span>{" "}
-              <span>{demoMatch || "partido demo"}</span>
-            </div>
-
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link
-                className="min-h-11 rounded-md bg-cyan-300 px-5 py-3 text-center text-sm font-black text-slate-950 transition hover:bg-cyan-200"
-                href="/today"
-              >
-                Ver pronósticos
-              </Link>
-              <Link
-                className="min-h-11 rounded-md border border-white/15 bg-white/10 px-5 py-3 text-center text-sm font-bold text-white transition hover:bg-white/15"
-                href="/ranking"
-              >
-                Ver ranking
-              </Link>
-              <Link
-                className="min-h-11 rounded-md border border-white/15 bg-white/5 px-5 py-3 text-center text-sm font-bold text-slate-200 transition hover:bg-white/10"
-                href="/rules"
-              >
-                Cómo funciona
-              </Link>
-              <Link
-                className="min-h-11 rounded-md border border-white/15 bg-white/5 px-5 py-3 text-center text-sm font-bold text-slate-200 transition hover:bg-white/10"
-                href="/"
-              >
-                Volver al inicio
-              </Link>
-            </div>
-          </section>
+    <main className="min-h-screen bg-[#07111f] px-5 py-6 text-white md:px-10 md:py-8">
+      <div className="mx-auto max-w-3xl">
+        <BrandHeader className="mb-3" />
+        <div className="mb-5 border-b border-white/10 pb-4">
+          <SimpleNav compact />
         </div>
+
+        <header className="mb-5">
+          <div className="mb-3 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-cyan-100">
+            Modo Mundial v0.1
+          </div>
+
+          <h1 className="text-3xl font-black leading-tight tracking-tight md:text-5xl">
+            Haz tu pronóstico
+          </h1>
+
+          <div className="mt-4 rounded-md border border-white/10 bg-black/20 px-4 py-3 text-sm text-slate-300">
+            <span className="font-semibold text-slate-100">Partido:</span>{" "}
+            <span>{matchLabel}</span>
+          </div>
+        </header>
+
+        <PredictDemoForm matchLabel={matchLabel} matchSlug={slug} />
       </div>
     </main>
   );
