@@ -9,32 +9,31 @@ export default function TodayPage() {
   });
 
   return (
-    <main className="min-h-screen bg-[#07111f] px-5 py-8 text-white md:px-10">
+    <main className="min-h-screen bg-[#07111f] px-5 py-6 text-white md:px-10 md:py-8">
       <div className="mx-auto max-w-5xl">
-        <BrandHeader className="mb-4" />
-        <SimpleNav />
+        <BrandHeader className="mb-3" />
+        <div className="mb-5 border-b border-white/10 pb-4">
+          <SimpleNav compact />
+        </div>
 
-        <header className="flex flex-col gap-5 border-b border-white/10 pb-8 md:flex-row md:items-end md:justify-between">
+        <header className="flex flex-col gap-2">
           <div>
-            <p className="mb-3 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-sm font-semibold text-cyan-100">
-              Modo Mundial activo
-            </p>
-            <h1 className="text-4xl font-black tracking-tight md:text-5xl">
-              Modo Mundial — Pronósticos
+            <h1 className="flex flex-wrap items-center gap-2 text-2xl font-black leading-tight tracking-tight md:text-3xl">
+              Partidos del Mundial 2026
+              <span className="rounded-full border border-amber-200/20 bg-amber-300/10 px-2 py-0.5 text-xs font-bold text-amber-100">
+                Calendario inicial
+              </span>
             </h1>
-            <p className="mt-3 max-w-2xl text-base leading-7 text-slate-300">
-              Elige tus pronósticos antes del cierre y comparte el reto con tu grupo.
+            <p className="mt-1 text-sm font-semibold text-slate-300">
+              Subset oficial inicial · pronósticos demo
             </p>
-            <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
+            <p className="mt-1 max-w-2xl text-xs leading-5 text-slate-500">
               Partidos reales cargados como subset inicial. Calendario completo en preparación.
             </p>
           </div>
-          <div className="w-fit rounded-md border border-amber-200/25 bg-amber-300/10 px-3 py-2 text-sm font-bold text-amber-100">
-            Calendario inicial — subset oficial
-          </div>
         </header>
 
-        <section className="mt-8 grid gap-4 lg:grid-cols-2">
+        <section className="mt-5 grid gap-4 lg:grid-cols-2">
           {matches.map((match) => (
             <MatchCard key={match.id} match={match} />
           ))}
