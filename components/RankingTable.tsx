@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import type { RankingParticipant, RankingStatus } from "@/lib/mock-ranking-data";
+import type { RankingParticipant, RankingStatus } from "@/lib/ranking-types";
 
 type RankingTableProps = {
   participants: RankingParticipant[];
