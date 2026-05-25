@@ -52,7 +52,10 @@ export default function Home() {
               </div>
 
               <p className="mt-4 text-sm text-slate-400">
-                Sin apuestas. Sin ruido. Solo fútbol, amigos y gloria deportiva.
+                Sin ruido. Solo fútbol, amigos y gloria deportiva.
+                <Link className="ml-2 font-semibold text-blue-100 hover:text-white" href="/ranking">
+                  Ver ranking
+                </Link>
               </p>
             </div>
 
