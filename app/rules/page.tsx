@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SimpleNav from "@/components/SimpleNav";
 
 const sections = [
   {
@@ -52,7 +53,7 @@ const sections = [
     title: "WhatsApp primero",
     items: [
       "La conversación vive en WhatsApp.",
-      "FutbolWeb.app organiza partidos, ranking y reglas.",
+      "FutbolWeb.app organiza partidos, ranking y cómo funciona.",
       "No estamos creando chat propio.",
     ],
   },
@@ -103,13 +104,9 @@ export default function RulesPage() {
   return (
     <main className="min-h-screen bg-[#07111f] px-5 py-8 text-white md:px-10">
       <div className="mx-auto max-w-5xl">
+        <SimpleNav />
+
         <header className="border-b border-white/10 pb-8">
-          <Link
-            className="mb-5 inline-flex text-sm font-semibold text-cyan-100 transition hover:text-cyan-50"
-            href="/"
-          >
-            Volver al inicio
-          </Link>
           <p className="mb-3 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-sm font-semibold text-cyan-100">
             Oráculo Futbolero
           </p>

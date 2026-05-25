@@ -1,4 +1,5 @@
 import Link from "next/link";
+import SimpleNav from "@/components/SimpleNav";
 
 export default function Home() {
   const matches = [
@@ -18,20 +19,15 @@ export default function Home() {
     <main className="min-h-screen bg-[#07111f] text-white">
       <section className="px-5 py-8 md:px-10">
         <div className="mx-auto max-w-6xl">
-          <nav className="flex items-center justify-between rounded-3xl border border-white/10 bg-white/5 px-4 py-3">
+          <header className="flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-blue-400/50 bg-blue-500/10 font-black">
                 FW
               </div>
               <span className="font-semibold">futbolweb.app</span>
             </div>
-            <div className="flex items-center gap-4 text-sm text-slate-300">
-              <Link className="hover:text-white" href="/rules">
-                Cómo funciona
-              </Link>
-              <a className="hover:text-white" href="#join">Acceso temprano</a>
-            </div>
-          </nav>
+            <SimpleNav compact />
+          </header>
 
           <div className="grid items-center gap-10 py-16 md:grid-cols-2 md:py-24">
             <div>
@@ -65,7 +61,7 @@ export default function Home() {
                   Ver ranking
                 </Link>
                 <Link className="ml-2 font-semibold text-blue-100 hover:text-white" href="/rules">
-                  Reglas
+                  Cómo funciona
                 </Link>
               </p>
             </div>

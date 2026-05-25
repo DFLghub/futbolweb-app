@@ -1,5 +1,5 @@
-import Link from "next/link";
 import MatchCard from "@/components/MatchCard";
+import SimpleNav from "@/components/SimpleNav";
 import { mockMatches } from "@/lib/mock-football-data";
 
 export default function TodayPage() {
@@ -12,6 +12,8 @@ export default function TodayPage() {
   return (
     <main className="min-h-screen bg-[#07111f] px-5 py-8 text-white md:px-10">
       <div className="mx-auto max-w-5xl">
+        <SimpleNav />
+
         <header className="flex flex-col gap-5 border-b border-white/10 pb-8 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="mb-3 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-sm font-semibold text-cyan-100">
@@ -23,20 +25,6 @@ export default function TodayPage() {
             <p className="mt-3 max-w-2xl text-base leading-7 text-slate-300">
               Elige tus pronósticos antes del cierre y comparte el reto con tu grupo.
             </p>
-            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2">
-              <Link
-                className="inline-flex text-sm font-bold text-cyan-100 transition hover:text-cyan-50"
-                href="/ranking"
-              >
-                Ver ranking
-              </Link>
-              <Link
-                className="inline-flex text-sm font-bold text-cyan-100 transition hover:text-cyan-50"
-                href="/rules"
-              >
-                Cómo funciona
-              </Link>
-            </div>
           </div>
           <div className="w-fit rounded-md border border-amber-200/25 bg-amber-300/10 px-3 py-2 text-sm font-bold text-amber-100">
             Demo local — datos de prueba
