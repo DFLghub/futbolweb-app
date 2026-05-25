@@ -16,9 +16,11 @@ export default function TodayPage() {
             <p className="mb-3 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-sm font-semibold text-cyan-100">
               Modo Mundial activo
             </p>
-            <h1 className="text-4xl font-black tracking-tight md:text-5xl">Partidos de hoy</h1>
+            <h1 className="text-4xl font-black tracking-tight md:text-5xl">
+              Modo Mundial — Pronósticos
+            </h1>
             <p className="mt-3 max-w-2xl text-base leading-7 text-slate-300">
-              Elige tus picks antes del cierre y comparte el reto con tu grupo.
+              Elige tus pronósticos antes del cierre y comparte el reto con tu grupo.
             </p>
           </div>
           <div className="w-fit rounded-md border border-amber-200/25 bg-amber-300/10 px-3 py-2 text-sm font-bold text-amber-100">

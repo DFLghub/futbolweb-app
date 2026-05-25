@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   const matches = [
     ["JUE 11 JUN", "México", "Sudáfrica", "3:00 PM ET", "Grupo A"],
@@ -41,12 +43,12 @@ export default function Home() {
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <a className="rounded-2xl bg-blue-600 px-6 py-4 text-center font-bold text-white hover:bg-blue-500" href="#join">
+                <Link className="rounded-2xl bg-blue-600 px-6 py-4 text-center font-bold text-white hover:bg-blue-500" href="/today">
                   Participar →
-                </a>
-                <a className="rounded-2xl border border-white/15 bg-white/5 px-6 py-4 text-center font-bold text-white hover:bg-white/10" href="#demo">
+                </Link>
+                <Link className="rounded-2xl border border-white/15 bg-white/5 px-6 py-4 text-center font-bold text-white hover:bg-white/10" href="/today">
                   Ver demo
-                </a>
+                </Link>
               </div>
 
               <p className="mt-4 text-sm text-slate-400">

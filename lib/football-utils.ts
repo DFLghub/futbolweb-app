@@ -33,6 +33,18 @@ export function formatMatchTime(kickoffUtc: string): string {
   }).format(new Date(kickoffUtc));
 }
 
+export function getTimezoneLabel(timezone: string): string {
+  if (timezone === "America/New_York") {
+    return "Hora Este";
+  }
+
+  if (timezone === "America/Los_Angeles") {
+    return "Hora Pacífico";
+  }
+
+  return "hora local";
+}
+
 export function canPredict(match: FootballMatch): boolean {
   return match.status !== "final" && new Date(match.kickoffUtc).getTime() > Date.now();
 }
@@ -45,7 +57,7 @@ export function getStatusLabel(match: FootballMatch): string {
   const diffMs = new Date(match.kickoffUtc).getTime() - Date.now();
 
   if (diffMs <= 0) {
-    return "Picks cerrados";
+    return "Pronósticos cerrados";
   }
 
   if (diffMs < 2 * HOUR_MS) {

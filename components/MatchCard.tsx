@@ -6,6 +6,7 @@ import {
   canPredict,
   formatMatchTime,
   getStatusLabel,
+  getTimezoneLabel,
   type FootballMatch,
 } from "@/lib/football-utils";
 
@@ -112,7 +113,7 @@ export default function MatchCard({ match }: MatchCardProps) {
       <div className="mt-5 rounded-md border border-white/10 bg-black/20 px-3 py-2 text-sm text-slate-300">
         <span className="font-semibold text-slate-100">{match.venueName}</span>
         <span className="text-slate-500"> · </span>
-        <span>{match.venueTimezone}</span>
+        <span>{getTimezoneLabel(match.venueTimezone)}</span>
       </div>
 
       <div className="mt-5 flex flex-col gap-2 sm:flex-row">
