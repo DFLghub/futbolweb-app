@@ -5,6 +5,7 @@ import type { RankingParticipant, RankingStatus } from "@/lib/ranking-types";
 
 type RankingTableProps = {
   participants: RankingParticipant[];
+  groupCode?: string;
 };
 
 const statusLabels: Record<RankingStatus, string> = {

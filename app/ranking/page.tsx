@@ -3,6 +3,7 @@ import RankingTable from "@/components/RankingTable";
 import SimpleNav from "@/components/SimpleNav";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import type { RankingParticipant } from "@/lib/ranking-types";
+
 export const dynamic = "force-dynamic";
 
 function deriveStatus(position: number): RankingParticipant["status"] {
@@ -13,24 +14,29 @@ function deriveStatus(position: number): RankingParticipant["status"] {
   return "red";
 }
 
-async function getRanking(): Promise<RankingParticipant[]> {
+async function getRanking(groupCode?: string): Promise<RankingParticipant[]> {
   try {
     const supabase = createSupabaseServerClient();
-    const { data, error } = await supabase
+    let query = supabase
       .from("ranking_summary")
       .select("position, name, group_code, points, exact_scores, correct_results")
       .order("position", { ascending: true });
 
+    if (groupCode) {
+      query = query.eq("group_code", groupCode);
+    }
+
+    const { data, error } = await query;
     if (error || !data) return [];
 
-    return data.map((r) => ({
-      position: r.position,
+    return data.map((r, index) => ({
+      position: groupCode ? index + 1 : r.position,
       name: r.name,
       points: Number(r.points),
       exactScores: Number(r.exact_scores),
       correctResults: Number(r.correct_results),
       groupCode: r.group_code ?? undefined,
-      status: deriveStatus(r.position),
+      status: deriveStatus(groupCode ? index + 1 : r.position),
       isBocon: false,
     }));
   } catch {
@@ -38,9 +44,16 @@ async function getRanking(): Promise<RankingParticipant[]> {
   }
 }
 
-export default async function RankingPage() {
-  const participants = await getRanking();
+type PageProps = {
+  searchParams: Promise<{ group?: string }>;
+};
+
+export default async function RankingPage({ searchParams }: PageProps) {
+  const { group } = await searchParams;
+  const groupCode = group?.trim() || undefined;
+  const participants = await getRanking(groupCode);
   const isLive = participants.length > 0;
+  const isFiltered = Boolean(groupCode);
 
   return (
     <main className="min-h-screen bg-[#07111f] px-5 py-8 text-white md:px-10">
@@ -50,11 +63,25 @@ export default async function RankingPage() {
 
         <header className="flex flex-col gap-5 border-b border-white/10 pb-8 md:flex-row md:items-end md:justify-between">
           <div>
-            <h1 className="text-4xl font-black tracking-tight md:text-5xl">Ranking del Grupo</h1>
+            <h1 className="text-4xl font-black tracking-tight md:text-5xl">
+              {isFiltered ? `Ranking — Grupo ${groupCode}` : "Ranking Global"}
+            </h1>
             <p className="mt-3 max-w-2xl text-base leading-7 text-slate-300">
-              Zona de gloria, zona de pelea y zona roja. Cada punto se presume en el grupo.
+              {isFiltered
+                ? `Posiciones dentro del grupo ${groupCode}. Cada punto se presume.`
+                : "Zona de gloria, zona de pelea y zona roja. Cada punto se presume en el grupo."}
             </p>
+
+            {isFiltered && (
+              <a
+                href="/ranking"
+                className="mt-3 inline-block text-sm font-semibold text-cyan-400 underline underline-offset-4 hover:text-cyan-300"
+              >
+                Ver ranking global
+              </a>
+            )}
           </div>
+
           <div
             className={`w-fit rounded-md border px-3 py-2 text-sm font-black shadow-lg ${
               isLive
@@ -62,11 +89,15 @@ export default async function RankingPage() {
                 : "border-amber-200/30 bg-amber-300/10 text-amber-100 shadow-amber-950/10"
             }`}
           >
-            {isLive ? "En vivo — datos reales" : "Sin datos aún"}
+            {isLive
+              ? isFiltered
+                ? `Grupo ${groupCode}`
+                : "En vivo — datos reales"
+              : "Sin datos aún"}
           </div>
         </header>
 
-        <RankingTable participants={participants} />
+        <RankingTable participants={participants} groupCode={groupCode} />
       </div>
     </main>
   );
