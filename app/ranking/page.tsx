@@ -8,12 +8,20 @@ export default function RankingPage() {
       <div className="mx-auto max-w-6xl">
         <header className="flex flex-col gap-5 border-b border-white/10 pb-8 md:flex-row md:items-end md:justify-between">
           <div>
-            <Link
-              className="mb-4 inline-flex text-sm font-semibold text-cyan-100 transition hover:text-cyan-50"
-              href="/today"
-            >
-              Volver a pronósticos
-            </Link>
+            <div className="mb-4 flex flex-wrap gap-x-4 gap-y-2">
+              <Link
+                className="inline-flex text-sm font-semibold text-cyan-100 transition hover:text-cyan-50"
+                href="/today"
+              >
+                Volver a pronósticos
+              </Link>
+              <Link
+                className="inline-flex text-sm font-semibold text-cyan-100 transition hover:text-cyan-50"
+                href="/rules"
+              >
+                Reglas
+              </Link>
+            </div>
             <h1 className="text-4xl font-black tracking-tight md:text-5xl">Ranking del Grupo</h1>
             <p className="mt-3 max-w-2xl text-base leading-7 text-slate-300">
               Zona de gloria, zona de pelea y zona roja.

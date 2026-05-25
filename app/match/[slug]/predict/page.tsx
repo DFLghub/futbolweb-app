@@ -55,6 +55,12 @@ export default async function PredictPage({ params }: PredictPageProps) {
             </Link>
             <Link
               className="min-h-11 rounded-md border border-white/15 bg-white/5 px-5 py-3 text-center text-sm font-bold text-slate-200 transition hover:bg-white/10"
+              href="/rules"
+            >
+              Cómo funciona
+            </Link>
+            <Link
+              className="min-h-11 rounded-md border border-white/15 bg-white/5 px-5 py-3 text-center text-sm font-bold text-slate-200 transition hover:bg-white/10"
               href="/"
             >
               Volver al inicio

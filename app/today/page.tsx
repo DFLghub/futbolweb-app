@@ -23,12 +23,20 @@ export default function TodayPage() {
             <p className="mt-3 max-w-2xl text-base leading-7 text-slate-300">
               Elige tus pronósticos antes del cierre y comparte el reto con tu grupo.
             </p>
-            <Link
-              className="mt-4 inline-flex text-sm font-bold text-cyan-100 transition hover:text-cyan-50"
-              href="/ranking"
-            >
-              Ver ranking
-            </Link>
+            <div className="mt-4 flex flex-wrap gap-x-4 gap-y-2">
+              <Link
+                className="inline-flex text-sm font-bold text-cyan-100 transition hover:text-cyan-50"
+                href="/ranking"
+              >
+                Ver ranking
+              </Link>
+              <Link
+                className="inline-flex text-sm font-bold text-cyan-100 transition hover:text-cyan-50"
+                href="/rules"
+              >
+                Cómo funciona
+              </Link>
+            </div>
           </div>
           <div className="w-fit rounded-md border border-amber-200/25 bg-amber-300/10 px-3 py-2 text-sm font-bold text-amber-100">
             Demo local — datos de prueba

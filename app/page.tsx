@@ -25,7 +25,12 @@ export default function Home() {
               </div>
               <span className="font-semibold">futbolweb.app</span>
             </div>
-            <a href="#join" className="text-sm text-slate-300">Acceso temprano</a>
+            <div className="flex items-center gap-4 text-sm text-slate-300">
+              <Link className="hover:text-white" href="/rules">
+                Cómo funciona
+              </Link>
+              <a className="hover:text-white" href="#join">Acceso temprano</a>
+            </div>
           </nav>
 
           <div className="grid items-center gap-10 py-16 md:grid-cols-2 md:py-24">
@@ -49,12 +54,18 @@ export default function Home() {
                 <Link className="rounded-2xl border border-white/15 bg-white/5 px-6 py-4 text-center font-bold text-white hover:bg-white/10" href="/today">
                   Ver demo
                 </Link>
+                <Link className="rounded-2xl border border-white/15 bg-white/5 px-6 py-4 text-center font-bold text-white hover:bg-white/10" href="/rules">
+                  Cómo funciona
+                </Link>
               </div>
 
               <p className="mt-4 text-sm text-slate-400">
                 Sin ruido. Solo fútbol, amigos y gloria deportiva.
                 <Link className="ml-2 font-semibold text-blue-100 hover:text-white" href="/ranking">
                   Ver ranking
+                </Link>
+                <Link className="ml-2 font-semibold text-blue-100 hover:text-white" href="/rules">
+                  Reglas
                 </Link>
               </p>
             </div>
