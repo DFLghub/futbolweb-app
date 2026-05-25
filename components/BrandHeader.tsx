@@ -5,31 +5,31 @@ type BrandHeaderProps = {
 export default function BrandHeader({ className = "" }: BrandHeaderProps) {
   return (
     <div
-      className={`rounded-lg border border-cyan-200/15 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.16),transparent_34%),linear-gradient(135deg,rgba(15,23,42,0.92),rgba(8,18,34,0.96))] px-4 py-4 shadow-xl shadow-black/15 ${className}`}
+      className={`rounded-lg border border-cyan-200/15 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.14),transparent_30%),linear-gradient(135deg,rgba(15,23,42,0.92),rgba(8,18,34,0.96))] px-3 py-2.5 shadow-lg shadow-black/15 sm:px-4 sm:py-3 ${className}`}
     >
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md border border-amber-200/30 bg-amber-300/10 text-2xl shadow-inner shadow-amber-200/5">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+        <div className="flex min-w-0 flex-1 items-center gap-2.5">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-amber-200/25 bg-amber-300/10 text-lg shadow-inner shadow-amber-200/5 sm:h-9 sm:w-9 sm:text-xl">
             🐯
           </div>
-          <div>
-            <p className="text-lg font-black tracking-tight text-white">
-              FutbolWeb.app
-            </p>
-            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-cyan-100/85">
-              El Oráculo Futbolero
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+              <p className="text-base font-black leading-tight tracking-tight text-white sm:text-lg">
+                FutbolWeb.app
+              </p>
+              <p className="text-[0.65rem] font-semibold uppercase leading-tight tracking-[0.14em] text-cyan-100/85 sm:text-xs">
+                El Oráculo Futbolero
+              </p>
+            </div>
+            <p className="mt-0.5 text-xs font-medium leading-snug text-slate-300 sm:text-sm">
+              El Tigre juega en equipo.
             </p>
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 sm:items-end">
-          <p className="text-sm font-medium text-slate-300">
-            El Tigre juega en equipo.
-          </p>
-          <span className="w-fit rounded-md border border-emerald-200/25 bg-emerald-300/10 px-2.5 py-1 text-xs font-black uppercase tracking-[0.14em] text-emerald-100">
-            Modo Mundial v0.1
-          </span>
-        </div>
+        <span className="w-fit shrink-0 rounded border border-emerald-200/25 bg-emerald-300/10 px-2 py-0.5 text-[0.62rem] font-black uppercase leading-5 tracking-[0.12em] text-emerald-100 sm:text-[0.68rem]">
+          Modo Mundial v0.1
+        </span>
       </div>
     </div>
   );
