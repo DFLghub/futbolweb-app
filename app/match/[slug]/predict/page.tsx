@@ -7,6 +7,9 @@ type PredictPageProps = {
   params: Promise<{
     slug: string;
   }>;
+  searchParams: Promise<{
+    group?: string;
+  }>;
 };
 
 function titleCase(value: string) {
@@ -55,8 +58,10 @@ function formatMatchLabel(slug: string) {
   return titleCase(normalized);
 }
 
-export default async function PredictPage({ params }: PredictPageProps) {
+export default async function PredictPage({ params, searchParams }: PredictPageProps) {
   const { slug } = await params;
+  const { group } = await searchParams;
+  const initialGroupCode = group?.trim() || "";
   const matchLabel = formatMatchLabel(slug);
 
   return (
@@ -80,9 +85,20 @@ export default async function PredictPage({ params }: PredictPageProps) {
             <span className="font-semibold text-slate-100">Partido:</span>{" "}
             <span>{matchLabel}</span>
           </div>
+
+          {initialGroupCode ? (
+            <div className="mt-3 rounded-md border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-100">
+              Entraste con invitación del grupo:{" "}
+              <span className="font-black">{initialGroupCode}</span>
+            </div>
+          ) : null}
         </header>
 
-        <PredictDemoForm matchLabel={matchLabel} matchSlug={slug} />
+        <PredictDemoForm
+          initialGroupCode={initialGroupCode}
+          matchLabel={matchLabel}
+          matchSlug={slug}
+        />
       </div>
     </main>
   );

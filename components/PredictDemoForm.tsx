@@ -17,9 +17,10 @@ type SavedPrediction = {
 type PredictDemoFormProps = {
   matchSlug: string;
   matchLabel: string;
+  initialGroupCode?: string;
 };
 
-const initialForm = {
+const emptyForm = {
   alias: "",
   favoriteTeam: "",
   scoreA: "",
@@ -36,15 +37,22 @@ function createClientSubmissionId() {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-export default function PredictDemoForm({ matchSlug, matchLabel }: PredictDemoFormProps) {
-  const [form, setForm] = useState(initialForm);
+export default function PredictDemoForm({
+  matchSlug,
+  matchLabel,
+  initialGroupCode = "",
+}: PredictDemoFormProps) {
+  const [form, setForm] = useState({
+    ...emptyForm,
+    groupCode: initialGroupCode,
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [copyMessage, setCopyMessage] = useState("");
   const [savedPrediction, setSavedPrediction] = useState<SavedPrediction | null>(null);
   const clientSubmissionId = useMemo(() => createClientSubmissionId(), []);
 
-  function updateField(field: keyof typeof initialForm, value: string) {
+  function updateField(field: keyof typeof emptyForm, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
     setErrorMessage("");
     setCopyMessage("");
@@ -103,6 +111,10 @@ export default function PredictDemoForm({ matchSlug, matchLabel }: PredictDemoFo
       return;
     }
 
+    const rankingPath = prediction.group_code
+      ? `/ranking?group=${encodeURIComponent(prediction.group_code)}`
+      : "/ranking";
+
     const text = [
       "🐯 Pronóstico FutbolWeb.app",
       `Partido: ${matchLabel}`,
@@ -112,7 +124,7 @@ export default function PredictDemoForm({ matchSlug, matchLabel }: PredictDemoFo
       `Boconeo: ${prediction.comment || "Sin boconeo"}`,
       `Grupo: ${prediction.group_code || "Sin grupo"}`,
       "Modo Mundial v0.1",
-      "https://www.futbolweb.app",
+      `Ranking: https://www.futbolweb.app${rankingPath}`,
     ].join("\n");
 
     try {
@@ -214,11 +226,16 @@ export default function PredictDemoForm({ matchSlug, matchLabel }: PredictDemoFo
           <input
             className="mt-2 min-h-11 w-full rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-200/60"
             id="groupCode"
-            maxLength={40}
+            maxLength={80}
             name="groupCode"
             onChange={(event) => updateField("groupCode", event.target.value)}
             value={form.groupCode}
           />
+          {initialGroupCode ? (
+            <p className="mt-2 text-xs font-semibold text-emerald-100">
+              Este grupo vino en el link de invitación. Puedes dejarlo así.
+            </p>
+          ) : null}
         </div>
 
         {errorMessage ? (
