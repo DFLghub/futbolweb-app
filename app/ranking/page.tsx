@@ -6,7 +6,8 @@ import type { RankingParticipant } from "@/lib/ranking-types";
 
 export const dynamic = "force-dynamic";
 
-function deriveStatus(position: number): RankingParticipant["status"] {
+function deriveStatus(position: number, points: number): RankingParticipant["status"] {
+  if (points <= 0) return "red";
   if (position === 1) return "gold";
   if (position <= 3) return "green";
   if (position <= 5) return "yellow";
@@ -36,7 +37,7 @@ async function getRanking(groupCode?: string): Promise<RankingParticipant[]> {
       exactScores: Number(r.exact_scores),
       correctResults: Number(r.correct_results),
       groupCode: r.group_code ?? undefined,
-      status: deriveStatus(groupCode ? index + 1 : r.position),
+      status: deriveStatus(groupCode ? index + 1 : r.position, Number(r.points)),
       isBocon: false,
     }));
   } catch {
