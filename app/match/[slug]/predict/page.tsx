@@ -1,4 +1,5 @@
 import BrandHeader from "@/components/BrandHeader";
+import CopyPredictionInviteButton from "@/components/CopyPredictionInviteButton";
 import PredictDemoForm from "@/components/PredictDemoForm";
 import SimpleNav from "@/components/SimpleNav";
 import { worldCup2026Matches } from "@/lib/world-cup-2026-matches";
@@ -92,6 +93,12 @@ export default async function PredictPage({ params, searchParams }: PredictPageP
               <span className="font-black">{initialGroupCode}</span>
             </div>
           ) : null}
+
+          <CopyPredictionInviteButton
+            groupCode={initialGroupCode || undefined}
+            matchLabel={matchLabel}
+            matchSlug={slug}
+          />
         </header>
 
         <PredictDemoForm
