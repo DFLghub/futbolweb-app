@@ -36,25 +36,36 @@ function formatPoints(points: number): string {
   return points === 1 ? "1 pt" : `${points} pts`;
 }
 
-export default function RankingTable({ participants }: RankingTableProps) {
+export default function RankingTable({ participants, groupCode }: RankingTableProps) {
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
   const clearFeedbackTimeout = useRef<number | null>(null);
   const topThree = participants.slice(0, 3);
   const redZone = participants.filter((participant) => participant.status === "red");
+  const rankingPath = groupCode ? `/ranking?group=${encodeURIComponent(groupCode)}` : "/ranking";
+  const rankingUrl = `https://www.futbolweb.app${rankingPath}`;
+  const rankingTitle = groupCode ? `Grupo: ${groupCode}` : "Ranking Global";
 
-  const topLines = topThree
-    .map((participant) => `${participant.position}. ${participant.name} — ${formatPoints(participant.points)}`)
-    .join("\n");
-  const redLines = redZone
-    .map((participant) => `${participant.position}. ${participant.name} — ${formatPoints(participant.points)}`)
-    .join("\n");
+  const topLines =
+    topThree.length > 0
+      ? topThree
+          .map((participant) => `#${participant.position} ${participant.name} — ${formatPoints(participant.points)}`)
+          .join("\n")
+      : "Todavía no hay datos puntuados.";
+
+  const redLines =
+    redZone.length > 0
+      ? ["", "Zona roja:", ...redZone.map((participant) => `#${participant.position} ${participant.name} — ${formatPoints(participant.points)}`)]
+      : [];
+
   const shareText = [
-    "🏆 Ranking del Grupo — Oráculo Futbolero",
+    "🏆 Ranking FutbolWeb.app",
+    rankingTitle,
+    "",
     "Top 3:",
     topLines,
-    "Zona roja:",
-    redLines,
-    "Revisa el ranking: https://www.futbolweb.app/ranking",
+    ...redLines,
+    "",
+    `Ver ranking: ${rankingUrl}`,
   ].join("\n");
 
   function clearFeedbackLater() {
