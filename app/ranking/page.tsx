@@ -97,6 +97,15 @@ export default async function RankingPage({ searchParams }: PageProps) {
           </div>
         </header>
 
+        {isFiltered && !isLive && (
+          <div className="mt-8 rounded-2xl border border-amber-200/20 bg-amber-300/10 p-5 text-sm text-amber-100">
+            <p className="font-black">No hay datos todavía para este grupo.</p>
+            <p className="mt-2 text-amber-100/80">
+              Cuando haya pronósticos aceptados y puntuados, aparecerán aquí.
+            </p>
+          </div>
+        )}
+
         <RankingTable participants={participants} groupCode={groupCode} />
       </div>
     </main>
