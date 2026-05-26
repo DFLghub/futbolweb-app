@@ -40,7 +40,10 @@ export default function RankingTable({ participants, groupCode }: RankingTablePr
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
   const clearFeedbackTimeout = useRef<number | null>(null);
   const topThree = participants.slice(0, 3);
-  const redZone = participants.filter((participant) => participant.status === "red");
+  const topThreePositions = new Set(topThree.map((participant) => participant.position));
+  const redZone = participants.filter(
+    (participant) => participant.status === "red" && !topThreePositions.has(participant.position),
+  );
   const rankingPath = groupCode ? `/ranking?group=${encodeURIComponent(groupCode)}` : "/ranking";
   const rankingUrl = `https://www.futbolweb.app${rankingPath}`;
   const rankingTitle = groupCode ? `Grupo: ${groupCode}` : "Ranking Global";
