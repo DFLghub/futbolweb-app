@@ -23,14 +23,15 @@ export default function CopyPredictionInviteButton({
   const predictionUrl = `https://www.futbolweb.app${predictionPath}`;
 
   const inviteText = [
-    "🐯 Entra al Oráculo Futbolero",
-    matchLabel,
+    "🏆 Polla Mundialista FutbolWeb.app",
     "",
-    "Haz tu pronóstico aquí:",
+    "Ya estoy jugando. Entra, haz tu pronóstico y compite con nosotros:",
+    "",
+    matchLabel,
     predictionUrl,
     "",
     groupCode ? `Grupo: ${groupCode}` : "Ranking Global",
-    "Modo Mundial v0.1",
+    "A ver quién sabe más de fútbol 😄",
   ].join("\n");
 
   function clearFeedbackLater() {
