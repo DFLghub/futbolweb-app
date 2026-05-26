@@ -54,6 +54,29 @@ export default async function RankingPage({ searchParams }: PageProps) {
   const participants = await getRanking(groupCode);
   const isLive = participants.length > 0;
   const isFiltered = Boolean(groupCode);
+  const isSolista = groupCode === "SOLISTA";
+
+  const title = isSolista
+    ? "Ranking — SOLISTA"
+    : isFiltered
+      ? `Ranking — Grupo ${groupCode}`
+      : "Ranking Global";
+
+  const description = isSolista
+    ? "¿No tienes grupo? Juega como SOLISTA. Participas individualmente, apareces en el Ranking Global y también puedes compararte con otros SOLISTA."
+    : isFiltered
+      ? `Posiciones dentro del grupo ${groupCode}. Cada punto se presume.`
+      : "Zona de gloria, zona de pelea y zona roja. Cada punto se presume en el grupo.";
+
+  const badgeText = isLive
+    ? isSolista
+      ? "Modo SOLISTA"
+      : isFiltered
+        ? `Grupo ${groupCode}`
+        : "En vivo — datos reales"
+    : isSolista
+      ? "SOLISTA listo"
+      : "Sin datos aún";
 
   return (
     <main className="min-h-screen bg-[#07111f] px-5 py-8 text-white md:px-10">
@@ -63,14 +86,8 @@ export default async function RankingPage({ searchParams }: PageProps) {
 
         <header className="flex flex-col gap-5 border-b border-white/10 pb-8 md:flex-row md:items-end md:justify-between">
           <div>
-            <h1 className="text-4xl font-black tracking-tight md:text-5xl">
-              {isFiltered ? `Ranking — Grupo ${groupCode}` : "Ranking Global"}
-            </h1>
-            <p className="mt-3 max-w-2xl text-base leading-7 text-slate-300">
-              {isFiltered
-                ? `Posiciones dentro del grupo ${groupCode}. Cada punto se presume.`
-                : "Zona de gloria, zona de pelea y zona roja. Cada punto se presume en el grupo."}
-            </p>
+            <h1 className="text-4xl font-black tracking-tight md:text-5xl">{title}</h1>
+            <p className="mt-3 max-w-2xl text-base leading-7 text-slate-300">{description}</p>
 
             {isFiltered && (
               <a
@@ -89,19 +106,19 @@ export default async function RankingPage({ searchParams }: PageProps) {
                 : "border-amber-200/30 bg-amber-300/10 text-amber-100 shadow-amber-950/10"
             }`}
           >
-            {isLive
-              ? isFiltered
-                ? `Grupo ${groupCode}`
-                : "En vivo — datos reales"
-              : "Sin datos aún"}
+            {badgeText}
           </div>
         </header>
 
         {isFiltered && !isLive && (
           <div className="mt-8 rounded-2xl border border-amber-200/20 bg-amber-300/10 p-5 text-sm text-amber-100">
-            <p className="font-black">No hay datos todavía para este grupo.</p>
+            <p className="font-black">
+              {isSolista ? "Todavía no hay jugadores SOLISTA puntuados." : "No hay datos todavía para este grupo."}
+            </p>
             <p className="mt-2 text-amber-100/80">
-              Cuando haya pronósticos aceptados y puntuados, aparecerán aquí.
+              {isSolista
+                ? "Cuando haya pronósticos aceptados y puntuados con group_code SOLISTA, aparecerán aquí."
+                : "Cuando haya pronósticos aceptados y puntuados, aparecerán aquí."}
             </p>
           </div>
         )}
