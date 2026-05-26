@@ -64,6 +64,9 @@ export default async function PredictPage({ params, searchParams }: PredictPageP
   const { group } = await searchParams;
   const initialGroupCode = group?.trim() || "";
   const matchLabel = formatMatchLabel(slug);
+  const knownMatch = worldCup2026Matches.find((match) => match.slug === slug);
+  const homeTeamName = knownMatch?.homeTeam.name || "equipo A";
+  const awayTeamName = knownMatch?.awayTeam.name || "equipo B";
 
   return (
     <main className="min-h-screen bg-[#07111f] px-5 py-6 text-white md:px-10 md:py-8">
@@ -102,6 +105,8 @@ export default async function PredictPage({ params, searchParams }: PredictPageP
         </header>
 
         <PredictDemoForm
+          awayTeamName={awayTeamName}
+          homeTeamName={homeTeamName}
           initialGroupCode={initialGroupCode}
           matchLabel={matchLabel}
           matchSlug={slug}

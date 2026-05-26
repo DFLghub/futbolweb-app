@@ -17,6 +17,8 @@ type SavedPrediction = {
 type PredictDemoFormProps = {
   matchSlug: string;
   matchLabel: string;
+  homeTeamName: string;
+  awayTeamName: string;
   initialGroupCode?: string;
 };
 
@@ -40,6 +42,8 @@ function createClientSubmissionId() {
 export default function PredictDemoForm({
   matchSlug,
   matchLabel,
+  homeTeamName,
+  awayTeamName,
   initialGroupCode = "",
 }: PredictDemoFormProps) {
   const [form, setForm] = useState({
@@ -170,7 +174,7 @@ export default function PredictDemoForm({
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="text-sm font-bold text-slate-100" htmlFor="scoreA">
-              Marcador equipo A
+              {`Marcador ${homeTeamName}`}
             </label>
             <input
               className="mt-2 min-h-11 w-full rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-200/60"
@@ -188,7 +192,7 @@ export default function PredictDemoForm({
 
           <div>
             <label className="text-sm font-bold text-slate-100" htmlFor="scoreB">
-              Marcador equipo B
+              {`Marcador ${awayTeamName}`}
             </label>
             <input
               className="mt-2 min-h-11 w-full rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-200/60"
