@@ -1,4 +1,4 @@
-export type GroupStandingStatus = "qualified" | "at_risk" | "pending" | "eliminated";
+export type GroupStandingStatus = "pending";
 
 export type GroupStandingTeam = {
   teamId: string;
@@ -21,191 +21,152 @@ export type GroupStanding = {
   teams: GroupStandingTeam[];
 };
 
-export const mockWorldCupGroupStandings: GroupStanding[] = [
+const groupLetters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"] as const;
+type GroupLetter = (typeof groupLetters)[number];
+
+const canonicalWorldCup2026Groups = [
   {
-    groupId: "grupo-a",
-    groupName: "Grupo A",
-    teams: [
-      {
-        teamId: "mexico",
-        teamName: "Mexico",
-        played: 2,
-        won: 1,
-        drawn: 1,
-        lost: 0,
-        goalsFor: 3,
-        goalsAgainst: 1,
-        goalDifference: 2,
-        points: 4,
-        rank: 1,
-        status: "qualified",
-      },
-      {
-        teamId: "south-africa",
-        teamName: "Sudafrica",
-        played: 2,
-        won: 1,
-        drawn: 0,
-        lost: 1,
-        goalsFor: 2,
-        goalsAgainst: 2,
-        goalDifference: 0,
-        points: 3,
-        rank: 2,
-        status: "at_risk",
-      },
-      {
-        teamId: "czechia",
-        teamName: "Chequia",
-        played: 2,
-        won: 0,
-        drawn: 2,
-        lost: 0,
-        goalsFor: 1,
-        goalsAgainst: 1,
-        goalDifference: 0,
-        points: 2,
-        rank: 3,
-        status: "pending",
-      },
-      {
-        teamId: "qatar",
-        teamName: "Qatar",
-        played: 2,
-        won: 0,
-        drawn: 1,
-        lost: 1,
-        goalsFor: 1,
-        goalsAgainst: 3,
-        goalDifference: -2,
-        points: 1,
-        rank: 4,
-        status: "at_risk",
-      },
-    ],
+    groupLetter: "A",
+    teams: ["México", "Sudáfrica", "Corea del Sur", "Chequia"],
   },
   {
-    groupId: "grupo-c",
-    groupName: "Grupo C",
-    teams: [
-      {
-        teamId: "brazil",
-        teamName: "Brasil",
-        played: 2,
-        won: 2,
-        drawn: 0,
-        lost: 0,
-        goalsFor: 5,
-        goalsAgainst: 1,
-        goalDifference: 4,
-        points: 6,
-        rank: 1,
-        status: "qualified",
-      },
-      {
-        teamId: "morocco",
-        teamName: "Marruecos",
-        played: 2,
-        won: 1,
-        drawn: 0,
-        lost: 1,
-        goalsFor: 3,
-        goalsAgainst: 3,
-        goalDifference: 0,
-        points: 3,
-        rank: 2,
-        status: "pending",
-      },
-      {
-        teamId: "scotland",
-        teamName: "Escocia",
-        played: 2,
-        won: 0,
-        drawn: 1,
-        lost: 1,
-        goalsFor: 2,
-        goalsAgainst: 4,
-        goalDifference: -2,
-        points: 1,
-        rank: 3,
-        status: "at_risk",
-      },
-      {
-        teamId: "haiti",
-        teamName: "Haiti",
-        played: 2,
-        won: 0,
-        drawn: 1,
-        lost: 1,
-        goalsFor: 1,
-        goalsAgainst: 3,
-        goalDifference: -2,
-        points: 1,
-        rank: 4,
-        status: "eliminated",
-      },
-    ],
+    groupLetter: "B",
+    teams: ["Canadá", "Suiza", "Catar", "Bosnia y Herzegovina"],
   },
   {
-    groupId: "grupo-k",
-    groupName: "Grupo K",
-    teams: [
-      {
-        teamId: "portugal",
-        teamName: "Portugal",
-        played: 1,
-        won: 1,
-        drawn: 0,
-        lost: 0,
-        goalsFor: 2,
-        goalsAgainst: 0,
-        goalDifference: 2,
-        points: 3,
-        rank: 1,
-        status: "pending",
-      },
-      {
-        teamId: "colombia",
-        teamName: "Colombia",
-        played: 1,
-        won: 1,
-        drawn: 0,
-        lost: 0,
-        goalsFor: 1,
-        goalsAgainst: 0,
-        goalDifference: 1,
-        points: 3,
-        rank: 2,
-        status: "pending",
-      },
-      {
-        teamId: "ghana",
-        teamName: "Ghana",
-        played: 1,
-        won: 0,
-        drawn: 0,
-        lost: 1,
-        goalsFor: 0,
-        goalsAgainst: 1,
-        goalDifference: -1,
-        points: 0,
-        rank: 3,
-        status: "at_risk",
-      },
-      {
-        teamId: "new-zealand",
-        teamName: "Nueva Zelanda",
-        played: 1,
-        won: 0,
-        drawn: 0,
-        lost: 1,
-        goalsFor: 0,
-        goalsAgainst: 2,
-        goalDifference: -2,
-        points: 0,
-        rank: 4,
-        status: "at_risk",
-      },
-    ],
+    groupLetter: "C",
+    teams: ["Brasil", "Marruecos", "Haití", "Escocia"],
   },
-];
+  {
+    groupLetter: "D",
+    teams: ["Estados Unidos", "Paraguay", "Australia", "Turquía"],
+  },
+  {
+    groupLetter: "E",
+    teams: ["Alemania", "Curazao", "Costa de Marfil", "Ecuador"],
+  },
+  {
+    groupLetter: "F",
+    teams: ["Países Bajos", "Japón", "Suecia", "Túnez"],
+  },
+  {
+    groupLetter: "G",
+    teams: ["Bélgica", "Egipto", "Irán", "Nueva Zelanda"],
+  },
+  {
+    groupLetter: "H",
+    teams: ["España", "Cabo Verde", "Arabia Saudita", "Uruguay"],
+  },
+  {
+    groupLetter: "I",
+    teams: ["Francia", "Senegal", "Noruega", "Irak"],
+  },
+  {
+    groupLetter: "J",
+    teams: ["Argentina", "Argelia", "Austria", "Jordania"],
+  },
+  {
+    groupLetter: "K",
+    teams: ["Portugal", "Colombia", "Uzbekistán", "RD Congo"],
+  },
+  {
+    groupLetter: "L",
+    teams: ["Inglaterra", "Croacia", "Ghana", "Panamá"],
+  },
+] satisfies ReadonlyArray<{
+  groupLetter: GroupLetter;
+  teams: readonly [string, string, string, string];
+}>;
+
+const placeholderTeamNames = ["Por definir", "TBD", "TBA"];
+
+function isPlaceholderTeamName(teamName: string) {
+  const normalizedTeamName = teamName.trim();
+
+  return (
+    normalizedTeamName.length === 0 ||
+    placeholderTeamNames.some((placeholder) => placeholder.toLowerCase() === normalizedTeamName.toLowerCase()) ||
+    /^Equipo\b/i.test(normalizedTeamName)
+  );
+}
+
+function validateGroupCatalog(
+  catalog: ReadonlyArray<{ groupLetter: GroupLetter; teams: readonly string[] }>,
+) {
+  const seenGroups = new Set<GroupLetter>();
+  const problems = [];
+
+  if (catalog.length !== 12) {
+    problems.push(`Catalogo: ${catalog.length}/12 grupos`);
+  }
+
+  catalog.forEach((group) => {
+    seenGroups.add(group.groupLetter);
+
+    const teams = group.teams.map((teamName) => teamName.trim());
+    const invalidTeams = teams.filter(isPlaceholderTeamName);
+
+    if (teams.length !== 4) {
+      problems.push(`Grupo ${group.groupLetter}: ${teams.length}/4 equipos`);
+    }
+
+    if (invalidTeams.length > 0) {
+      problems.push(`Grupo ${group.groupLetter}: nombres invalidos (${invalidTeams.join(", ")})`);
+    }
+  });
+
+  groupLetters.forEach((groupLetter) => {
+    if (!seenGroups.has(groupLetter)) {
+      problems.push(`Grupo ${groupLetter}: faltante`);
+    }
+  });
+
+  if (problems.length > 0) {
+    throw new Error(
+      [
+        "Catalogo canonico de grupos 2026 invalido en lib/mock-group-standings.ts.",
+        ...problems,
+      ].join("\n"),
+    );
+  }
+}
+
+function createTeamId(groupLetter: string, teamName: string) {
+  const teamSlug = teamName
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  return `grupo-${groupLetter.toLowerCase()}-${teamSlug}`;
+}
+
+function createInitialTeam(groupLetter: string, rank: number, teamName: string): GroupStandingTeam {
+  return {
+    teamId: createTeamId(groupLetter, teamName),
+    teamName,
+    played: 0,
+    won: 0,
+    drawn: 0,
+    lost: 0,
+    goalsFor: 0,
+    goalsAgainst: 0,
+    goalDifference: 0,
+    points: 0,
+    rank,
+    status: "pending",
+  };
+}
+
+validateGroupCatalog(canonicalWorldCup2026Groups);
+
+export const mockWorldCupGroupStandings: GroupStanding[] = canonicalWorldCup2026Groups.map((group) => ({
+  groupId: `grupo-${group.groupLetter.toLowerCase()}`,
+  groupName: `Grupo ${group.groupLetter}`,
+  teams: group.teams.map((teamName, index) => createInitialTeam(
+    group.groupLetter,
+    index + 1,
+    teamName,
+  )),
+}));
