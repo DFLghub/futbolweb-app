@@ -46,6 +46,9 @@ export default function Home() {
                 <Link className="rounded-md border border-white/20 bg-slate-950/70 px-6 py-4 text-center font-bold text-white shadow-lg shadow-black/15 transition hover:border-emerald-200/35 hover:bg-slate-900" href="/today">
                   Ver demo
                 </Link>
+                <Link className="rounded-md border border-white/20 bg-slate-950/70 px-6 py-4 text-center font-bold text-white shadow-lg shadow-black/15 transition hover:border-cyan-200/35 hover:bg-slate-900" href="/standings">
+                  Ver grupos
+                </Link>
                 <Link className="rounded-md border border-white/20 bg-slate-950/70 px-6 py-4 text-center font-bold text-white shadow-lg shadow-black/15 transition hover:border-amber-200/35 hover:bg-slate-900" href="/rules">
                   Cómo funciona
                 </Link>
@@ -55,6 +58,9 @@ export default function Home() {
                 Sin ruido. Solo fútbol, amigos y gloria deportiva.
                 <Link className="ml-2 font-semibold text-cyan-100 hover:text-white" href="/ranking">
                   Ver ranking
+                </Link>
+                <Link className="ml-2 font-semibold text-cyan-100 hover:text-white" href="/standings">
+                  Ver grupos
                 </Link>
                 <Link className="ml-2 font-semibold text-cyan-100 hover:text-white" href="/rules">
                   Cómo funciona

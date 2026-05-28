@@ -4,6 +4,7 @@ const navItems = [
   { href: "/", label: "Inicio" },
   { href: "/today", label: "Pronósticos" },
   { href: "/ranking", label: "Ranking" },
+  { href: "/standings", label: "Grupos" },
   { href: "/rules", label: "Cómo funciona" },
 ];
 
