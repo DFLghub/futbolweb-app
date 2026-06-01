@@ -137,6 +137,8 @@ const es = {
     badge: "Modo Mundial",
     title: "Haz tu pronóstico",
     matchLabel: "Partido:",
+    contextKickoff: "Inicio",
+    contextVenue: "Sede",
     invitedGroup: "Entraste con invitación del grupo:",
     unknownMatch: "Partido Mundial",
     fallbackHome: "equipo A",

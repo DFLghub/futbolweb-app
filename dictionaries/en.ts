@@ -137,6 +137,8 @@ const en = {
     badge: "World Cup Mode",
     title: "Make your prediction",
     matchLabel: "Match:",
+    contextKickoff: "Kickoff",
+    contextVenue: "Venue",
     invitedGroup: "You entered with an invitation from group:",
     unknownMatch: "World Cup match",
     fallbackHome: "team A",
