@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 
+import { useI18n } from "@/components/I18nProvider";
 import GroupStandingsTable from "@/components/GroupStandingsTable";
 import type { GroupStanding } from "@/lib/mock-group-standings";
 
@@ -10,6 +11,7 @@ type GroupStandingsSelectorProps = {
 };
 
 export default function GroupStandingsSelector({ groups }: GroupStandingsSelectorProps) {
+  const { dict } = useI18n();
   const [selectedGroupId, setSelectedGroupId] = useState("grupo-a");
   const selectedGroup = useMemo(
     () => groups.find((group) => group.groupId === selectedGroupId) ?? groups[0],
@@ -19,7 +21,7 @@ export default function GroupStandingsSelector({ groups }: GroupStandingsSelecto
   return (
     <section className="mt-6">
       <label className="block text-sm font-black text-slate-200" htmlFor="group-selector">
-        Ver grupo
+        {dict.standings.selectorLabel}
       </label>
       <select
         className="mt-2 w-full rounded-md border border-white/15 bg-slate-950 px-3 py-3 text-base font-bold text-white outline-none transition focus:border-cyan-200/70 md:max-w-xs"

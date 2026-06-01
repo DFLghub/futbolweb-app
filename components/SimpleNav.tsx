@@ -1,21 +1,25 @@
-import Link from "next/link";
+"use client";
 
-const navItems = [
-  { href: "/", label: "Inicio" },
-  { href: "/today", label: "Pronósticos" },
-  { href: "/ranking", label: "Ranking" },
-  { href: "/standings", label: "Grupos" },
-  { href: "/rules", label: "Cómo funciona" },
-];
+import Link from "next/link";
+import { useI18n } from "@/components/I18nProvider";
 
 type SimpleNavProps = {
   compact?: boolean;
 };
 
 export default function SimpleNav({ compact = false }: SimpleNavProps) {
+  const { dict } = useI18n();
+  const navItems = [
+    { href: "/", label: dict.nav.home },
+    { href: "/today", label: dict.nav.predictions },
+    { href: "/ranking", label: dict.nav.ranking },
+    { href: "/standings", label: dict.nav.groups },
+    { href: "/rules", label: dict.nav.rules },
+  ];
+
   return (
     <nav
-      aria-label="Navegación principal"
+      aria-label={dict.nav.ariaLabel}
       className={
         compact
           ? "flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-semibold text-slate-300"

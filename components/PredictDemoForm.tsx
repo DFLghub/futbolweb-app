@@ -1,6 +1,9 @@
 "use client";
 
 import { FormEvent, useMemo, useState } from "react";
+import { useI18n } from "@/components/I18nProvider";
+import { formatMessage } from "@/lib/i18n";
+import { normalizeGroupCode } from "@/lib/group-code";
 
 type SavedPrediction = {
   id: string;
@@ -46,9 +49,12 @@ export default function PredictDemoForm({
   awayTeamName,
   initialGroupCode = "",
 }: PredictDemoFormProps) {
+  const { dict } = useI18n();
+  const formDict = dict.predict.form;
+  const normalizedInitialGroupCode = normalizeGroupCode(initialGroupCode);
   const [form, setForm] = useState({
     ...emptyForm,
-    groupCode: initialGroupCode,
+    groupCode: initialGroupCode ? normalizedInitialGroupCode : "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -95,14 +101,14 @@ export default function PredictDemoForm({
         setErrorMessage(
           typeof result.message === "string"
             ? result.message
-            : "No pudimos guardar el pronóstico. Revisa los datos e intenta otra vez.",
+            : formDict.genericError,
         );
         return;
       }
 
       setSavedPrediction(result.prediction);
     } catch {
-      setErrorMessage("No pudimos conectar con el servidor. Intenta otra vez.");
+      setErrorMessage(formDict.connectionError);
     } finally {
       setIsSubmitting(false);
     }
@@ -120,22 +126,22 @@ export default function PredictDemoForm({
       : "/ranking";
 
     const text = [
-      "🐯 Pronóstico FutbolWeb.app",
-      `Partido: ${matchLabel}`,
-      `Jugador: ${prediction.alias}`,
-      `Equipo favorito: ${prediction.favorite_team || "Sin equipo declarado"}`,
-      `Marcador: ${prediction.score_a} - ${prediction.score_b}`,
-      `Boconeo: ${prediction.comment || "Sin boconeo"}`,
-      `Grupo: ${prediction.group_code || "Sin grupo"}`,
-      "Modo Mundial v0.1",
-      `Ranking: https://www.futbolweb.app${rankingPath}`,
+      formDict.shareTitle,
+      formatMessage(formDict.shareMatch, { match: matchLabel }),
+      formatMessage(formDict.sharePlayer, { alias: prediction.alias }),
+      formatMessage(formDict.shareFavorite, { team: prediction.favorite_team || formDict.noFavorite }),
+      formatMessage(formDict.shareScore, { scoreA: prediction.score_a, scoreB: prediction.score_b }),
+      formatMessage(formDict.shareComment, { comment: prediction.comment || formDict.noComment }),
+      formatMessage(formDict.shareGroup, { group: prediction.group_code || normalizedInitialGroupCode }),
+      formDict.mode,
+      formatMessage(formDict.ranking, { url: `https://www.futbolweb.app${rankingPath}` }),
     ].join("\n");
 
     try {
       await navigator.clipboard.writeText(text);
-      setCopyMessage("Pronóstico copiado para WhatsApp.");
+      setCopyMessage(formDict.copied);
     } catch {
-      setCopyMessage("No pudimos copiarlo automáticamente. Selecciona el texto e intenta copiarlo.");
+      setCopyMessage(formDict.copyError);
     }
   }
 
@@ -144,7 +150,7 @@ export default function PredictDemoForm({
       <form className="grid gap-4" onSubmit={handleSubmit}>
         <div>
           <label className="text-sm font-bold text-slate-100" htmlFor="alias">
-            Alias o nombre
+            {formDict.alias}
           </label>
           <input
             className="mt-2 min-h-11 w-full rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-200/60"
@@ -159,7 +165,7 @@ export default function PredictDemoForm({
 
         <div>
           <label className="text-sm font-bold text-slate-100" htmlFor="favoriteTeam">
-            Equipo favorito / selección que apoyas
+            {formDict.favoriteTeam}
           </label>
           <input
             className="mt-2 min-h-11 w-full rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-200/60"
@@ -174,7 +180,7 @@ export default function PredictDemoForm({
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="text-sm font-bold text-slate-100" htmlFor="scoreA">
-              {`Marcador ${homeTeamName}`}
+              {formatMessage(formDict.scoreHome, { team: homeTeamName })}
             </label>
             <input
               className="mt-2 min-h-11 w-full rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-200/60"
@@ -192,7 +198,7 @@ export default function PredictDemoForm({
 
           <div>
             <label className="text-sm font-bold text-slate-100" htmlFor="scoreB">
-              {`Marcador ${awayTeamName}`}
+              {formatMessage(formDict.scoreAway, { team: awayTeamName })}
             </label>
             <input
               className="mt-2 min-h-11 w-full rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-200/60"
@@ -211,7 +217,7 @@ export default function PredictDemoForm({
 
         <div>
           <label className="text-sm font-bold text-slate-100" htmlFor="comment">
-            Comentario opcional / boconeo
+            {formDict.comment}
           </label>
           <textarea
             className="mt-2 min-h-24 w-full resize-y rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-200/60"
@@ -225,7 +231,7 @@ export default function PredictDemoForm({
 
         <div>
           <label className="text-sm font-bold text-slate-100" htmlFor="groupCode">
-            Código de grupo opcional
+            {formDict.groupCode}
           </label>
           <input
             className="mt-2 min-h-11 w-full rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-200/60"
@@ -237,9 +243,13 @@ export default function PredictDemoForm({
           />
           {initialGroupCode ? (
             <p className="mt-2 text-xs font-semibold text-emerald-100">
-              Este grupo vino en el link de invitación. Puedes dejarlo así.
+              {formDict.invitedHelp}
             </p>
-          ) : null}
+          ) : (
+            <p className="mt-2 text-xs font-semibold text-slate-300">
+              {formDict.solistaHelp}
+            </p>
+          )}
         </div>
 
         {errorMessage ? (
@@ -253,21 +263,21 @@ export default function PredictDemoForm({
           disabled={isSubmitting}
           type="submit"
         >
-          {isSubmitting ? "Guardando pronóstico..." : "Enviar pronóstico"}
+          {isSubmitting ? formDict.submitting : formDict.submit}
         </button>
       </form>
 
       {savedPrediction ? (
         <div className="mt-5 rounded-md border border-emerald-200/20 bg-emerald-300/10 p-4">
           <p className="text-sm font-bold text-emerald-100">
-            Pronóstico recibido. Quedó guardado en modo beta y pendiente de revisión.
+            {formDict.received}
           </p>
           <button
             className="mt-4 min-h-11 w-full rounded-md border border-white/15 bg-white/10 px-4 py-3 text-sm font-black text-white transition hover:bg-white/15"
             onClick={copyForWhatsApp}
             type="button"
           >
-            Copiar pronóstico para WhatsApp
+            {formDict.copyButton}
           </button>
           {copyMessage ? (
             <p className="mt-3 text-sm font-semibold text-cyan-100">{copyMessage}</p>

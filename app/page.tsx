@@ -1,8 +1,10 @@
 import Link from "next/link";
 import BrandHeader from "@/components/BrandHeader";
 import SimpleNav from "@/components/SimpleNav";
+import { getCurrentDictionary } from "@/lib/i18n-server";
 
-export default function Home() {
+export default async function Home() {
+  const dict = await getCurrentDictionary();
   const matches = [
     ["JUE 11 JUN", "México", "Sudáfrica", "3:00 PM ET", "Grupo A"],
     ["VIE 12 JUN", "Canadá", "Bosnia y Herzegovina", "3:00 PM ET", "Grupo B"],
@@ -28,59 +30,59 @@ export default function Home() {
           <div className="grid items-center gap-10 py-14 md:grid-cols-2 md:py-20">
             <div>
               <div className="mb-5 inline-flex rounded-full border border-emerald-300/25 bg-emerald-300/10 px-3 py-1 text-sm font-bold text-emerald-100 shadow-[0_0_24px_rgba(45,212,191,0.12)]">
-                Mundial social vivo
+                {dict.home.eyebrow}
               </div>
 
               <h1 className="text-5xl font-black leading-tight tracking-tight md:text-6xl">
-                El Mundial lo jugamos todos.
+                {dict.home.title}
               </h1>
 
               <p className="mt-5 max-w-2xl text-lg leading-8 text-slate-300">
-                Predice. Compite. Presume. Reta a tus amigos desde WhatsApp y convierte cada partido en conversación.
+                {dict.home.intro}
               </p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
                 <Link className="rounded-md bg-cyan-300 px-6 py-4 text-center font-black text-slate-950 shadow-lg shadow-cyan-300/20 ring-1 ring-cyan-100/40 transition hover:bg-cyan-200 active:bg-cyan-100" href="/today">
-                  Participar →
+                  {dict.home.ctaPrimary}
                 </Link>
                 <Link className="rounded-md border border-white/20 bg-slate-950/70 px-6 py-4 text-center font-bold text-white shadow-lg shadow-black/15 transition hover:border-emerald-200/35 hover:bg-slate-900" href="/today">
-                  Ver demo
+                  {dict.home.ctaMatches}
                 </Link>
                 <Link className="rounded-md border border-white/20 bg-slate-950/70 px-6 py-4 text-center font-bold text-white shadow-lg shadow-black/15 transition hover:border-cyan-200/35 hover:bg-slate-900" href="/standings">
-                  Ver grupos
+                  {dict.home.ctaGroups}
                 </Link>
                 <Link className="rounded-md border border-white/20 bg-slate-950/70 px-6 py-4 text-center font-bold text-white shadow-lg shadow-black/15 transition hover:border-amber-200/35 hover:bg-slate-900" href="/rules">
-                  Cómo funciona
+                  {dict.home.ctaRules}
                 </Link>
               </div>
 
               <p className="mt-4 text-sm text-slate-300">
-                Sin ruido. Solo fútbol, amigos y gloria deportiva.
+                {dict.home.quietLine}
                 <Link className="ml-2 font-semibold text-cyan-100 hover:text-white" href="/ranking">
-                  Ver ranking
+                  {dict.home.rankingLink}
                 </Link>
                 <Link className="ml-2 font-semibold text-cyan-100 hover:text-white" href="/standings">
-                  Ver grupos
+                  {dict.home.ctaGroups}
                 </Link>
                 <Link className="ml-2 font-semibold text-cyan-100 hover:text-white" href="/rules">
-                  Cómo funciona
+                  {dict.home.ctaRules}
                 </Link>
               </p>
             </div>
 
-            <div id="demo" className="rounded-lg border border-emerald-200/20 bg-slate-950/70 p-5 shadow-2xl shadow-black/25">
+            <div id="partidos" className="rounded-lg border border-emerald-200/20 bg-slate-950/70 p-5 shadow-2xl shadow-black/25">
               <div className="mb-5 flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-300">Grupo</p>
-                  <h2 className="text-2xl font-black">Quiniela Mundial</h2>
+                  <p className="text-sm text-slate-300">{dict.home.groupLabel}</p>
+                  <h2 className="text-2xl font-black">{dict.home.poolTitle}</h2>
                 </div>
                 <div className="rounded-2xl border border-emerald-200/25 bg-emerald-400/15 px-3 py-2 text-sm font-black text-emerald-100">
-                  EN VIVO
+                  {dict.home.live}
                 </div>
               </div>
 
               <div className="rounded-lg border border-white/10 bg-[#07111f] p-4 shadow-inner shadow-black/25">
-                <p className="mb-3 text-sm font-semibold text-slate-200">Hoy se juega con amigos</p>
+                <p className="mb-3 text-sm font-semibold text-slate-200">{dict.home.todayWithFriends}</p>
                 <div className="space-y-3">
                   {matches.map((m, i) => (
                     <div key={i} className="rounded-lg border border-white/10 bg-slate-900/80 px-4 py-3 text-sm">
@@ -97,11 +99,11 @@ export default function Home() {
                     </div>
                   ))}
                 </div>
-                <p className="mt-3 text-xs text-slate-400">Hora Miami / ET para esta vista previa.</p>
+                <p className="mt-3 text-xs text-slate-400">{dict.home.quickTime}</p>
               </div>
 
               <div className="mt-4 rounded-lg border border-amber-200/15 bg-[#07111f] p-4">
-                <p className="mb-3 text-sm font-semibold text-amber-100">Vista previa del ranking</p>
+                <p className="mb-3 text-sm font-semibold text-amber-100">{dict.home.rankingPreview}</p>
                 <div className="space-y-2">
                   {ranking.map((row) => (
                     <div key={row[0]} className="grid grid-cols-4 rounded-lg border border-white/10 bg-slate-900/80 px-3 py-2 text-sm">
@@ -117,12 +119,7 @@ export default function Home() {
           </div>
 
           <section className="grid gap-4 md:grid-cols-4">
-            {[
-              ["Quinielas del Mundial", "Pronostica resultados, suma puntos y mide tu olfato futbolero."],
-              ["Participa e invita", "Compite con tus amigos e invita a otros a entrar en la emoción."],
-              ["Rankings", "Compite y avanza. Todos ven quién sube y quién se queda atrás."],
-              ["Listo para WhatsApp", "Pensado para compartirse y vivir la conversación desde tus grupos."],
-            ].map((item) => (
+            {dict.home.featureCards.map((item) => (
               <div key={item[0]} className="rounded-lg border border-white/10 bg-slate-950/65 p-5 shadow-lg shadow-black/10 transition hover:border-cyan-200/25 hover:bg-slate-900/90">
                 <h3 className="font-black">{item[0]}</h3>
                 <p className="mt-2 text-sm leading-6 text-slate-300">{item[1]}</p>
@@ -131,15 +128,14 @@ export default function Home() {
           </section>
 
           <section id="join" className="my-14 rounded-lg border border-emerald-200/20 bg-gradient-to-br from-emerald-950/70 via-slate-950 to-amber-950/50 p-8 shadow-2xl shadow-black/20">
-            <h2 className="text-3xl font-black">Elige marcador. Reta al grupo. Comparte por WhatsApp.</h2>
+            <h2 className="text-3xl font-black">{dict.home.closingTitle}</h2>
             <p className="mt-3 max-w-2xl text-slate-300">
-              La primera versión mantiene la energía del fútbol sin encerrarse en un solo país.
-              Participa, compite e invita a tus amigos.
+              {dict.home.closingText}
             </p>
           </section>
 
           <footer className="border-t border-white/10 py-8 text-center text-sm text-slate-400">
-            futbolweb.app — MVP social del Mundial · Powered by amOS
+            {dict.home.footer}
           </footer>
         </div>
       </section>

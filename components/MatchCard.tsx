@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useI18n } from "@/components/I18nProvider";
 import {
   buildWhatsAppShareText,
   canPredict,
@@ -16,11 +17,12 @@ type MatchCardProps = {
 };
 
 export default function MatchCard({ match }: MatchCardProps) {
+  const { dict, locale } = useI18n();
   const [shareFeedback, setShareFeedback] = useState<"idle" | "copied" | "shared" | "error">(
     "idle",
   );
   const isOpen = canPredict(match);
-  const shareText = buildWhatsAppShareText(match);
+  const shareText = buildWhatsAppShareText(match, dict.matchCard.shareText, locale);
   const predictHref = `/match/${match.slug ?? match.id}/predict`;
 
   function clearFeedbackLater() {
@@ -66,11 +68,11 @@ export default function MatchCard({ match }: MatchCardProps) {
 
   const feedbackMessage =
     shareFeedback === "copied"
-      ? "Copiado para WhatsApp"
+      ? dict.matchCard.copied
       : shareFeedback === "shared"
-        ? "Compartido"
+        ? dict.matchCard.shared
         : shareFeedback === "error"
-          ? "No se pudo copiar"
+          ? dict.matchCard.copyError
           : "";
 
   return (
@@ -83,11 +85,11 @@ export default function MatchCard({ match }: MatchCardProps) {
             {match.stage} · {match.groupCode}
           </p>
           <p className="mt-1 text-sm font-medium text-slate-200">
-            {match.kickoffLabel ?? formatMatchTime(match.kickoffUtc)}
+            {match.kickoffLabel ?? formatMatchTime(match.kickoffUtc, locale)}
           </p>
         </div>
         <span className="w-fit rounded-full border border-emerald-300/30 bg-emerald-400/15 px-3 py-1 text-xs font-black text-emerald-50 shadow-[0_0_20px_rgba(52,211,153,0.12)]">
-          {getStatusLabel(match)}
+          {getStatusLabel(match, dict.matchCard.status)}
         </span>
       </div>
 
@@ -100,7 +102,7 @@ export default function MatchCard({ match }: MatchCardProps) {
             </span>
           ) : (
             <span className="rounded-full border border-cyan-200/25 bg-cyan-300/10 px-3 py-2 text-sm font-black text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.12)]">
-              VS
+              {dict.matchCard.vs}
             </span>
           )}
         </div>
@@ -110,7 +112,7 @@ export default function MatchCard({ match }: MatchCardProps) {
       <div className="mt-5 rounded-md border border-white/10 bg-slate-950/80 px-3 py-2 text-sm text-slate-200">
         <span className="font-semibold text-slate-100">{match.venueName}</span>
         <span className="text-slate-400"> · </span>
-        <span>{getTimezoneLabel(match.venueTimezone)}</span>
+        <span>{getTimezoneLabel(match.venueTimezone, dict.timezones)}</span>
         {match.sourceLabel ? (
           <>
             <span className="text-slate-400"> · </span>
@@ -125,7 +127,7 @@ export default function MatchCard({ match }: MatchCardProps) {
             className="inline-flex min-h-11 flex-[1.35] items-center justify-center rounded-md bg-cyan-300 px-4 py-2 text-sm font-black text-slate-950 shadow-lg shadow-cyan-300/20 ring-1 ring-cyan-100/40 transition hover:bg-cyan-200 active:bg-cyan-100"
             href={predictHref}
           >
-            Pronosticar
+            {dict.matchCard.predict}
           </Link>
         ) : (
           <button
@@ -133,7 +135,7 @@ export default function MatchCard({ match }: MatchCardProps) {
             disabled
             type="button"
           >
-            Pronosticar
+            {dict.matchCard.predict}
           </button>
         )}
         <button
@@ -141,7 +143,7 @@ export default function MatchCard({ match }: MatchCardProps) {
           onClick={handleShare}
           type="button"
         >
-          Compartir
+          {dict.matchCard.share}
         </button>
       </div>
 

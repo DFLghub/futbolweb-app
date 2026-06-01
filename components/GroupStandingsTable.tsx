@@ -1,3 +1,6 @@
+"use client";
+
+import { useI18n } from "@/components/I18nProvider";
 import type {
   GroupStanding,
   GroupStandingTeam,
@@ -13,23 +16,28 @@ function formatGoalDifference(goalDifference: number) {
 }
 
 export default function GroupStandingsTable({ group }: GroupStandingsTableProps) {
+  const { dict } = useI18n();
+
   return (
     <section className="overflow-hidden rounded-lg border border-white/10 bg-slate-950/75 shadow-xl shadow-black/15">
       <header className="border-b border-white/10 bg-[#07111f] px-4 py-3">
         <h2 className="text-2xl font-black text-white">{group.groupName}</h2>
+        <p className="mt-1 text-xs font-semibold text-slate-400">
+          {dict.standings.tableNote}
+        </p>
       </header>
 
       <div className="hidden grid-cols-[52px_1.4fr_repeat(7,52px)_72px] gap-2 border-b border-white/10 px-4 py-2 text-xs font-black uppercase tracking-[0.1em] text-slate-400 md:grid">
         <span>#</span>
-        <span>Equipo</span>
-        <span className="text-center">PJ</span>
-        <span className="text-center">G</span>
-        <span className="text-center">E</span>
-        <span className="text-center">P</span>
-        <span className="text-center">GF</span>
-        <span className="text-center">GC</span>
-        <span className="text-center">DG</span>
-        <span className="text-center">Pts</span>
+        <span>{dict.standings.headers.team}</span>
+        <span className="text-center">{dict.standings.headers.played}</span>
+        <span className="text-center">{dict.standings.headers.won}</span>
+        <span className="text-center">{dict.standings.headers.drawn}</span>
+        <span className="text-center">{dict.standings.headers.lost}</span>
+        <span className="text-center">{dict.standings.headers.goalsFor}</span>
+        <span className="text-center">{dict.standings.headers.goalsAgainst}</span>
+        <span className="text-center">{dict.standings.headers.goalDifference}</span>
+        <span className="text-center">{dict.standings.headers.points}</span>
       </div>
 
       <div className="divide-y divide-white/10">
@@ -42,6 +50,8 @@ export default function GroupStandingsTable({ group }: GroupStandingsTableProps)
 }
 
 function StandingRow({ team }: { team: GroupStandingTeam }) {
+  const { dict } = useI18n();
+
   return (
     <article className="px-4 py-4 md:grid md:grid-cols-[52px_1.4fr_repeat(7,52px)_72px] md:items-center md:gap-2 md:py-3">
       <div className="grid grid-cols-[42px_1fr_auto] items-center gap-3 md:contents">
@@ -50,18 +60,18 @@ function StandingRow({ team }: { team: GroupStandingTeam }) {
           <h3 className="truncate text-base font-black text-white">{team.teamName}</h3>
         </div>
         <span className="rounded-md border border-white/10 bg-white/[0.06] px-2.5 py-1 text-sm font-black text-slate-100 md:hidden">
-          {team.points} pts
+          {team.points} {dict.standings.headers.points}
         </span>
       </div>
 
       <div className="mt-3 grid grid-cols-7 gap-1 text-center text-sm md:contents">
-        <MobileStat label="PJ" value={team.played} />
-        <MobileStat label="G" value={team.won} />
-        <MobileStat label="E" value={team.drawn} />
-        <MobileStat label="P" value={team.lost} />
-        <MobileStat label="GF" value={team.goalsFor} />
-        <MobileStat label="GC" value={team.goalsAgainst} />
-        <MobileStat label="DG" value={formatGoalDifference(team.goalDifference)} strong={team.goalDifference > 0} />
+        <MobileStat label={dict.standings.headers.played} value={team.played} />
+        <MobileStat label={dict.standings.headers.won} value={team.won} />
+        <MobileStat label={dict.standings.headers.drawn} value={team.drawn} />
+        <MobileStat label={dict.standings.headers.lost} value={team.lost} />
+        <MobileStat label={dict.standings.headers.goalsFor} value={team.goalsFor} />
+        <MobileStat label={dict.standings.headers.goalsAgainst} value={team.goalsAgainst} />
+        <MobileStat label={dict.standings.headers.goalDifference} value={formatGoalDifference(team.goalDifference)} strong={team.goalDifference > 0} />
       </div>
 
       <span className="hidden text-center font-black text-white md:block">{team.played}</span>

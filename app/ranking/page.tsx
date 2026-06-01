@@ -1,6 +1,9 @@
 import BrandHeader from "@/components/BrandHeader";
 import RankingTable from "@/components/RankingTable";
 import SimpleNav from "@/components/SimpleNav";
+import { formatMessage } from "@/lib/i18n";
+import { getCurrentDictionary } from "@/lib/i18n-server";
+import { normalizeGroupCode, SOLISTA_GROUP_CODE } from "@/lib/group-code";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import type { RankingParticipant } from "@/lib/ranking-types";
 
@@ -50,34 +53,35 @@ type PageProps = {
 };
 
 export default async function RankingPage({ searchParams }: PageProps) {
+  const dict = await getCurrentDictionary();
   const { group } = await searchParams;
-  const groupCode = group?.trim() || undefined;
+  const groupCode = group === undefined ? undefined : normalizeGroupCode(group);
   const participants = await getRanking(groupCode);
   const isLive = participants.length > 0;
   const isFiltered = Boolean(groupCode);
-  const isSolista = groupCode === "SOLISTA";
+  const isSolista = groupCode === SOLISTA_GROUP_CODE;
 
   const title = isSolista
-    ? "Ranking — SOLISTA"
+    ? dict.ranking.solistaTitle
     : isFiltered
-      ? `Ranking — Grupo ${groupCode}`
-      : "Ranking Global";
+      ? formatMessage(dict.ranking.groupTitle, { group: groupCode ?? "" })
+      : dict.ranking.globalTitle;
 
   const description = isSolista
-    ? "¿No tienes grupo? Juega como SOLISTA. Participas individualmente, apareces en el Ranking Global y también puedes compararte con otros SOLISTA."
+    ? dict.ranking.solistaDescription
     : isFiltered
-      ? `Posiciones dentro del grupo ${groupCode}. Cada punto se presume.`
-      : "Zona de gloria, zona de pelea y zona roja. Cada punto se presume en el grupo.";
+      ? formatMessage(dict.ranking.groupDescription, { group: groupCode ?? "" })
+      : dict.ranking.globalDescription;
 
   const badgeText = isLive
     ? isSolista
-      ? "Modo SOLISTA"
+      ? dict.ranking.liveSolista
       : isFiltered
-        ? `Grupo ${groupCode}`
-        : "En vivo — datos reales"
+        ? formatMessage(dict.ranking.liveGroup, { group: groupCode ?? "" })
+        : dict.ranking.liveGlobal
     : isSolista
-      ? "SOLISTA listo"
-      : "Sin datos aún";
+      ? dict.ranking.solistaReady
+      : dict.ranking.emptyBadge;
 
   return (
     <main className="min-h-screen bg-[#07111f] px-5 py-8 text-white md:px-10">
@@ -95,7 +99,7 @@ export default async function RankingPage({ searchParams }: PageProps) {
                 href="/ranking"
                 className="mt-3 inline-block text-sm font-semibold text-cyan-400 underline underline-offset-4 hover:text-cyan-300"
               >
-                Ver ranking global
+                {dict.ranking.globalLink}
               </a>
             )}
           </div>
@@ -114,12 +118,12 @@ export default async function RankingPage({ searchParams }: PageProps) {
         {isFiltered && !isLive && (
           <div className="mt-8 rounded-2xl border border-amber-200/20 bg-amber-300/10 p-5 text-sm text-amber-100">
             <p className="font-black">
-              {isSolista ? "Todavía no hay jugadores SOLISTA puntuados." : "No hay datos todavía para este grupo."}
+              {isSolista ? dict.ranking.emptySolistaTitle : dict.ranking.emptyGroupTitle}
             </p>
             <p className="mt-2 text-amber-100/80">
               {isSolista
-                ? "Cuando haya pronósticos aceptados y puntuados con group_code SOLISTA, aparecerán aquí."
-                : "Cuando haya pronósticos aceptados y puntuados, aparecerán aquí."}
+                ? dict.ranking.emptySolistaText
+                : dict.ranking.emptyGroupText}
             </p>
           </div>
         )}

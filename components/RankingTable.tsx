@@ -1,19 +1,13 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useI18n } from "@/components/I18nProvider";
+import { formatMessage } from "@/lib/i18n";
 import type { RankingParticipant, RankingStatus } from "@/lib/ranking-types";
 
 type RankingTableProps = {
   participants: RankingParticipant[];
   groupCode?: string;
-};
-
-const statusLabels: Record<RankingStatus, string> = {
-  gold: "Zona de gloria",
-  green: "En pelea",
-  yellow: "Cuidado",
-  purple: "Resucitado",
-  red: "Zona roja",
 };
 
 const statusClasses: Record<RankingStatus, string> = {
@@ -32,11 +26,13 @@ const rowClasses: Record<RankingStatus, string> = {
   red: "border-rose-300/40 bg-rose-500/15",
 };
 
-function formatPoints(points: number): string {
-  return points === 1 ? "1 pt" : `${points} pts`;
+function formatPoints(points: number, singular: string, plural: string): string {
+  return points === 1 ? singular : formatMessage(plural, { points });
 }
 
 export default function RankingTable({ participants, groupCode }: RankingTableProps) {
+  const { dict } = useI18n();
+  const rankingDict = dict.ranking.table;
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
   const clearFeedbackTimeout = useRef<number | null>(null);
   const topThree = participants.slice(0, 3);
@@ -46,29 +42,31 @@ export default function RankingTable({ participants, groupCode }: RankingTablePr
   );
   const rankingPath = groupCode ? `/ranking?group=${encodeURIComponent(groupCode)}` : "/ranking";
   const rankingUrl = `https://www.futbolweb.app${rankingPath}`;
-  const rankingTitle = groupCode ? `Grupo: ${groupCode}` : "Ranking Global";
+  const rankingTitle = groupCode
+    ? formatMessage(rankingDict.groupShareTitle, { group: groupCode })
+    : rankingDict.globalShareTitle;
 
   const topLines =
     topThree.length > 0
       ? topThree
-          .map((participant) => `#${participant.position} ${participant.name} — ${formatPoints(participant.points)}`)
+          .map((participant) => `#${participant.position} ${participant.name} — ${formatPoints(participant.points, rankingDict.pointsSingular, rankingDict.pointsPlural)}`)
           .join("\n")
-      : "Todavía no hay datos puntuados.";
+      : rankingDict.noScores;
 
   const redLines =
     redZone.length > 0
-      ? ["", "Zona roja:", ...redZone.map((participant) => `#${participant.position} ${participant.name} — ${formatPoints(participant.points)}`)]
+      ? ["", rankingDict.redZone, ...redZone.map((participant) => `#${participant.position} ${participant.name} — ${formatPoints(participant.points, rankingDict.pointsSingular, rankingDict.pointsPlural)}`)]
       : [];
 
   const shareText = [
-    "🏆 Ranking FutbolWeb.app",
+    rankingDict.shareHeader,
     rankingTitle,
     "",
-    "Top 3:",
+    rankingDict.topThree,
     topLines,
     ...redLines,
     "",
-    `Ver ranking: ${rankingUrl}`,
+    formatMessage(rankingDict.viewRanking, { url: rankingUrl }),
   ].join("\n");
 
   function clearFeedbackLater() {
@@ -101,9 +99,9 @@ export default function RankingTable({ participants, groupCode }: RankingTablePr
 
   const feedbackMessage =
     copyStatus === "copied"
-      ? "Resumen copiado para WhatsApp"
+      ? rankingDict.copied
       : copyStatus === "error"
-        ? "No se pudo copiar"
+        ? rankingDict.copyError
         : "";
 
   return (
@@ -116,12 +114,12 @@ export default function RankingTable({ participants, groupCode }: RankingTablePr
 
       <div className="mt-6 overflow-hidden rounded-lg border border-white/10 bg-slate-950/80 shadow-2xl shadow-black/20">
         <div className="hidden grid-cols-[80px_1.25fr_100px_130px_140px_190px] gap-3 border-b border-white/10 bg-[#07111f] px-4 py-3 text-xs font-bold uppercase tracking-[0.14em] text-slate-300 md:grid">
-          <span>Pos.</span>
-          <span>Nombre</span>
-          <span>Puntos</span>
-          <span>Exactos</span>
-          <span>Resultados</span>
-          <span>Estado</span>
+          <span>{rankingDict.headers.position}</span>
+          <span>{rankingDict.headers.name}</span>
+          <span>{rankingDict.headers.points}</span>
+          <span>{rankingDict.headers.exact}</span>
+          <span>{rankingDict.headers.results}</span>
+          <span>{rankingDict.headers.status}</span>
         </div>
 
         <div className="divide-y divide-white/10">
@@ -132,7 +130,7 @@ export default function RankingTable({ participants, groupCode }: RankingTablePr
             >
               <div className="flex items-center justify-between gap-3 md:block">
                 <span className="text-xs font-bold uppercase tracking-[0.14em] text-slate-400 md:hidden">
-                  Posición
+                  {rankingDict.headers.positionLong}
                 </span>
                 <span className="font-black text-slate-100">#{participant.position}</span>
               </div>
@@ -142,21 +140,21 @@ export default function RankingTable({ participants, groupCode }: RankingTablePr
                   <h2 className="text-lg font-black leading-tight text-white">{participant.name}</h2>
                   {participant.isBocon ? (
                     <span className="rounded-full border border-cyan-200/35 bg-cyan-300/10 px-2.5 py-1 text-xs font-black text-cyan-100">
-                      Bocón Mode
+                      {rankingDict.bocon}
                     </span>
                   ) : null}
                 </div>
               </div>
 
-              <Stat label="Puntos" value={formatPoints(participant.points)} strong />
-              <Stat label="Marcadores exactos" value={participant.exactScores} />
-              <Stat label="Resultados acertados" value={participant.correctResults} />
+              <Stat label={rankingDict.headers.points} value={formatPoints(participant.points, rankingDict.pointsSingular, rankingDict.pointsPlural)} strong />
+              <Stat label={rankingDict.headers.exactScores} value={participant.exactScores} />
+              <Stat label={rankingDict.headers.correctResults} value={participant.correctResults} />
 
               <div className="flex items-center justify-between gap-3 md:block">
                 <span className="text-xs font-bold uppercase tracking-[0.14em] text-slate-400 md:hidden">
-                  Estado
+                  {rankingDict.headers.status}
                 </span>
-                <StatusBadge status={participant.status} />
+                <StatusBadge status={participant.status} labels={rankingDict.statuses} />
               </div>
             </article>
           ))}
@@ -169,7 +167,7 @@ export default function RankingTable({ participants, groupCode }: RankingTablePr
           onClick={handleCopySummary}
           type="button"
         >
-          Copiar resumen para WhatsApp
+          {rankingDict.copyButton}
         </button>
         <p
           className={`min-h-5 text-sm font-semibold ${
@@ -186,8 +184,14 @@ export default function RankingTable({ participants, groupCode }: RankingTablePr
 }
 
 function PodiumCard({ participant }: { participant: RankingParticipant }) {
+  const { dict } = useI18n();
+  const rankingDict = dict.ranking.table;
   const placeLabel =
-    participant.position === 1 ? "Líder" : participant.position === 2 ? "Escolta" : "Podio";
+    participant.position === 1
+      ? rankingDict.podium.leader
+      : participant.position === 2
+        ? rankingDict.podium.second
+        : rankingDict.podium.podium;
   const tone =
     participant.position === 1
       ? "border-amber-200/40 bg-slate-950 shadow-amber-950/25"
@@ -217,9 +221,14 @@ function PodiumCard({ participant }: { participant: RankingParticipant }) {
           #{participant.position}
         </span>
       </div>
-      <p className="mt-4 text-3xl font-black text-white">{formatPoints(participant.points)}</p>
+      <p className="mt-4 text-3xl font-black text-white">
+        {formatPoints(participant.points, rankingDict.pointsSingular, rankingDict.pointsPlural)}
+      </p>
       <p className="mt-1 text-sm text-slate-200">
-        {participant.exactScores} exactos · {participant.correctResults} resultados
+        {formatMessage(rankingDict.podium.exactResults, {
+          exact: participant.exactScores,
+          results: participant.correctResults,
+        })}
       </p>
     </article>
   );
@@ -244,10 +253,16 @@ function Stat({
   );
 }
 
-function StatusBadge({ status }: { status: RankingStatus }) {
+function StatusBadge({
+  labels,
+  status,
+}: {
+  labels: Record<RankingStatus, string>;
+  status: RankingStatus;
+}) {
   return (
     <span className={`inline-flex rounded-full border px-3 py-1 text-xs font-black ${statusClasses[status]}`}>
-      {statusLabels[status]}
+      {labels[status]}
     </span>
   );
 }

@@ -2,6 +2,7 @@ import BrandHeader from "@/components/BrandHeader";
 import CopyPredictionInviteButton from "@/components/CopyPredictionInviteButton";
 import PredictDemoForm from "@/components/PredictDemoForm";
 import SimpleNav from "@/components/SimpleNav";
+import { getCurrentDictionary } from "@/lib/i18n-server";
 import { worldCup2026Matches } from "@/lib/world-cup-2026-matches";
 
 type PredictPageProps = {
@@ -21,7 +22,7 @@ function titleCase(value: string) {
     .join(" ");
 }
 
-function formatMatchLabel(slug: string) {
+function formatMatchLabel(slug: string, unknownMatchLabel: string) {
   const knownMatch = worldCup2026Matches.find((match) => match.slug === slug);
 
   if (knownMatch) {
@@ -35,7 +36,7 @@ function formatMatchLabel(slug: string) {
     .toLowerCase();
 
   if (!normalized) {
-    return "Partido Mundial";
+    return unknownMatchLabel;
   }
 
   const dateMatch = normalized.match(/\b(20\d{2})\s+(\d{2})\s+(\d{2})\b/);
@@ -60,13 +61,14 @@ function formatMatchLabel(slug: string) {
 }
 
 export default async function PredictPage({ params, searchParams }: PredictPageProps) {
+  const dict = await getCurrentDictionary();
   const { slug } = await params;
   const { group } = await searchParams;
   const initialGroupCode = group?.trim() || "";
-  const matchLabel = formatMatchLabel(slug);
+  const matchLabel = formatMatchLabel(slug, dict.predict.unknownMatch);
   const knownMatch = worldCup2026Matches.find((match) => match.slug === slug);
-  const homeTeamName = knownMatch?.homeTeam.name || "equipo A";
-  const awayTeamName = knownMatch?.awayTeam.name || "equipo B";
+  const homeTeamName = knownMatch?.homeTeam.name || dict.predict.fallbackHome;
+  const awayTeamName = knownMatch?.awayTeam.name || dict.predict.fallbackAway;
 
   return (
     <main className="min-h-screen bg-[#07111f] px-5 py-6 text-white md:px-10 md:py-8">
@@ -78,21 +80,21 @@ export default async function PredictPage({ params, searchParams }: PredictPageP
 
         <header className="mb-5">
           <div className="mb-3 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-cyan-100">
-            Modo Mundial v0.1
+            {dict.predict.badge}
           </div>
 
           <h1 className="text-3xl font-black leading-tight tracking-tight md:text-5xl">
-            Haz tu pronóstico
+            {dict.predict.title}
           </h1>
 
           <div className="mt-4 rounded-md border border-white/10 bg-black/20 px-4 py-3 text-sm text-slate-300">
-            <span className="font-semibold text-slate-100">Partido:</span>{" "}
+            <span className="font-semibold text-slate-100">{dict.predict.matchLabel}</span>{" "}
             <span>{matchLabel}</span>
           </div>
 
           {initialGroupCode ? (
             <div className="mt-3 rounded-md border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-100">
-              Entraste con invitación del grupo:{" "}
+              {dict.predict.invitedGroup}{" "}
               <span className="font-black">{initialGroupCode}</span>
             </div>
           ) : null}

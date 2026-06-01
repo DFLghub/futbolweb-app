@@ -1,6 +1,8 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useI18n } from "@/components/I18nProvider";
+import { formatMessage } from "@/lib/i18n";
 
 type CopyPredictionInviteButtonProps = {
   matchLabel: string;
@@ -13,6 +15,8 @@ export default function CopyPredictionInviteButton({
   matchSlug,
   groupCode,
 }: CopyPredictionInviteButtonProps) {
+  const { dict } = useI18n();
+  const inviteDict = dict.predict.invite;
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
   const clearFeedbackTimeout = useRef<number | null>(null);
 
@@ -23,15 +27,15 @@ export default function CopyPredictionInviteButton({
   const predictionUrl = `https://www.futbolweb.app${predictionPath}`;
 
   const inviteText = [
-    "🏆 Polla Mundialista FutbolWeb.app",
+    inviteDict.title,
     "",
-    "Ya estoy jugando. Entra, haz tu pronóstico y compite con nosotros:",
+    inviteDict.line,
     "",
     matchLabel,
     predictionUrl,
     "",
-    groupCode ? `Grupo: ${groupCode}` : "Ranking Global",
-    "A ver quién sabe más de fútbol 😄",
+    groupCode ? formatMessage(inviteDict.group, { group: groupCode }) : inviteDict.global,
+    inviteDict.challenge,
   ].join("\n");
 
   function clearFeedbackLater() {
@@ -64,9 +68,9 @@ export default function CopyPredictionInviteButton({
 
   const feedbackMessage =
     copyStatus === "copied"
-      ? "Invitación copiada para WhatsApp"
+      ? inviteDict.copied
       : copyStatus === "error"
-        ? "No se pudo copiar"
+        ? inviteDict.error
         : "";
 
   return (
@@ -76,7 +80,7 @@ export default function CopyPredictionInviteButton({
         onClick={handleCopyInvite}
         type="button"
       >
-        Copiar invitación para WhatsApp
+        {inviteDict.button}
       </button>
       <p
         className={`mt-2 min-h-5 text-sm font-semibold ${
