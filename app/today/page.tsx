@@ -40,16 +40,16 @@ export default async function TodayPage() {
         <header className="flex flex-col gap-3">
           <div>
             <h1 className="flex flex-wrap items-center gap-2 text-2xl font-black leading-tight tracking-tight md:text-3xl">
-              {hasTodayMatches ? dict.today.titleToday : dict.today.titleUpcoming}
+              {hasTodayMatches ? dict.today.titleToday : dict.today.titleFallback}
               <span className="rounded-full border border-amber-200/25 bg-amber-300/10 px-2 py-0.5 text-xs font-black text-amber-100">
-                {dict.today.badge}
+                {hasTodayMatches ? dict.today.badge : dict.today.fallbackBadge}
               </span>
             </h1>
             <p className="mt-2 text-sm font-black text-cyan-100">
-              {dict.today.actionLine}
+              {hasTodayMatches ? dict.today.actionLine : dict.today.fallbackActionLine}
             </p>
             <p className="mt-1 max-w-2xl text-xs leading-5 text-slate-300">
-              {hasTodayMatches ? dict.today.todayText : dict.today.upcomingText}
+              {hasTodayMatches ? dict.today.todayText : dict.today.fallbackText}
             </p>
           </div>
         </header>
