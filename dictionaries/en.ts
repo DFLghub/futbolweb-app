@@ -15,8 +15,8 @@ const en = {
   },
   nav: {
     ariaLabel: "Main navigation",
-    home: "Home",
-    predictions: "Predictions",
+    today: "Today",
+    upcoming: "Upcoming",
     ranking: "Ranking",
     groups: "Groups",
     rules: "How it works",
@@ -252,9 +252,9 @@ const en = {
     tricksFooter: "You can be clever, loud, and dramatic. But you cannot really cheat. This is World Cup, friendship, and folklore; not a casino, not a fight, and not shady business.",
     goldenTitle: "Golden rule",
     goldenText: "This is played for fun, community, and the World Cup. It is not played for money.",
-    ctaPredictions: "View predictions",
+    ctaPredictions: "View matches",
     ctaRanking: "View ranking",
-    ctaHome: "Back home",
+    ctaHome: "Back to today",
   },
 } as const;
 

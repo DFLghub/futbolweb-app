@@ -10,8 +10,8 @@ type SimpleNavProps = {
 export default function SimpleNav({ compact = false }: SimpleNavProps) {
   const { dict } = useI18n();
   const navItems = [
-    { href: "/", label: dict.nav.home },
-    { href: "/today", label: dict.nav.predictions },
+    { href: "/", label: dict.nav.today },
+    { href: "/upcoming", label: dict.nav.upcoming },
     { href: "/ranking", label: dict.nav.ranking },
     { href: "/standings", label: dict.nav.groups },
     { href: "/rules", label: dict.nav.rules },

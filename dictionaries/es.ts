@@ -15,8 +15,8 @@ const es = {
   },
   nav: {
     ariaLabel: "Navegación principal",
-    home: "Inicio",
-    predictions: "Pronósticos",
+    today: "Hoy",
+    upcoming: "Próximos",
     ranking: "Ranking",
     groups: "Grupos",
     rules: "Cómo funciona",
@@ -252,9 +252,9 @@ const es = {
     tricksFooter: "Puedes ser astuto, bocón y dramático. Pero no puedes hacer trampa real. Esto es Mundial, amistad y folklore; no casino, no pelea y no negocio raro.",
     goldenTitle: "Regla de oro",
     goldenText: "Esto se juega por diversión, comunidad y Mundial. No se juega con dinero.",
-    ctaPredictions: "Ver pronósticos",
+    ctaPredictions: "Ver partidos",
     ctaRanking: "Ver ranking",
-    ctaHome: "Volver al inicio",
+    ctaHome: "Volver a hoy",
   },
 } as const;
 

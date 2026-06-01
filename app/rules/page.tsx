@@ -82,7 +82,7 @@ export default async function RulesPage() {
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
           <Link
             className="min-h-11 rounded-md bg-cyan-300 px-5 py-3 text-center text-sm font-black text-slate-950 transition hover:bg-cyan-200"
-            href="/today"
+            href="/"
           >
             {dict.rules.ctaPredictions}
           </Link>
