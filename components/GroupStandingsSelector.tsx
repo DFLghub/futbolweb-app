@@ -8,11 +8,15 @@ import type { GroupStanding } from "@/lib/mock-group-standings";
 
 type GroupStandingsSelectorProps = {
   groups: GroupStanding[];
+  initialGroupId?: string;
 };
 
-export default function GroupStandingsSelector({ groups }: GroupStandingsSelectorProps) {
+export default function GroupStandingsSelector({ groups, initialGroupId }: GroupStandingsSelectorProps) {
   const { dict } = useI18n();
-  const [selectedGroupId, setSelectedGroupId] = useState("grupo-a");
+  const initialSelectedGroupId = groups.some((group) => group.groupId === initialGroupId)
+    ? initialGroupId
+    : "grupo-a";
+  const [selectedGroupId, setSelectedGroupId] = useState(initialSelectedGroupId);
   const selectedGroup = useMemo(
     () => groups.find((group) => group.groupId === selectedGroupId) ?? groups[0],
     [groups, selectedGroupId],

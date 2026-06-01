@@ -1,11 +1,20 @@
 import BrandHeader from "@/components/BrandHeader";
 import GroupStandingsSelector from "@/components/GroupStandingsSelector";
 import SimpleNav from "@/components/SimpleNav";
+import { groupCodeToStandingGroupId } from "@/lib/group-code";
 import { getCurrentDictionary } from "@/lib/i18n-server";
 import { mockWorldCupGroupStandings } from "@/lib/mock-group-standings";
 
-export default async function StandingsPage() {
+type StandingsPageProps = {
+  searchParams: Promise<{
+    group?: string;
+  }>;
+};
+
+export default async function StandingsPage({ searchParams }: StandingsPageProps) {
   const dict = await getCurrentDictionary();
+  const { group } = await searchParams;
+  const initialGroupId = groupCodeToStandingGroupId(group);
 
   return (
     <main className="min-h-screen bg-[#07111f] px-5 py-6 text-white md:px-10 md:py-8">
@@ -29,7 +38,7 @@ export default async function StandingsPage() {
           </div>
         </header>
 
-        <GroupStandingsSelector groups={mockWorldCupGroupStandings} />
+        <GroupStandingsSelector groups={mockWorldCupGroupStandings} initialGroupId={initialGroupId} />
       </div>
     </main>
   );

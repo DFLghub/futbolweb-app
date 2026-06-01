@@ -1,4 +1,4 @@
-export type MatchStatus = "scheduled" | "final";
+export type MatchStatus = "scheduled" | "live" | "final";
 
 export type FootballTeam = {
   name: string;
@@ -67,6 +67,7 @@ export function getStatusLabel(
     closed: "Pronósticos cerrados",
     closingSoon: "Cierra pronto",
     final: "Finalizado",
+    live: "En Vivo",
     startsInDay: "Empieza en 1 día",
     startsInDays: "Empieza en {count} días",
     startsInHour: "Empieza en 1 hora",
@@ -75,6 +76,10 @@ export function getStatusLabel(
 ): string {
   if (match.status === "final") {
     return labels.final;
+  }
+
+  if (match.status === "live") {
+    return labels.live;
   }
 
   const diffMs = new Date(match.kickoffUtc).getTime() - Date.now();

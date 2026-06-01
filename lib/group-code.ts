@@ -15,3 +15,15 @@ export function normalizeGroupCode(value: string | null | undefined) {
 
   return normalized;
 }
+
+export function groupCodeToStandingGroupId(value: string | null | undefined) {
+  const normalized = value?.trim().toLocaleLowerCase("es");
+
+  if (!normalized) {
+    return "";
+  }
+
+  const groupLetter = normalized.match(/grupo\s+([a-z])/i)?.[1] ?? normalized.match(/^([a-z])$/i)?.[1];
+
+  return groupLetter ? `grupo-${groupLetter.toLocaleLowerCase("es")}` : "";
+}
