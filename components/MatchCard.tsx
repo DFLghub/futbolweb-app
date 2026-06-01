@@ -14,9 +14,10 @@ import { groupCodeToStandingGroupId } from "@/lib/group-code";
 
 type MatchCardProps = {
   match: FootballMatch;
+  variant?: "compact" | "calendar";
 };
 
-export default function MatchCard({ match }: MatchCardProps) {
+export default function MatchCard({ match, variant = "compact" }: MatchCardProps) {
   const { dict, locale } = useI18n();
   const [shareFeedback, setShareFeedback] = useState<"idle" | "copied" | "shared" | "error">(
     "idle",
@@ -26,6 +27,7 @@ export default function MatchCard({ match }: MatchCardProps) {
   const predictHref = `/match/${match.slug ?? match.id}/predict`;
   const groupHref = `/standings?group=${encodeURIComponent(groupCodeToStandingGroupId(match.groupCode) || match.groupCode)}`;
   const statusTone = getStatusTone(match);
+  const isCalendar = variant === "calendar";
 
   function clearFeedbackLater() {
     window.setTimeout(() => {
@@ -78,10 +80,14 @@ export default function MatchCard({ match }: MatchCardProps) {
           : "";
 
   return (
-    <article className="relative overflow-hidden rounded-lg border border-white/10 bg-slate-950 p-3.5 shadow-xl shadow-black/20">
+    <article
+      className={`relative overflow-hidden rounded-lg border border-white/10 bg-slate-950 shadow-xl shadow-black/20 ${
+        isCalendar ? "p-3 md:p-4" : "p-3.5"
+      }`}
+    >
       <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-cyan-200/45 to-transparent" />
 
-      <div className="flex items-start justify-between gap-3">
+      <div className={`flex items-start justify-between gap-3 ${isCalendar ? "md:items-center" : ""}`}>
         <div className="min-w-0">
           <p className="text-[11px] font-black uppercase text-slate-400">
             {match.stage}
@@ -95,7 +101,11 @@ export default function MatchCard({ match }: MatchCardProps) {
         </span>
       </div>
 
-      <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+      <div
+        className={`mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-3 ${
+          isCalendar ? "md:mt-2" : ""
+        }`}
+      >
         <TeamBlock align="left" flagEmoji={match.homeTeam.flagEmoji} name={match.homeTeam.name} />
         <div className="flex min-w-14 items-center justify-center">
           {match.status === "final" ? (
@@ -111,7 +121,11 @@ export default function MatchCard({ match }: MatchCardProps) {
         <TeamBlock align="right" flagEmoji={match.awayTeam.flagEmoji} name={match.awayTeam.name} />
       </div>
 
-      <div className="mt-4 grid gap-2 rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-slate-300">
+      <div
+        className={`mt-4 grid gap-2 rounded-md border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-slate-300 ${
+          isCalendar ? "md:grid-cols-[1fr_1.35fr] md:items-center" : ""
+        }`}
+      >
         <div className="flex items-center justify-between gap-3">
           <span className="font-black text-slate-100">{match.kickoffLabel ?? formatMatchTime(match.kickoffUtc, locale)}</span>
           <span className="shrink-0 text-slate-400">{getTimezoneLabel(match.venueTimezone, dict.timezones)}</span>
@@ -126,17 +140,21 @@ export default function MatchCard({ match }: MatchCardProps) {
         ) : null}
       </div>
 
-      <div className="mt-3 grid grid-cols-[1.25fr_1fr_auto] gap-2">
+      <div className={`mt-3 grid gap-2 ${isCalendar ? "grid-cols-[1fr_1fr_auto] md:flex md:justify-end" : "grid-cols-[1.25fr_1fr_auto]"}`}>
         {isOpen ? (
           <Link
-            className="inline-flex min-h-11 items-center justify-center rounded-md bg-cyan-300 px-3 py-2 text-sm font-black text-slate-950 shadow-lg shadow-cyan-300/15 ring-1 ring-cyan-100/40 transition hover:bg-cyan-200 active:bg-cyan-100"
+            className={`inline-flex min-h-11 items-center justify-center rounded-md bg-cyan-300 px-3 py-2 text-sm font-black text-slate-950 shadow-lg shadow-cyan-300/15 ring-1 ring-cyan-100/40 transition hover:bg-cyan-200 active:bg-cyan-100 ${
+              isCalendar ? "md:min-w-32" : ""
+            }`}
             href={predictHref}
           >
             {dict.matchCard.predict}
           </Link>
         ) : (
           <button
-            className="min-h-11 rounded-md border border-white/10 bg-slate-900/70 px-3 py-2 text-sm font-bold text-slate-400"
+            className={`min-h-11 rounded-md border border-white/10 bg-slate-900/70 px-3 py-2 text-sm font-bold text-slate-400 ${
+              isCalendar ? "md:min-w-32" : ""
+            }`}
             disabled
             type="button"
           >
@@ -144,7 +162,9 @@ export default function MatchCard({ match }: MatchCardProps) {
           </button>
         )}
         <button
-          className="min-h-11 rounded-md border border-white/20 bg-slate-900 px-3 py-2 text-sm font-bold text-white shadow-md shadow-black/15 transition hover:border-emerald-200/35 hover:bg-slate-800 active:bg-slate-700"
+          className={`min-h-11 rounded-md border border-white/20 bg-slate-900 px-3 py-2 text-sm font-bold text-white shadow-md shadow-black/15 transition hover:border-emerald-200/35 hover:bg-slate-800 active:bg-slate-700 ${
+            isCalendar ? "md:min-w-28" : ""
+          }`}
           onClick={handleShare}
           type="button"
         >

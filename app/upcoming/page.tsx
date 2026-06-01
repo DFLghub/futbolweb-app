@@ -12,6 +12,8 @@ export default async function UpcomingPage() {
     .sort((left, right) => {
       return new Date(left.kickoffUtc).getTime() - new Date(right.kickoffUtc).getTime();
     });
+  const firstMatch = matches[0];
+  const lastMatch = matches[matches.length - 1];
 
   return (
     <main className="min-h-screen bg-[#07111f] px-5 py-6 text-white md:px-10 md:py-8">
@@ -23,10 +25,13 @@ export default async function UpcomingPage() {
 
         <header className="flex flex-col gap-3">
           <div>
+            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-cyan-200">
+              {dict.today.calendarEyebrow}
+            </p>
             <h1 className="flex flex-wrap items-center gap-2 text-2xl font-black leading-tight tracking-tight md:text-3xl">
               {dict.today.calendarTitle}
-              <span className="rounded-full border border-amber-200/25 bg-amber-300/10 px-2 py-0.5 text-xs font-black text-amber-100">
-                {dict.today.badge}
+              <span className="rounded-full border border-cyan-200/25 bg-cyan-300/10 px-2 py-0.5 text-xs font-black text-cyan-100">
+                {dict.today.calendarBadge.replace("{count}", String(matches.length))}
               </span>
             </h1>
             <p className="mt-2 text-sm font-black text-cyan-100">
@@ -38,10 +43,25 @@ export default async function UpcomingPage() {
           </div>
         </header>
 
+        <section className="mt-5 grid gap-3 border-y border-white/10 py-4 text-xs text-slate-300 md:grid-cols-3">
+          <div>
+            <p className="font-black uppercase text-slate-500">{dict.today.calendarLoadedLabel}</p>
+            <p className="mt-1 text-lg font-black text-white">{matches.length}</p>
+          </div>
+          <div>
+            <p className="font-black uppercase text-slate-500">{dict.today.calendarStartsLabel}</p>
+            <p className="mt-1 font-black text-white">{firstMatch?.kickoffLabel ?? dict.today.emptyTitle}</p>
+          </div>
+          <div>
+            <p className="font-black uppercase text-slate-500">{dict.today.calendarEndsLabel}</p>
+            <p className="mt-1 font-black text-white">{lastMatch?.kickoffLabel ?? dict.today.emptyTitle}</p>
+          </div>
+        </section>
+
         {matches.length > 0 ? (
-          <section className="mt-5 grid gap-4 lg:grid-cols-2">
+          <section className="mt-5 grid gap-3">
             {matches.map((match) => (
-              <MatchCard key={match.id} match={match} />
+              <MatchCard key={match.id} match={match} variant="calendar" />
             ))}
           </section>
         ) : (
