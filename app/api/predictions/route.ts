@@ -17,6 +17,12 @@ type PredictionPayload = {
 const predictionSelect =
   "id, match_slug, alias, favorite_team, score_a, score_b, comment, group_code, created_at";
 
+type SavedPrediction = {
+  id: string;
+  match_slug: string;
+  group_code: string | null;
+};
+
 function getRequestDictionary(request: Request) {
   const cookie = request.headers
     .get("cookie")
@@ -62,6 +68,33 @@ function logSupabaseError(error: {
 
 function isUniqueViolation(error: { code?: unknown }) {
   return error.code === "23505";
+}
+
+async function recordPredictionSubmittedEvent(
+  supabase: ReturnType<typeof createSupabaseServerClient>,
+  prediction: SavedPrediction,
+) {
+  if (!prediction.id) {
+    console.error("[predictions-api] missing prediction id for state event", {
+      match_slug: prediction.match_slug,
+    });
+    return;
+  }
+
+  const { error } = await supabase.rpc("record_state_change_event", {
+    p_event_type: "PredictionSubmitted",
+    p_entity_type: "prediction_intake",
+    p_entity_id: prediction.id,
+    p_match_slug: prediction.match_slug,
+    p_group_code: prediction.group_code,
+    p_dedupe_key: `PredictionSubmitted:${prediction.id}`,
+    p_payload: { source: "web" },
+    p_source: "web",
+  });
+
+  if (error) {
+    logSupabaseError(error);
+  }
 }
 
 function findKnownMatch(matchSlug: string) {
@@ -247,6 +280,8 @@ export async function POST(request: Request) {
       }
 
       if (existingPrediction) {
+        await recordPredictionSubmittedEvent(supabase, existingPrediction);
+
         return Response.json({ ok: true, prediction: existingPrediction });
       }
     }
@@ -270,6 +305,8 @@ export async function POST(request: Request) {
           .single();
 
         if (!existingPredictionError && existingPrediction) {
+          await recordPredictionSubmittedEvent(supabase, existingPrediction);
+
           return Response.json({ ok: true, prediction: existingPrediction });
         }
 
@@ -285,6 +322,8 @@ export async function POST(request: Request) {
         500,
       );
     }
+
+    await recordPredictionSubmittedEvent(supabase, data);
 
     return Response.json({ ok: true, prediction: data });
   } catch (error) {
