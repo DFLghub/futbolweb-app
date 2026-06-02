@@ -1,0 +1,211 @@
+{
+  "name": "factory-audit-rubric",
+  "version": "0.1.0",
+  "auditor": "factory-auditor",
+  "identity": {
+    "label": "Factory Audit Rubric v0",
+    "purpose": "Post-execution rubric for auditing contract compliance, architecture, metabolism, and pattern yield in Apps Factory cycles.",
+    "core": "Contract Auditor",
+    "extensions": [
+      "architecture",
+      "metabolism",
+      "pattern_yield"
+    ]
+  },
+  "global_principles": [
+    {
+      "id": "flaco_de_acero",
+      "name": "Flaco de Acero",
+      "rule": "Audit must be lighter than the work being audited."
+    },
+    {
+      "id": "contract_first",
+      "rule": "The contract is the source of truth for scope, validations, stop conditions, and commit policy."
+    },
+    {
+      "id": "preserve_on_fail",
+      "rule": "FAIL never executes an automatic reset. FAIL preserves changes and requires human decision."
+    }
+  ],
+  "required_inputs": [
+    "contract",
+    "git_status_short",
+    "git_diff_name_only",
+    "git_diff",
+    "validations_executed",
+    "commit_list_if_applicable"
+  ],
+  "measurement": {
+    "line_change_default": {
+      "command": "git diff --stat",
+      "required": true
+    },
+    "line_change_optional": {
+      "command": "cloc",
+      "required": false,
+      "condition": "Use only if available and useful; do not make cloc a dependency for audit completion."
+    }
+  },
+  "path_policy": {
+    "forbidden_paths": {
+      "definition": "Paths that must never be touched without explicit authorization in the active contract.",
+      "defaults_for_ui_ux_cycles": [
+        "supabase/",
+        "vercel.json",
+        ".vercel/",
+        ".env",
+        ".env.local",
+        ".env.production",
+        "package.json",
+        "package-lock.json"
+      ],
+      "notes": [
+        "Keep supabase/ forbidden by default for UI/UX cycles.",
+        "supabase/ may be explicitly authorized in DB contracts."
+      ]
+    },
+    "sensitive_paths": {
+      "definition": "Paths that can be touched only with warning, justification, and contract alignment.",
+      "defaults": [
+        "next.config.ts",
+        "eslint.config.mjs",
+        "tsconfig.json",
+        "postcss.config.mjs",
+        "lib/",
+        "app/api/",
+        ".claude/skills/"
+      ]
+    }
+  },
+  "verdicts": {
+    "contract": [
+      "PASS",
+      "WARN",
+      "FAIL"
+    ],
+    "architecture": [
+      "PASS",
+      "WARN",
+      "FAIL"
+    ],
+    "metabolism": [
+      "PASS",
+      "WARN",
+      "FAIL"
+    ],
+    "pattern_yield": {
+      "scale": [
+        "NONE",
+        "LOW",
+        "MEDIUM",
+        "HIGH"
+      ],
+      "rules": {
+        "NONE": "No reusable pattern identified.",
+        "LOW": "Local lesson, no extraction required.",
+        "MEDIUM": "Reusable repo-level pattern; consider documentation.",
+        "HIGH": "Transversal Apps Factory pattern; recommend PATTERN.md or SKILL.md candidate."
+      }
+    },
+    "final_verdict": [
+      "PASS",
+      "PASS_WITH_WARNINGS",
+      "FAIL",
+      "PASS_WITH_PATTERN_EXTRACTION"
+    ]
+  },
+  "audit_sections": {
+    "contract": {
+      "checks": [
+        "NO TOCAR boundaries respected",
+        "Si tocar scope matched",
+        "Only permitted files changed",
+        "Only permitted commands executed",
+        "Required validations executed or justified",
+        "Commit policy followed",
+        "Stop condition respected"
+      ],
+      "fail_conditions": [
+        "Forbidden path touched without explicit authorization",
+        "Required validation skipped without justification",
+        "Stop condition ignored",
+        "Commit mixes unrelated scopes"
+      ]
+    },
+    "architecture": {
+      "checks": [
+        "No overarchitecture",
+        "No unnecessary duplication",
+        "No new unrelated fronts opened",
+        "No improper coupling",
+        "No runtime/factory artifact mixing without authorization"
+      ]
+    },
+    "metabolism": {
+      "checks": [
+        "File count proportional to task",
+        "Line count proportional to task",
+        "Commit count proportional to task",
+        "Commands proportional to task",
+        "Lint executed when code changed",
+        "Build executed when runtime changed",
+        "Unnecessary spend avoided"
+      ]
+    },
+    "pattern_yield": {
+      "checks": [
+        "Reusable pattern identified",
+        "Pattern classified as local or transversal",
+        "PATTERN.md need assessed",
+        "SKILL.md candidate assessed",
+        "Future memory candidate assessed"
+      ]
+    }
+  },
+  "fail_behavior": {
+    "no_commit": true,
+    "no_automatic_reset": true,
+    "preserve_changes": true,
+    "generate_report": true,
+    "requires_human_decision": true
+  },
+  "report_template": {
+    "file": "AUDIT_REPORT.md",
+    "sections": [
+      "Summary",
+      "Contract Compliance",
+      "Architecture",
+      "Metabolism",
+      "Pattern Yield",
+      "Violations",
+      "Recommended Action",
+      "Human Decision Required?"
+    ]
+  },
+  "test_cases": {
+    "test_case_11D": {
+      "name": "FutbolWeb 11D",
+      "contract": {
+        "objective": "Differentiate /today and /upcoming.",
+        "no_tocar": [
+          "Supabase",
+          "scoring",
+          "ranking",
+          "prediction API",
+          "deployment"
+        ]
+      },
+      "expected_result": {
+        "contract": "PASS",
+        "architecture": "PASS",
+        "metabolism": "PASS",
+        "pattern_yield": "MEDIUM_OR_HIGH",
+        "final_verdict": "PASS_WITH_PATTERN_EXTRACTION"
+      },
+      "primary_pattern": {
+        "name": "Live Cover vs Calendar Split",
+        "reason": "Separates a live operational surface from a planning/calendar surface, making the distinction reusable beyond MatchCard."
+      }
+    }
+  }
+}
