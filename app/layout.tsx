@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { I18nProvider } from "@/components/I18nProvider";
+import InstallFutbolWebPrompt from "@/components/InstallFutbolWebPrompt";
 import { getCurrentDictionary, getCurrentLocale } from "@/lib/i18n-server";
 import "./globals.css";
 
@@ -61,6 +62,7 @@ async function RootLayoutContent({ children }: { children: React.ReactNode }) {
     <html lang={locale} className="h-full antialiased">
       <body className="min-h-full flex flex-col">
         <I18nProvider dict={dict} locale={locale}>
+          <InstallFutbolWebPrompt />
           {children}
         </I18nProvider>
       </body>

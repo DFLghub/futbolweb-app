@@ -25,6 +25,18 @@ export default async function RulesPage() {
         </header>
 
         <section className="mt-8 grid gap-4 md:grid-cols-2">
+          <article className="rounded-lg border border-white/10 bg-white/[0.06] p-5 shadow-xl shadow-black/10">
+            <h2 className="text-xl font-black">{dict.rules.pointsTitle}</h2>
+            <ul className="mt-4 space-y-3 text-sm leading-6 text-slate-300">
+              {dict.rules.pointsItems.map((item) => (
+                <li key={item} className="flex gap-3">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-cyan-200" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </article>
+
           {dict.rules.sections.map(([title, items]) => (
             <article
               key={title}
@@ -77,6 +89,37 @@ export default async function RulesPage() {
           <p className="mt-3 max-w-3xl text-sm leading-6 text-amber-100/90">
             {dict.rules.goldenText}
           </p>
+        </section>
+
+        <section className="mt-4 rounded-lg border border-cyan-200/20 bg-cyan-300/10 p-5">
+          <h2 className="text-2xl font-black text-cyan-50">
+            {dict.rules.installTitle}
+          </h2>
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-cyan-50/85">
+            {dict.rules.installIntro}
+          </p>
+          <div className="mt-5 grid gap-4 md:grid-cols-3">
+            {dict.rules.installSections.map(([title, items]) => (
+              <article
+                key={title}
+                className="rounded-lg border border-white/10 bg-slate-950/25 p-4"
+              >
+                <h3 className="text-base font-black text-cyan-50">
+                  {title}
+                </h3>
+                <ol className="mt-3 space-y-3 text-sm leading-6 text-cyan-50/85">
+                  {items.map((item, index) => (
+                    <li key={item} className="flex gap-3">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-cyan-200 text-xs font-black text-slate-950">
+                        {index + 1}
+                      </span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ol>
+              </article>
+            ))}
+          </div>
         </section>
 
         <div className="mt-8 flex flex-col gap-3 sm:flex-row">
