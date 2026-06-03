@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { useI18n } from "@/components/I18nProvider";
 import { formatMessage } from "@/lib/i18n";
 import { normalizeGroupCode } from "@/lib/group-code";
@@ -34,12 +34,59 @@ const emptyForm = {
   groupCode: "",
 };
 
+const participantIdentityStorageKey = "futbolweb.participantIdentity.v1";
+
+type FormState = typeof emptyForm;
+
+type ParticipantIdentity = Pick<FormState, "alias" | "favoriteTeam" | "groupCode">;
+
 function createClientSubmissionId() {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
     return crypto.randomUUID();
   }
 
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function clampText(value: unknown, maxLength: number) {
+  return typeof value === "string" ? value.slice(0, maxLength) : "";
+}
+
+function readStoredParticipantIdentity(): ParticipantIdentity | null {
+  try {
+    const storedValue = window.localStorage.getItem(participantIdentityStorageKey);
+
+    if (!storedValue) {
+      return null;
+    }
+
+    const parsedValue = JSON.parse(storedValue) as Partial<ParticipantIdentity>;
+
+    return {
+      alias: clampText(parsedValue.alias, 40),
+      favoriteTeam: clampText(parsedValue.favoriteTeam, 60),
+      groupCode: clampText(parsedValue.groupCode, 80),
+    };
+  } catch {
+    return null;
+  }
+}
+
+function writeStoredParticipantIdentity(identity: ParticipantIdentity) {
+  try {
+    window.localStorage.setItem(participantIdentityStorageKey, JSON.stringify(identity));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function removeStoredParticipantIdentity() {
+  try {
+    window.localStorage.removeItem(participantIdentityStorageKey);
+  } catch {
+    // localStorage can be unavailable in private or restricted browser contexts.
+  }
 }
 
 export default function PredictDemoForm({
@@ -59,11 +106,47 @@ export default function PredictDemoForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [copyMessage, setCopyMessage] = useState("");
+  const [hasStoredIdentity, setHasStoredIdentity] = useState(false);
   const [savedPrediction, setSavedPrediction] = useState<SavedPrediction | null>(null);
   const clientSubmissionId = useMemo(() => createClientSubmissionId(), []);
 
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      const storedIdentity = readStoredParticipantIdentity();
+
+      if (!storedIdentity) {
+        return;
+      }
+
+      setHasStoredIdentity(true);
+      setForm((current) => ({
+        ...current,
+        alias: storedIdentity.alias,
+        favoriteTeam: storedIdentity.favoriteTeam,
+        groupCode: initialGroupCode
+          ? normalizedInitialGroupCode
+          : storedIdentity.groupCode,
+      }));
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [initialGroupCode, normalizedInitialGroupCode]);
+
   function updateField(field: keyof typeof emptyForm, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
+    setErrorMessage("");
+    setCopyMessage("");
+  }
+
+  function forgetStoredIdentity() {
+    removeStoredParticipantIdentity();
+    setHasStoredIdentity(false);
+    setForm((current) => ({
+      ...current,
+      alias: "",
+      favoriteTeam: "",
+      groupCode: initialGroupCode ? normalizedInitialGroupCode : "",
+    }));
     setErrorMessage("");
     setCopyMessage("");
   }
@@ -107,6 +190,11 @@ export default function PredictDemoForm({
       }
 
       setSavedPrediction(result.prediction);
+      setHasStoredIdentity(writeStoredParticipantIdentity({
+        alias: form.alias,
+        favoriteTeam: form.favoriteTeam,
+        groupCode: form.groupCode,
+      }));
     } catch {
       setErrorMessage(formDict.connectionError);
     } finally {
@@ -148,6 +236,21 @@ export default function PredictDemoForm({
   return (
     <section className="rounded-lg border border-white/10 bg-white/[0.06] p-4 shadow-xl shadow-black/10 sm:p-6">
       <form className="grid gap-4" onSubmit={handleSubmit}>
+        {hasStoredIdentity ? (
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-cyan-200/20 bg-cyan-300/10 px-3 py-2">
+            <p className="text-xs font-bold text-cyan-100">
+              {formDict.identitySaved}
+            </p>
+            <button
+              className="rounded border border-white/15 px-2 py-1 text-xs font-black text-white transition hover:bg-white/10"
+              onClick={forgetStoredIdentity}
+              type="button"
+            >
+              {formDict.forgetIdentity}
+            </button>
+          </div>
+        ) : null}
+
         <div>
           <label className="text-sm font-bold text-slate-100" htmlFor="alias">
             {formDict.alias}

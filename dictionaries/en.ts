@@ -183,6 +183,8 @@ const en = {
       groupCode: "Optional group code",
       invitedHelp: "This group came from the invite link. You can leave it as is.",
       solistaHelp: "If you leave it empty, you play as SOLISTA.",
+      identitySaved: "Participant details saved for your next predictions.",
+      forgetIdentity: "Forget details",
       submit: "Submit prediction",
       submitting: "Saving prediction...",
       genericError: "We could not save the prediction. Check the data and try again.",

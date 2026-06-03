@@ -183,6 +183,8 @@ const es = {
       groupCode: "Código de grupo opcional",
       invitedHelp: "Este grupo vino en el link de invitación. Puedes dejarlo así.",
       solistaHelp: "Si lo dejas vacío, juegas como SOLISTA.",
+      identitySaved: "Datos de participante guardados para tus próximos pronósticos.",
+      forgetIdentity: "Olvidar datos",
       submit: "Enviar pronóstico",
       submitting: "Guardando pronóstico...",
       genericError: "No pudimos guardar el pronóstico. Revisa los datos e intenta otra vez.",
