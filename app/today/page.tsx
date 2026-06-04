@@ -131,6 +131,46 @@ export default async function TodayPage() {
           </div>
         </section>
 
+        <section className="mt-5 overflow-hidden rounded-3xl border border-amber-200/20 bg-[radial-gradient(circle_at_top_left,#f9731650,transparent_32%),linear-gradient(135deg,#111827,#020617)] p-5 shadow-xl shadow-black/25">
+          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-amber-100">
+                🔥 La tribuna se calienta
+              </p>
+              <h2 className="mt-2 text-2xl font-black text-white md:text-3xl">
+                Primeros gritos antes del pitazo inicial
+              </h2>
+              <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-slate-300">
+                Esto arranca como conversación social: pronósticos, orgullo de grupo y boconeo sano.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-emerald-200/25 bg-emerald-300/10 px-4 py-3 text-center">
+              <p className="text-3xl font-black text-white">143</p>
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-emerald-100">
+                pronósticos de prueba
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-5 grid gap-3 md:grid-cols-3">
+            {[
+              ["Alejo · Tuluá", "Brasil 2-1 Marruecos", "Brasil sigue siendo Brasil."],
+              ["Nacho · New York", "México 1-0 Sudáfrica", "No me bajo del Tri."],
+              ["John Jairo · Palmira", "España 3-0 Cabo Verde", "Empieza la reconquista."],
+            ].map(([name, pick, comment]) => (
+              <article key={name} className="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-cyan-100">{name}</p>
+                <p className="mt-3 text-lg font-black text-white">{pick}</p>
+                <p className="mt-2 text-xs leading-5 text-slate-300">“{comment}”</p>
+              </article>
+            ))}
+          </div>
+
+          <p className="mt-4 text-xs font-semibold text-slate-400">
+            Actividad demostrativa para mostrar la experiencia social. La tribuna real se alimentará con pronósticos enviados por los participantes.
+          </p>
+        </section>
+
         <section className="mt-5 grid gap-3 md:grid-cols-[1.15fr_0.85fr]">
           <div className="rounded-2xl border border-emerald-200/20 bg-emerald-300/10 p-4">
             <p className="text-xs font-black uppercase text-emerald-100">
