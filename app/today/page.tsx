@@ -165,7 +165,7 @@ export default async function TodayPage() {
                   {hasTodayMatches ? dict.today.liveSectionTitle : "Próximos partidos"}
                 </h2>
                 <p className="mt-1 text-sm font-semibold text-slate-300">
-                  {hasTodayMatches ? dict.today.liveSectionText : "Estos son los próximos partidos destacados. Para ver el calendario completo, entra a Próximos."}
+                  {hasTodayMatches ? dict.today.liveSectionText : "Estos son los próximos partidos destacados. Para ver más partidos cargados, entra a Próximos."}
                 </p>
               </div>
             </div>
