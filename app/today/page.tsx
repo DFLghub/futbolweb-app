@@ -171,6 +171,31 @@ export default async function TodayPage() {
           </p>
         </section>
 
+        <section className="mt-5 rounded-3xl border border-fuchsia-200/20 bg-[radial-gradient(circle_at_top_left,#d946ef40,transparent_32%),linear-gradient(135deg,#111827,#020617)] p-5 shadow-xl shadow-black/25">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-fuchsia-100">
+                🤖 El Mundial de la IA
+              </p>
+              <h2 className="mt-2 text-2xl font-black text-white md:text-3xl">
+                Ahora sí veremos quién sabe más que la IA.
+              </h2>
+              <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-300">
+                Periodistas, analistas e hinchas ya llegan al Mundial con IA entre los dientes.
+                Pongámosla a jugar también: pregúntele, discútale y rétela.
+              </p>
+            </div>
+            <a
+              href="https://chatgpt.com/g/g-6a221c5d5b588191a9607f91961e45e2-el-oraculo-mundialista"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-12 items-center justify-center rounded-full bg-fuchsia-300 px-5 py-3 text-sm font-black text-slate-950 shadow-lg shadow-fuchsia-950/30 transition hover:scale-[1.02] hover:bg-fuchsia-200"
+            >
+              Retar a la IA →
+            </a>
+          </div>
+        </section>
+
         <section className="mt-5 grid gap-3 md:grid-cols-[1.15fr_0.85fr]">
           <div className="rounded-2xl border border-emerald-200/20 bg-emerald-300/10 p-4">
             <p className="text-xs font-black uppercase text-emerald-100">
