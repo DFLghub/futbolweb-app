@@ -172,27 +172,27 @@ export default async function TodayPage() {
           </p>
         </section>
 
-        <section className="mt-5 rounded-lg border border-slate-200 bg-slate-950 p-4 text-white shadow-sm">
-          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.16em] text-sky-200">
-                🤖 El Mundial de la IA
+        <section className="mt-5 overflow-hidden rounded-2xl border border-sky-300/30 bg-slate-950 p-5 text-white shadow-lg shadow-slate-300/40 md:p-6">
+          <div className="flex flex-col gap-5 md:flex-row md:items-stretch md:justify-between">
+            <div className="flex-1">
+              <p className="inline-flex rounded-full border border-sky-300/20 bg-sky-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-sky-100">
+                Oráculo Mundialista
               </p>
-              <h2 className="mt-1 text-lg font-black text-white md:text-xl">
-                Ahora sí veremos quién sabe más que la IA.
+              <h2 className="mt-4 max-w-3xl text-3xl font-black leading-none text-white md:text-4xl">
+                EL ORÁCULO YA PUSO SU RAYA
               </h2>
-              <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-300">
-                Periodistas, analistas e hinchas ya llegan al Mundial con IA entre los dientes.
-                Pongámosla a jugar también: pregúntele, discútale y rétela.
+              <p className="mt-3 max-w-3xl text-base font-semibold leading-7 text-slate-200 md:text-lg">
+                No es solo una polla. Aquí también juega el Oráculo: pronostica, se equivoca,
+                acierta y queda expuesto en la tribuna.
               </p>
             </div>
             <a
               href="https://chatgpt.com/g/g-6a221c5d5b588191a9607f91961e45e2-el-oraculo-mundialista"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-11 items-center justify-center rounded-md border border-white/15 bg-white px-4 py-2 text-sm font-black text-slate-950 transition hover:bg-slate-100"
+              className="inline-flex min-h-16 w-full items-center justify-center rounded-lg border border-white/20 bg-white px-6 py-4 text-base font-black text-slate-950 shadow-sm transition hover:bg-sky-50 md:min-h-full md:w-auto md:min-w-56 md:text-lg"
             >
-              Retar a la IA →
+              RETAR AL ORÁCULO →
             </a>
           </div>
         </section>
