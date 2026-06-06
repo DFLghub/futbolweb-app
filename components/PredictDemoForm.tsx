@@ -234,15 +234,15 @@ export default function PredictDemoForm({
   }
 
   return (
-    <section className="rounded-lg border border-white/10 bg-white/[0.06] p-4 shadow-xl shadow-black/10 sm:p-6">
+    <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/70 sm:p-6">
       <form className="grid gap-4" onSubmit={handleSubmit}>
         {hasStoredIdentity ? (
-          <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-cyan-200/20 bg-cyan-300/10 px-3 py-2">
-            <p className="text-xs font-bold text-cyan-100">
+          <div className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-sky-200 bg-sky-50 px-3 py-2">
+            <p className="text-xs font-bold text-sky-800">
               {formDict.identitySaved}
             </p>
             <button
-              className="rounded border border-white/15 px-2 py-1 text-xs font-black text-white transition hover:bg-white/10"
+              className="rounded border border-sky-200 bg-white px-2 py-1 text-xs font-black text-sky-800 transition hover:bg-sky-100"
               onClick={forgetStoredIdentity}
               type="button"
             >
@@ -251,12 +251,12 @@ export default function PredictDemoForm({
           </div>
         ) : null}
 
-        <div>
-          <label className="text-sm font-bold text-slate-100" htmlFor="alias">
+        <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-3">
+          <label className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500" htmlFor="alias">
             {formDict.alias}
           </label>
           <input
-            className="mt-2 min-h-11 w-full rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-200/60"
+            className="mt-2 min-h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             id="alias"
             maxLength={40}
             name="alias"
@@ -266,12 +266,12 @@ export default function PredictDemoForm({
           />
         </div>
 
-        <div>
-          <label className="text-sm font-bold text-slate-100" htmlFor="favoriteTeam">
+        <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-3">
+          <label className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500" htmlFor="favoriteTeam">
             {formDict.favoriteTeam}
           </label>
           <input
-            className="mt-2 min-h-11 w-full rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-200/60"
+            className="mt-2 min-h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             id="favoriteTeam"
             maxLength={60}
             name="favoriteTeam"
@@ -280,50 +280,64 @@ export default function PredictDemoForm({
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="text-sm font-bold text-slate-100" htmlFor="scoreA">
-              {formatMessage(formDict.scoreHome, { team: homeTeamName })}
-            </label>
-            <input
-              className="mt-2 min-h-11 w-full rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-200/60"
-              id="scoreA"
-              inputMode="numeric"
-              max={20}
-              min={0}
-              name="scoreA"
-              onChange={(event) => updateField("scoreA", event.target.value)}
-              required
-              type="number"
-              value={form.scoreA}
-            />
-          </div>
+        <div className="rounded-lg border border-emerald-300 bg-emerald-50 p-4 shadow-sm ring-1 ring-emerald-100">
+          <div className="grid grid-cols-[minmax(0,1fr)_32px_minmax(0,1fr)] items-end gap-2 sm:grid-cols-[minmax(0,1fr)_44px_minmax(0,1fr)] sm:gap-4">
+            <div className="min-w-0 text-center">
+              <label className="block text-base font-black leading-tight text-slate-950 sm:text-lg" htmlFor="scoreA">
+                <span className="block truncate">{homeTeamName}</span>
+                <span className="mt-1 block text-[10px] font-black uppercase tracking-[0.14em] text-emerald-700">
+                  {formatMessage(formDict.scoreHome, { team: homeTeamName })}
+                </span>
+              </label>
+              <input
+                className="mt-3 min-h-24 w-full rounded-lg border-2 border-emerald-400 bg-white px-2 py-3 text-center text-5xl font-black leading-none text-slate-950 shadow-sm outline-none transition placeholder:text-slate-300 focus:border-emerald-700 focus:ring-4 focus:ring-emerald-200 sm:min-h-28 sm:text-6xl"
+                id="scoreA"
+                inputMode="numeric"
+                max={20}
+                min={0}
+                name="scoreA"
+                onChange={(event) => updateField("scoreA", event.target.value)}
+                required
+                type="number"
+                value={form.scoreA}
+              />
+            </div>
 
-          <div>
-            <label className="text-sm font-bold text-slate-100" htmlFor="scoreB">
-              {formatMessage(formDict.scoreAway, { team: awayTeamName })}
-            </label>
-            <input
-              className="mt-2 min-h-11 w-full rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-200/60"
-              id="scoreB"
-              inputMode="numeric"
-              max={20}
-              min={0}
-              name="scoreB"
-              onChange={(event) => updateField("scoreB", event.target.value)}
-              required
-              type="number"
-              value={form.scoreB}
-            />
+            <div className="flex h-24 items-center justify-center pb-1 sm:h-28">
+              <span aria-hidden="true" className="text-4xl font-black leading-none text-slate-400 sm:text-5xl">
+                -
+              </span>
+            </div>
+
+            <div className="min-w-0 text-center">
+              <label className="block text-base font-black leading-tight text-slate-950 sm:text-lg" htmlFor="scoreB">
+                <span className="block truncate">{awayTeamName}</span>
+                <span className="mt-1 block text-[10px] font-black uppercase tracking-[0.14em] text-emerald-700">
+                  {formatMessage(formDict.scoreAway, { team: awayTeamName })}
+                </span>
+              </label>
+              <input
+                className="mt-3 min-h-24 w-full rounded-lg border-2 border-emerald-400 bg-white px-2 py-3 text-center text-5xl font-black leading-none text-slate-950 shadow-sm outline-none transition placeholder:text-slate-300 focus:border-emerald-700 focus:ring-4 focus:ring-emerald-200 sm:min-h-28 sm:text-6xl"
+                id="scoreB"
+                inputMode="numeric"
+                max={20}
+                min={0}
+                name="scoreB"
+                onChange={(event) => updateField("scoreB", event.target.value)}
+                required
+                type="number"
+                value={form.scoreB}
+              />
+            </div>
           </div>
         </div>
 
-        <div>
-          <label className="text-sm font-bold text-slate-100" htmlFor="comment">
+        <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-3">
+          <label className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500" htmlFor="comment">
             {formDict.comment}
           </label>
           <textarea
-            className="mt-2 min-h-24 w-full resize-y rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-200/60"
+            className="mt-2 min-h-20 w-full resize-y rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             id="comment"
             maxLength={160}
             name="comment"
@@ -332,12 +346,12 @@ export default function PredictDemoForm({
           />
         </div>
 
-        <div>
-          <label className="text-sm font-bold text-slate-100" htmlFor="groupCode">
+        <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-3">
+          <label className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500" htmlFor="groupCode">
             {formDict.groupCode}
           </label>
           <input
-            className="mt-2 min-h-11 w-full rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-200/60"
+            className="mt-2 min-h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
             id="groupCode"
             maxLength={80}
             name="groupCode"
@@ -345,24 +359,24 @@ export default function PredictDemoForm({
             value={form.groupCode}
           />
           {initialGroupCode ? (
-            <p className="mt-2 text-xs font-semibold text-emerald-100">
+            <p className="mt-2 text-xs font-semibold text-emerald-700">
               {formDict.invitedHelp}
             </p>
           ) : (
-            <p className="mt-2 text-xs font-semibold text-slate-300">
+            <p className="mt-2 text-xs font-semibold text-slate-600">
               {formDict.solistaHelp}
             </p>
           )}
         </div>
 
         {errorMessage ? (
-          <p className="rounded-md border border-red-300/20 bg-red-500/10 px-3 py-2 text-sm font-semibold text-red-100">
+          <p className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700">
             {errorMessage}
           </p>
         ) : null}
 
         <button
-          className="min-h-11 rounded-md bg-cyan-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-cyan-200 disabled:cursor-not-allowed disabled:opacity-60"
+          className="min-h-12 rounded-md bg-emerald-600 px-5 py-3 text-base font-black text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
           disabled={isSubmitting}
           type="submit"
         >
@@ -371,19 +385,19 @@ export default function PredictDemoForm({
       </form>
 
       {savedPrediction ? (
-        <div className="mt-5 rounded-md border border-emerald-200/20 bg-emerald-300/10 p-4">
-          <p className="text-sm font-bold text-emerald-100">
+        <div className="mt-5 rounded-md border border-emerald-200 bg-emerald-50 p-4">
+          <p className="text-sm font-bold text-emerald-800">
             {formDict.received}
           </p>
           <button
-            className="mt-4 min-h-11 w-full rounded-md border border-white/15 bg-white/10 px-4 py-3 text-sm font-black text-white transition hover:bg-white/15"
+            className="mt-4 min-h-11 w-full rounded-md border border-emerald-300 bg-white px-4 py-3 text-sm font-black text-emerald-800 transition hover:bg-emerald-100"
             onClick={copyForWhatsApp}
             type="button"
           >
             {formDict.copyButton}
           </button>
           {copyMessage ? (
-            <p className="mt-3 text-sm font-semibold text-cyan-100">{copyMessage}</p>
+            <p className="mt-3 text-sm font-semibold text-emerald-700">{copyMessage}</p>
           ) : null}
         </div>
       ) : null}

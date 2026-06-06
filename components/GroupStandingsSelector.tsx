@@ -24,11 +24,11 @@ export default function GroupStandingsSelector({ groups, initialGroupId }: Group
 
   return (
     <section className="mt-6">
-      <label className="block text-sm font-black text-slate-200" htmlFor="group-selector">
+      <label className="block text-sm font-black text-slate-700" htmlFor="group-selector">
         {dict.standings.selectorLabel}
       </label>
       <select
-        className="mt-2 w-full rounded-md border border-white/15 bg-slate-950 px-3 py-3 text-base font-bold text-white outline-none transition focus:border-cyan-200/70 md:max-w-xs"
+        className="mt-2 w-full rounded-md border border-slate-300 bg-white px-3 py-3 text-base font-bold text-slate-950 shadow-sm outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100 md:max-w-xs"
         id="group-selector"
         onChange={(event) => setSelectedGroupId(event.target.value)}
         value={selectedGroup.groupId}

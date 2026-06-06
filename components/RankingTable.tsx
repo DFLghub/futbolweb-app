@@ -11,19 +11,19 @@ type RankingTableProps = {
 };
 
 const statusClasses: Record<RankingStatus, string> = {
-  gold: "border-amber-200/50 bg-amber-300/15 text-amber-100",
-  green: "border-emerald-300/35 bg-emerald-300/10 text-emerald-100",
-  yellow: "border-yellow-200/40 bg-yellow-300/10 text-yellow-100",
-  purple: "border-violet-300/45 bg-violet-400/15 text-violet-100",
-  red: "border-rose-300/45 bg-rose-400/15 text-rose-100",
+  gold: "border-amber-200 bg-amber-50 text-amber-800",
+  green: "border-emerald-200 bg-emerald-50 text-emerald-800",
+  yellow: "border-yellow-200 bg-yellow-50 text-yellow-800",
+  purple: "border-violet-200 bg-violet-50 text-violet-800",
+  red: "border-rose-200 bg-rose-50 text-rose-800",
 };
 
 const rowClasses: Record<RankingStatus, string> = {
-  gold: "border-amber-200/35 bg-amber-300/15",
-  green: "border-white/10 bg-slate-950/70",
-  yellow: "border-yellow-200/30 bg-yellow-300/10",
-  purple: "border-violet-300/35 bg-violet-400/15",
-  red: "border-rose-300/40 bg-rose-500/15",
+  gold: "border-amber-400 bg-amber-50",
+  green: "border-emerald-400 bg-white",
+  yellow: "border-yellow-400 bg-yellow-50",
+  purple: "border-violet-400 bg-violet-50",
+  red: "border-rose-400 bg-rose-50",
 };
 
 function formatPoints(points: number, singular: string, plural: string): string {
@@ -112,8 +112,8 @@ export default function RankingTable({ participants, groupCode }: RankingTablePr
         ))}
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-lg border border-white/10 bg-slate-950/80 shadow-2xl shadow-black/20">
-        <div className="hidden grid-cols-[80px_1.25fr_100px_130px_140px_190px] gap-3 border-b border-white/10 bg-[#07111f] px-4 py-3 text-xs font-bold uppercase tracking-[0.14em] text-slate-300 md:grid">
+      <div className="mt-6 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm shadow-slate-200/70">
+        <div className="hidden grid-cols-[80px_1.25fr_100px_130px_140px_190px] gap-3 border-b border-slate-200 bg-slate-50 px-4 py-3 text-xs font-bold uppercase tracking-[0.14em] text-slate-500 md:grid">
           <span>{rankingDict.headers.position}</span>
           <span>{rankingDict.headers.name}</span>
           <span>{rankingDict.headers.points}</span>
@@ -122,24 +122,24 @@ export default function RankingTable({ participants, groupCode }: RankingTablePr
           <span>{rankingDict.headers.status}</span>
         </div>
 
-        <div className="divide-y divide-white/10">
+        <div className="divide-y divide-slate-200">
           {participants.map((participant) => (
             <article
               className={`grid gap-3 border-l-4 px-4 py-4 md:grid-cols-[80px_1.25fr_100px_130px_140px_190px] md:items-center ${rowClasses[participant.status]}`}
               key={participant.position}
             >
               <div className="flex items-center justify-between gap-3 md:block">
-                <span className="text-xs font-bold uppercase tracking-[0.14em] text-slate-400 md:hidden">
+                <span className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500 md:hidden">
                   {rankingDict.headers.positionLong}
                 </span>
-                <span className="font-black text-slate-100">#{participant.position}</span>
+                <span className="font-black text-slate-950">#{participant.position}</span>
               </div>
 
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="text-lg font-black leading-tight text-white">{participant.name}</h2>
+                  <h2 className="text-lg font-black leading-tight text-slate-950">{participant.name}</h2>
                   {participant.isBocon ? (
-                    <span className="rounded-full border border-cyan-200/35 bg-cyan-300/10 px-2.5 py-1 text-xs font-black text-cyan-100">
+                    <span className="rounded-full border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-black text-sky-700">
                       {rankingDict.bocon}
                     </span>
                   ) : null}
@@ -151,7 +151,7 @@ export default function RankingTable({ participants, groupCode }: RankingTablePr
               <Stat label={rankingDict.headers.correctResults} value={participant.correctResults} />
 
               <div className="flex items-center justify-between gap-3 md:block">
-                <span className="text-xs font-bold uppercase tracking-[0.14em] text-slate-400 md:hidden">
+                <span className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500 md:hidden">
                   {rankingDict.headers.status}
                 </span>
                 <StatusBadge status={participant.status} labels={rankingDict.statuses} />
@@ -163,7 +163,7 @@ export default function RankingTable({ participants, groupCode }: RankingTablePr
 
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
         <button
-          className="min-h-11 rounded-md bg-cyan-300 px-5 py-2 text-sm font-black text-slate-950 shadow-lg shadow-cyan-300/20 ring-1 ring-cyan-100/40 transition hover:bg-cyan-200 active:bg-cyan-100"
+          className="min-h-11 rounded-md bg-slate-950 px-5 py-2 text-sm font-black text-white shadow-sm transition hover:bg-slate-800 active:bg-slate-700"
           onClick={handleCopySummary}
           type="button"
         >
@@ -171,7 +171,7 @@ export default function RankingTable({ participants, groupCode }: RankingTablePr
         </button>
         <p
           className={`min-h-5 text-sm font-semibold ${
-            copyStatus === "error" ? "text-rose-100" : "text-cyan-100"
+            copyStatus === "error" ? "text-rose-700" : "text-emerald-700"
           }`}
           role="status"
           aria-live="polite"
@@ -194,37 +194,37 @@ function PodiumCard({ participant }: { participant: RankingParticipant }) {
         : rankingDict.podium.podium;
   const tone =
     participant.position === 1
-      ? "border-amber-200/40 bg-slate-950 shadow-amber-950/25"
+      ? "border-amber-200 bg-amber-50 shadow-amber-100/70"
       : participant.position === 2
-        ? "border-cyan-200/30 bg-slate-950 shadow-cyan-950/20"
-        : "border-emerald-200/30 bg-slate-950 shadow-emerald-950/20";
+        ? "border-sky-200 bg-sky-50 shadow-sky-100/70"
+        : "border-emerald-200 bg-emerald-50 shadow-emerald-100/70";
   const accentLine =
     participant.position === 1
-      ? "via-amber-200/50"
+      ? "via-amber-400"
       : participant.position === 2
-        ? "via-cyan-200/45"
-        : "via-emerald-200/45";
+        ? "via-sky-400"
+        : "via-emerald-400";
   const badgeTone =
     participant.position === 1
-      ? "border-amber-200/45 bg-amber-300/20 text-amber-50"
-      : "border-cyan-200/35 bg-cyan-300/10 text-cyan-50";
+      ? "border-amber-200 bg-white text-amber-800"
+      : "border-sky-200 bg-white text-sky-800";
 
   return (
-    <article className={`relative overflow-hidden rounded-lg border p-4 shadow-2xl ${tone}`}>
+    <article className={`relative overflow-hidden rounded-lg border p-4 shadow-sm ${tone}`}>
       <div className={`pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent to-transparent ${accentLine}`} />
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-amber-100">{placeLabel}</p>
-          <h2 className="mt-2 text-2xl font-black text-white">{participant.name}</h2>
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-600">{placeLabel}</p>
+          <h2 className="mt-2 text-2xl font-black text-slate-950">{participant.name}</h2>
         </div>
         <span className={`rounded-full border px-3 py-1 text-sm font-black ${badgeTone}`}>
           #{participant.position}
         </span>
       </div>
-      <p className="mt-4 text-3xl font-black text-white">
+      <p className="mt-4 text-3xl font-black text-slate-950">
         {formatPoints(participant.points, rankingDict.pointsSingular, rankingDict.pointsPlural)}
       </p>
-      <p className="mt-1 text-sm text-slate-200">
+      <p className="mt-1 text-sm text-slate-600">
         {formatMessage(rankingDict.podium.exactResults, {
           exact: participant.exactScores,
           results: participant.correctResults,
@@ -245,10 +245,10 @@ function Stat({
 }) {
   return (
     <div className="flex items-center justify-between gap-3 md:block">
-      <span className="text-xs font-bold uppercase tracking-[0.14em] text-slate-400 md:hidden">
+      <span className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500 md:hidden">
         {label}
       </span>
-      <span className={strong ? "font-black text-white" : "font-semibold text-slate-200"}>{value}</span>
+      <span className={strong ? "font-black text-slate-950" : "font-semibold text-slate-700"}>{value}</span>
     </div>
   );
 }

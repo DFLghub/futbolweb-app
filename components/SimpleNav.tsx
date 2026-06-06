@@ -24,8 +24,8 @@ export default function SimpleNav({ compact = false }: SimpleNavProps) {
       aria-label={dict.nav.ariaLabel}
       className={
         compact
-          ? "flex snap-x items-center gap-2 overflow-x-auto pb-1 text-sm font-semibold text-slate-300"
-          : "mb-8 flex snap-x items-center gap-2 overflow-x-auto border-b border-white/10 pb-4 text-sm font-semibold text-slate-300"
+          ? "flex snap-x items-center gap-2 overflow-x-auto pb-1 text-sm font-semibold text-slate-600"
+          : "mb-8 flex snap-x items-center gap-2 overflow-x-auto border-b border-slate-200 pb-4 text-sm font-semibold text-slate-600"
       }
     >
       {navItems.map((item) => {
@@ -40,8 +40,8 @@ export default function SimpleNav({ compact = false }: SimpleNavProps) {
             aria-current={isActive ? "page" : undefined}
             className={
               isActive
-                ? "snap-start whitespace-nowrap rounded-md bg-white px-3 py-2 font-black text-slate-950"
-                : "snap-start whitespace-nowrap rounded-md px-3 py-2 transition hover:bg-white/10 hover:text-white"
+                ? "snap-start whitespace-nowrap rounded-md bg-slate-950 px-3 py-2 font-black text-white shadow-sm"
+                : "snap-start whitespace-nowrap rounded-md px-3 py-2 transition hover:bg-white hover:text-slate-950 hover:shadow-sm"
             }
             href={item.href}
           >

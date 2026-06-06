@@ -80,15 +80,15 @@ export default async function PredictPage({ params, searchParams }: PredictPageP
   });
 
   return (
-    <main className="min-h-screen bg-[#07111f] px-5 py-6 text-white md:px-10 md:py-8">
+    <main className="min-h-screen bg-[#f3f6fb] px-5 py-6 text-slate-950 md:px-10 md:py-8">
       <div className="mx-auto max-w-6xl">
         <BrandHeader className="mb-3" />
-        <div className="mb-5 border-b border-white/10 pb-4">
+        <div className="mb-5 border-b border-slate-200 pb-4">
           <SimpleNav compact />
         </div>
 
         <header className="mb-5">
-          <div className="mb-3 inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-cyan-100">
+          <div className="mb-3 inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-emerald-700">
             {dict.predict.badge}
           </div>
 
@@ -97,7 +97,7 @@ export default async function PredictPage({ params, searchParams }: PredictPageP
           </h1>
 
           {initialGroupCode ? (
-            <div className="mt-3 rounded-md border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-100">
+            <div className="mt-3 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
               {dict.predict.invitedGroup}{" "}
               <span className="font-black">{initialGroupCode}</span>
             </div>
@@ -137,11 +137,11 @@ export default async function PredictPage({ params, searchParams }: PredictPageP
             <aside className="lg:sticky lg:top-5">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-xs font-black uppercase text-slate-400">{dict.nav.groups}</p>
-                  <h2 className="text-xl font-black text-white">{relatedGroup.groupName}</h2>
+                  <p className="text-xs font-black uppercase text-slate-500">{dict.nav.groups}</p>
+                  <h2 className="text-xl font-black text-slate-950">{relatedGroup.groupName}</h2>
                 </div>
                 <Link
-                  className="rounded-md border border-white/15 bg-white/[0.06] px-3 py-2 text-xs font-black text-cyan-100 transition hover:bg-white/10 hover:text-white"
+                  className="rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-black text-slate-800 shadow-sm transition hover:bg-slate-50"
                   href={`/standings?group=${encodeURIComponent(relatedGroup.groupId)}`}
                 >
                   {dict.standings.selectorLabel}
@@ -179,40 +179,40 @@ function MatchContextPanel({
 }) {
   if (!match) {
     return (
-      <section className="rounded-lg border border-white/10 bg-slate-950/75 p-4 text-sm text-slate-300">
-        <span className="font-semibold text-slate-100">{labels.match}</span>{" "}
+      <section className="rounded-lg border border-slate-200 bg-white p-4 text-sm text-slate-600 shadow-sm">
+        <span className="font-semibold text-slate-950">{labels.match}</span>{" "}
         <span>{matchLabel}</span>
       </section>
     );
   }
 
   return (
-    <section className="rounded-lg border border-white/10 bg-slate-950/75 p-4 shadow-xl shadow-black/15">
+    <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-black uppercase text-slate-400">{match.stage}</p>
-          <h2 className="mt-2 text-2xl font-black leading-tight text-white">
+          <p className="text-xs font-black uppercase text-slate-500">{match.stage}</p>
+          <h2 className="mt-2 text-2xl font-black leading-tight text-slate-950">
             {match.homeTeam.flagEmoji} {match.homeTeam.name} <span className="text-slate-500">vs</span>{" "}
             {match.awayTeam.flagEmoji} {match.awayTeam.name}
           </h2>
         </div>
         <Link
-          className="shrink-0 rounded-md border border-cyan-200/20 bg-cyan-300/10 px-3 py-2 text-xs font-black text-cyan-100 transition hover:bg-cyan-300/15 hover:text-white"
+          className="shrink-0 rounded-md border border-sky-200 bg-sky-50 px-3 py-2 text-xs font-black text-sky-700 transition hover:bg-sky-100"
           href={groupHref}
         >
           {match.groupCode}
         </Link>
       </div>
 
-      <div className="mt-4 grid gap-2 text-sm text-slate-300 sm:grid-cols-2">
-        <div className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+      <div className="mt-4 grid gap-2 text-sm text-slate-600 sm:grid-cols-2">
+        <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2">
           <p className="text-xs font-black uppercase text-slate-500">{labels.kickoff}</p>
-          <p className="mt-1 font-bold text-slate-100">{match.kickoffLabel}</p>
+          <p className="mt-1 font-bold text-slate-950">{match.kickoffLabel}</p>
         </div>
-        <div className="rounded-md border border-white/10 bg-white/[0.04] px-3 py-2">
+        <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2">
           <p className="text-xs font-black uppercase text-slate-500">{labels.venue}</p>
-          <p className="mt-1 font-bold text-slate-100">{match.venueName}</p>
-          <p className="text-xs text-slate-400">{getTimezoneLabel(match.venueTimezone, timezoneLabels)}</p>
+          <p className="mt-1 font-bold text-slate-950">{match.venueName}</p>
+          <p className="text-xs text-slate-500">{getTimezoneLabel(match.venueTimezone, timezoneLabels)}</p>
         </div>
       </div>
     </section>
