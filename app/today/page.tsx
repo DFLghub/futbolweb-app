@@ -133,7 +133,7 @@ export default async function TodayPage() {
           </div>
         </section>
 
-        <section id="tribuna" className="mt-5 grid gap-3 md:grid-cols-3">
+        <section id="tribuna" className="mt-5 hidden gap-3 md:grid md:grid-cols-3">
           <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
             <p className="text-2xl">🔥</p>
             <p className="mt-2 text-sm font-black text-slate-950">Tribuna Viva</p>
@@ -155,6 +155,55 @@ export default async function TodayPage() {
               Competencia social. Cero gambling. Puro pulso futbolero.
             </p>
           </div>
+        </section>
+
+        <section className="mt-5 rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+          <p className="text-xs font-black uppercase text-emerald-700">
+            {hasTodayMatches ? dict.today.livePanelLabel : "Partidos en cartelera"}
+          </p>
+          <p className="mt-2 text-2xl font-black leading-none text-slate-950">
+            {hasTodayMatches
+              ? dict.today.todayCount.replace("{count}", String(todayMatches.length))
+              : dict.today.featuredCount.replace("{count}", String(visibleMatches.length))}
+          </p>
+          <p className="mt-2 text-xs leading-5 text-slate-600">
+            {hasTodayMatches ? dict.today.livePanelText : "La jornada se está armando. Empieza a mirar, escoger y calentar la tribuna."}
+          </p>
+        </section>
+
+        {visibleMatches.length > 0 ? (
+          <section id="partidos" className="mt-6">
+            <div className="mb-3 flex items-end justify-between gap-3">
+              <div>
+                <h2 className="text-xl font-black text-slate-950">
+                  {hasTodayMatches ? dict.today.liveSectionTitle : "Próximos partidos"}
+                </h2>
+                <p className="mt-1 text-sm font-semibold text-slate-600">
+                  {hasTodayMatches ? dict.today.liveSectionText : "Estos son los próximos partidos destacados. Para ver más partidos cargados, entra a Próximos."}
+                </p>
+              </div>
+            </div>
+            <div className="grid gap-3 lg:grid-cols-2">
+              {visibleMatches.map((match) => (
+                <MatchCard key={match.id} match={match} variant="compact" />
+              ))}
+            </div>
+          </section>
+        ) : (
+          <section className="mt-5 rounded-lg border border-slate-200 bg-white p-5 text-sm text-slate-600">
+            <p className="font-black text-slate-950">{dict.today.emptyTitle}</p>
+            <p className="mt-2">{dict.today.emptyText}</p>
+          </section>
+        )}
+
+        <section className="mt-5 rounded-lg border border-amber-200 bg-amber-50 p-4">
+          <p className="text-xs font-black uppercase text-amber-700">Grito de guerra</p>
+          <p className="mt-2 text-lg font-black leading-tight text-slate-950">
+            El Mundial no se mira en silencio.
+          </p>
+          <p className="mt-2 text-xs font-semibold text-slate-600">
+            Se pronostica, se discute, se celebra y se sufre con la tribu.
+          </p>
         </section>
 
         <section className="mt-5 overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -196,57 +245,6 @@ export default async function TodayPage() {
             Actividad demostrativa para mostrar la experiencia social. La tribuna real se alimentará con pronósticos enviados por los participantes.
           </p>
         </section>
-
-        <section className="mt-5 grid gap-3 md:grid-cols-[1.15fr_0.85fr]">
-          <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
-            <p className="text-xs font-black uppercase text-emerald-700">
-              {hasTodayMatches ? dict.today.livePanelLabel : "Partidos en cartelera"}
-            </p>
-            <p className="mt-2 text-2xl font-black leading-none text-slate-950">
-              {hasTodayMatches
-                ? dict.today.todayCount.replace("{count}", String(todayMatches.length))
-                : dict.today.featuredCount.replace("{count}", String(visibleMatches.length))}
-            </p>
-            <p className="mt-2 text-xs leading-5 text-slate-600">
-              {hasTodayMatches ? dict.today.livePanelText : "La jornada se está armando. Empieza a mirar, escoger y calentar la tribuna."}
-            </p>
-          </div>
-
-          <div className="rounded-lg border border-amber-200 bg-amber-50 p-4">
-            <p className="text-xs font-black uppercase text-amber-700">Grito de guerra</p>
-            <p className="mt-2 text-lg font-black leading-tight text-slate-950">
-              El Mundial no se mira en silencio.
-            </p>
-            <p className="mt-2 text-xs font-semibold text-slate-600">
-              Se pronostica, se discute, se celebra y se sufre con la tribu.
-            </p>
-          </div>
-        </section>
-
-        {visibleMatches.length > 0 ? (
-          <section id="partidos" className="mt-6">
-            <div className="mb-3 flex items-end justify-between gap-3">
-              <div>
-                <h2 className="text-xl font-black text-slate-950">
-                  {hasTodayMatches ? dict.today.liveSectionTitle : "Próximos partidos"}
-                </h2>
-                <p className="mt-1 text-sm font-semibold text-slate-600">
-                  {hasTodayMatches ? dict.today.liveSectionText : "Estos son los próximos partidos destacados. Para ver más partidos cargados, entra a Próximos."}
-                </p>
-              </div>
-            </div>
-            <div className="grid gap-3 lg:grid-cols-2">
-              {visibleMatches.map((match) => (
-                <MatchCard key={match.id} match={match} variant="compact" />
-              ))}
-            </div>
-          </section>
-        ) : (
-          <section className="mt-5 rounded-lg border border-slate-200 bg-white p-5 text-sm text-slate-600">
-            <p className="font-black text-slate-950">{dict.today.emptyTitle}</p>
-            <p className="mt-2">{dict.today.emptyText}</p>
-          </section>
-        )}
       </div>
     </main>
   );
