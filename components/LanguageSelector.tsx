@@ -14,10 +14,10 @@ export default function LanguageSelector() {
   }
 
   return (
-    <label className="flex items-center gap-2 text-xs font-bold text-slate-300">
-      <span>{dict.language.label}</span>
+    <label className="flex flex-col items-end gap-1 text-[0.62rem] font-bold leading-none text-slate-500 sm:flex-row sm:items-center sm:gap-2 sm:text-xs sm:text-slate-300">
+      <span className="uppercase tracking-[0.12em] sm:normal-case sm:tracking-normal">{dict.language.label}</span>
       <select
-        className="rounded-md border border-white/15 bg-slate-950 px-2 py-1 text-xs font-black text-white outline-none transition focus:border-cyan-200/70"
+        className="rounded-md border border-slate-800 bg-slate-950 px-2 py-1 text-xs font-black text-white outline-none transition focus:border-cyan-200/70 sm:border-white/15"
         onChange={(event) => handleChange(event.target.value)}
         value={locale}
       >
