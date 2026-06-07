@@ -6,6 +6,7 @@ import { worldCup2026Matches } from "@/lib/world-cup-2026-matches";
 type PredictionPayload = {
   match_slug?: unknown;
   alias?: unknown;
+  whatsapp_phone?: unknown;
   favorite_team?: unknown;
   score_a?: unknown;
   score_b?: unknown;
@@ -15,7 +16,7 @@ type PredictionPayload = {
 };
 
 const predictionSelect =
-  "id, match_slug, alias, favorite_team, score_a, score_b, comment, group_code, created_at";
+  "id, match_slug, alias, whatsapp_phone, favorite_team, score_a, score_b, comment, group_code, created_at";
 
 type SavedPrediction = {
   id: string;
@@ -169,6 +170,28 @@ function optionalText(
   return cleaned;
 }
 
+function optionalWhatsAppPhone(payload: PredictionPayload, dict: Dictionary) {
+  const value = optionalText(
+    payload,
+    "whatsapp_phone",
+    dict.api.whatsappPhone,
+    20,
+    dict,
+  );
+
+  if (!value) {
+    return null;
+  }
+
+  const normalizedPhone = value.replace(/[\s().-]/g, "");
+
+  if (!/^\+[1-9]\d{6,14}$/.test(normalizedPhone)) {
+    throw new Error(dict.api.whatsappPhoneFormat);
+  }
+
+  return normalizedPhone;
+}
+
 function requiredScore(
   payload: PredictionPayload,
   key: "score_a" | "score_b",
@@ -198,6 +221,7 @@ function parsePredictionPayload(payload: unknown, dict: Dictionary) {
   return {
     match_slug: requiredText(predictionPayload, "match_slug", dict.api.matchRequired, 120, dict),
     alias: requiredText(predictionPayload, "alias", dict.api.aliasRequired, 40, dict),
+    whatsapp_phone: optionalWhatsAppPhone(predictionPayload, dict),
     favorite_team: optionalText(
       predictionPayload,
       "favorite_team",

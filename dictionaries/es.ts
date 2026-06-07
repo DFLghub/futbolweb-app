@@ -189,6 +189,9 @@ const es = {
     form: {
       alias: "Alias o nombre",
       favoriteTeam: "Equipo favorito / selección que apoyas",
+      whatsappPhone: "Teléfono de WhatsApp",
+      whatsappPhoneHelp: "Usa formato internacional, por ejemplo +573001234567.",
+      whatsappPhoneFormat: "Ingresa el número en formato internacional, por ejemplo +573001234567.",
       scoreHome: "Marcador {team}",
       scoreAway: "Marcador {team}",
       comment: "Comentario opcional / boconeo",
@@ -222,6 +225,8 @@ const es = {
     invalidPrediction: "Envía un pronóstico válido.",
     matchRequired: "El partido",
     aliasRequired: "Alias o nombre",
+    whatsappPhone: "Teléfono de WhatsApp",
+    whatsappPhoneFormat: "El teléfono de WhatsApp debe usar formato internacional, por ejemplo +573001234567.",
     favoriteTeam: "Equipo favorito",
     scoreA: "Marcador equipo A",
     scoreB: "Marcador equipo B",

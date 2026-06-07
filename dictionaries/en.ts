@@ -189,6 +189,9 @@ const en = {
     form: {
       alias: "Alias or name",
       favoriteTeam: "Favorite team / team you support",
+      whatsappPhone: "WhatsApp phone",
+      whatsappPhoneHelp: "Use international format, for example +573001234567.",
+      whatsappPhoneFormat: "Enter the number in international format, for example +573001234567.",
       scoreHome: "{team} score",
       scoreAway: "{team} score",
       comment: "Optional comment / trash talk",
@@ -222,6 +225,8 @@ const en = {
     invalidPrediction: "Send a valid prediction.",
     matchRequired: "The match",
     aliasRequired: "Alias or name",
+    whatsappPhone: "WhatsApp phone",
+    whatsappPhoneFormat: "WhatsApp phone must use international format, for example +573001234567.",
     favoriteTeam: "Favorite team",
     scoreA: "Home team score",
     scoreB: "Away team score",

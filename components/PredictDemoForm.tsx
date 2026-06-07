@@ -9,6 +9,7 @@ type SavedPrediction = {
   id: string;
   match_slug: string;
   alias: string;
+  whatsapp_phone: string | null;
   favorite_team: string | null;
   score_a: number;
   score_b: number;
@@ -27,6 +28,7 @@ type PredictDemoFormProps = {
 
 const emptyForm = {
   alias: "",
+  whatsappPhone: "",
   favoriteTeam: "",
   scoreA: "",
   scoreB: "",
@@ -169,6 +171,7 @@ export default function PredictDemoForm({
         body: JSON.stringify({
           match_slug: matchSlug,
           alias: form.alias,
+          whatsapp_phone: form.whatsappPhone,
           favorite_team: form.favoriteTeam,
           score_a: scoreA,
           score_b: scoreB,
@@ -278,6 +281,28 @@ export default function PredictDemoForm({
             onChange={(event) => updateField("favoriteTeam", event.target.value)}
             value={form.favoriteTeam}
           />
+        </div>
+
+        <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-3">
+          <label className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500" htmlFor="whatsappPhone">
+            {formDict.whatsappPhone}
+          </label>
+          <input
+            className="mt-2 min-h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+            id="whatsappPhone"
+            inputMode="tel"
+            maxLength={20}
+            name="whatsappPhone"
+            onChange={(event) => updateField("whatsappPhone", event.target.value)}
+            pattern="^\+[1-9][0-9]{6,14}$"
+            placeholder="+573001234567"
+            title={formDict.whatsappPhoneFormat}
+            type="tel"
+            value={form.whatsappPhone}
+          />
+          <p className="mt-2 text-xs font-semibold text-slate-600">
+            {formDict.whatsappPhoneHelp}
+          </p>
         </div>
 
         <div className="rounded-lg border border-emerald-300 bg-emerald-50 p-4 shadow-sm ring-1 ring-emerald-100">

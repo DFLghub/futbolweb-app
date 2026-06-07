@@ -187,7 +187,7 @@ export default async function TodayPage() {
               </p>
             </div>
             <a
-              href="https://chatgpt.com/g/g-6a221c5d5b588191a9607f91961e45e2-el-oraculo-mundialista"
+              href="https://chatgpt.com/g/g-6a259750fefc8191af804deb256e9616-paulgpt"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex min-h-16 w-full items-center justify-center rounded-lg border border-white/20 bg-white px-6 py-4 text-base font-black text-slate-950 shadow-sm transition hover:bg-sky-50 md:min-h-full md:w-auto md:min-w-56 md:text-lg"
