@@ -1,3 +1,4 @@
+import Link from "next/link";
 import BrandHeader from "@/components/BrandHeader";
 import MatchCard from "@/components/MatchCard";
 import SimpleNav from "@/components/SimpleNav";
@@ -36,6 +37,7 @@ export default async function TodayPage() {
   const upcomingMatches = matches.filter((match) => new Date(match.kickoffUtc).getTime() > now.getTime());
   const hasTodayMatches = todayMatches.length > 0;
   const visibleMatches = hasTodayMatches ? todayMatches : upcomingMatches.slice(0, 7);
+  const mobileVisibleMatches = visibleMatches.slice(0, 3);
   const nextFeaturedMatch = upcomingMatches[0];
 
   return (
@@ -157,7 +159,7 @@ export default async function TodayPage() {
           </div>
         </section>
 
-        <section className="mt-5 rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+        <section className="mt-5 hidden rounded-lg border border-emerald-200 bg-emerald-50 p-4 md:block">
           <p className="text-xs font-black uppercase text-emerald-700">
             {hasTodayMatches ? dict.today.livePanelLabel : "Partidos en cartelera"}
           </p>
@@ -183,7 +185,20 @@ export default async function TodayPage() {
                 </p>
               </div>
             </div>
-            <div className="grid gap-3 lg:grid-cols-2">
+            <div className="grid gap-3 md:hidden">
+              {mobileVisibleMatches.map((match) => (
+                <MatchCard key={match.id} match={match} variant="compact" />
+              ))}
+              {visibleMatches.length > mobileVisibleMatches.length ? (
+                <Link
+                  className="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-800 shadow-sm transition hover:bg-slate-50"
+                  href="/upcoming"
+                >
+                  Ver todos los partidos
+                </Link>
+              ) : null}
+            </div>
+            <div className="hidden gap-3 md:grid lg:grid-cols-2">
               {visibleMatches.map((match) => (
                 <MatchCard key={match.id} match={match} variant="compact" />
               ))}

@@ -82,12 +82,12 @@ export default function MatchCard({ match, variant = "compact" }: MatchCardProps
   return (
     <article
       className={`relative overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm shadow-slate-200/70 ${
-        isCalendar ? "p-3 md:p-4" : "p-3.5"
+        isCalendar ? "p-2.5 md:p-4" : "p-2.5 md:p-3.5"
       }`}
     >
       <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-emerald-500 via-sky-500 to-red-500" />
 
-      <div className={`flex items-start justify-between gap-3 ${isCalendar ? "md:items-center" : ""}`}>
+      <div className={`hidden items-start justify-between gap-3 md:flex ${isCalendar ? "md:items-center" : ""}`}>
         <div className="min-w-0">
           <p className="text-[11px] font-black uppercase text-slate-500">
             {match.stage}
@@ -102,7 +102,7 @@ export default function MatchCard({ match, variant = "compact" }: MatchCardProps
       </div>
 
       <div
-        className={`mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-3 ${
+        className={`mt-2 grid grid-cols-[1fr_auto_1fr] items-center gap-2 md:mt-3 md:gap-3 ${
           isCalendar ? "md:mt-2" : ""
         }`}
       >
@@ -113,7 +113,7 @@ export default function MatchCard({ match, variant = "compact" }: MatchCardProps
               {match.homeScore} - {match.awayScore}
             </span>
           ) : (
-            <span className="rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-black text-slate-700">
+            <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1.5 text-xs font-black text-slate-700 md:px-3 md:py-2 md:text-sm">
               {dict.matchCard.vs}
             </span>
           )}
@@ -122,25 +122,25 @@ export default function MatchCard({ match, variant = "compact" }: MatchCardProps
       </div>
 
       <div
-        className={`mt-4 grid gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-600 ${
+        className={`mt-2 grid gap-1 rounded-md border border-slate-200 bg-slate-50 px-2 py-1.5 text-[0.68rem] text-slate-600 md:mt-4 md:gap-2 md:px-3 md:py-2 md:text-xs ${
           isCalendar ? "md:grid-cols-[1fr_1.35fr] md:items-center" : ""
         }`}
       >
         <div className="flex items-center justify-between gap-3">
           <span className="font-black text-slate-950">{match.kickoffLabel ?? formatMatchTime(match.kickoffUtc, locale)}</span>
-          <span className="shrink-0 text-slate-500">{getTimezoneLabel(match.venueTimezone, dict.timezones)}</span>
+          <span className="hidden shrink-0 text-slate-500 md:inline">{getTimezoneLabel(match.venueTimezone, dict.timezones)}</span>
         </div>
-        <div>
+        <div className="hidden md:block">
           <span className="font-semibold text-slate-800">{match.venueName}</span>
         <span className="text-slate-400"> · </span>
           <span>{dict.matchCard.actionAvailable}: {isOpen ? dict.matchCard.predict : dict.matchCard.closedAction}</span>
         </div>
         {match.sourceLabel ? (
-          <span className="text-slate-500">{match.sourceLabel}</span>
+          <span className="hidden text-slate-500 md:inline">{match.sourceLabel}</span>
         ) : null}
       </div>
 
-      <div className={`mt-3 grid gap-2 ${isCalendar ? "grid-cols-[1fr_1fr_auto] md:flex md:justify-end" : "grid-cols-[1.25fr_1fr_auto]"}`}>
+      <div className={`mt-2 grid gap-2 md:mt-3 ${isCalendar ? "grid-cols-1 md:flex md:justify-end" : "grid-cols-1 md:grid-cols-[1.25fr_1fr_auto]"}`}>
         {isOpen ? (
           <Link
             className={`inline-flex min-h-11 items-center justify-center rounded-md bg-emerald-600 px-3 py-2 text-sm font-black text-white shadow-sm transition hover:bg-emerald-700 active:bg-emerald-800 ${
@@ -162,7 +162,7 @@ export default function MatchCard({ match, variant = "compact" }: MatchCardProps
           </button>
         )}
         <button
-          className={`min-h-11 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-800 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50 active:bg-emerald-100 ${
+          className={`hidden min-h-11 rounded-md border border-slate-300 bg-white px-3 py-2 text-sm font-bold text-slate-800 shadow-sm transition hover:border-emerald-300 hover:bg-emerald-50 active:bg-emerald-100 md:block ${
             isCalendar ? "md:min-w-28" : ""
           }`}
           onClick={handleShare}
@@ -172,16 +172,18 @@ export default function MatchCard({ match, variant = "compact" }: MatchCardProps
         </button>
         <Link
           aria-label={`${dict.nav.groups}: ${match.groupCode}`}
-          className="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm font-black text-slate-700 transition hover:bg-slate-100 hover:text-slate-950"
+          className="hidden min-h-11 items-center justify-center rounded-md border border-slate-300 bg-slate-50 px-3 py-2 text-sm font-black text-slate-700 transition hover:bg-slate-100 hover:text-slate-950 md:inline-flex"
           href={groupHref}
         >
           {dict.matchCard.groupShort}
         </Link>
       </div>
 
-      <p className="mt-3 min-h-5 text-sm font-semibold text-emerald-700" role="status" aria-live="polite">
-        {feedbackMessage}
-      </p>
+      {feedbackMessage ? (
+        <p className="mt-3 text-sm font-semibold text-emerald-700" role="status" aria-live="polite">
+          {feedbackMessage}
+        </p>
+      ) : null}
     </article>
   );
 }
@@ -197,8 +199,8 @@ function TeamBlock({
 }) {
   return (
     <div className={align === "right" ? "text-right" : "text-left"}>
-      <div className="text-3xl leading-none">{flagEmoji}</div>
-      <h2 className="mt-1 text-lg font-black leading-tight text-slate-950">{name}</h2>
+      <div className="text-2xl leading-none md:text-3xl">{flagEmoji}</div>
+      <h2 className="mt-1 text-base font-black leading-tight text-slate-950 md:text-lg">{name}</h2>
     </div>
   );
 }
