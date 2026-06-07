@@ -4,6 +4,7 @@ import SimpleNav from "@/components/SimpleNav";
 import { groupCodeToStandingGroupId } from "@/lib/group-code";
 import { getCurrentDictionary } from "@/lib/i18n-server";
 import { mockWorldCupGroupStandings } from "@/lib/mock-group-standings";
+import { getRealGroupStandings } from "@/lib/real-group-standings";
 
 type StandingsPageProps = {
   searchParams: Promise<{
@@ -15,6 +16,13 @@ export default async function StandingsPage({ searchParams }: StandingsPageProps
   const dict = await getCurrentDictionary();
   const { group } = await searchParams;
   const initialGroupId = groupCodeToStandingGroupId(group);
+  let standings = mockWorldCupGroupStandings;
+
+  try {
+    standings = await getRealGroupStandings();
+  } catch (error) {
+    console.error("[standings-page] fallback to mock standings", error);
+  }
 
   return (
     <main className="min-h-screen bg-[#f3f6fb] px-5 py-6 text-slate-950 md:px-10 md:py-8">
@@ -38,7 +46,7 @@ export default async function StandingsPage({ searchParams }: StandingsPageProps
           </div>
         </header>
 
-        <GroupStandingsSelector groups={mockWorldCupGroupStandings} initialGroupId={initialGroupId} />
+        <GroupStandingsSelector groups={standings} initialGroupId={initialGroupId} />
       </div>
     </main>
   );
