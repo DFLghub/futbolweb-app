@@ -80,27 +80,27 @@ export default async function TodayPage() {
               </div>
             </div>
 
-            <div className="grid gap-3">
-              <div className="rounded-lg border border-amber-200 bg-amber-50 p-5">
-                <p className="text-xs font-black uppercase tracking-[0.14em] text-amber-700">
+            <div className="grid grid-cols-[0.78fr_1.22fr] gap-2 md:grid-cols-1 md:gap-3">
+              <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 md:p-5">
+                <p className="text-[0.6rem] font-black uppercase tracking-[0.12em] text-amber-700 md:text-xs md:tracking-[0.14em]">
                   Cuenta regresiva
                 </p>
-                <p className="mt-3 text-6xl font-black leading-none text-slate-950">{daysLeft}</p>
-                <p className="mt-2 text-sm font-bold text-slate-600">
+                <p className="mt-1 text-4xl font-black leading-none text-slate-950 md:mt-3 md:text-6xl">{daysLeft}</p>
+                <p className="mt-1 text-[0.68rem] font-bold leading-tight text-slate-600 md:mt-2 md:text-sm">
                   días para que ruede la pelota
                 </p>
               </div>
 
-              <div className="rounded-lg border border-sky-200 bg-sky-50 p-5">
-                <p className="text-xs font-black uppercase tracking-[0.14em] text-sky-700">
+              <div className="rounded-lg border border-sky-200 bg-sky-50 p-3 md:p-5">
+                <p className="text-[0.6rem] font-black uppercase tracking-[0.12em] text-sky-700 md:text-xs md:tracking-[0.14em]">
                   Próximo pitazo
                 </p>
-                <p className="mt-3 text-xl font-black leading-tight text-slate-950">
+                <p className="mt-1 text-sm font-black leading-tight text-slate-950 md:mt-3 md:text-xl">
                   {nextFeaturedMatch
                     ? `${nextFeaturedMatch.homeTeam.flagEmoji} ${nextFeaturedMatch.homeTeam.name} vs ${nextFeaturedMatch.awayTeam.flagEmoji} ${nextFeaturedMatch.awayTeam.name}`
                     : dict.today.emptyTitle}
                 </p>
-                <p className="mt-2 text-sm font-bold text-slate-600">
+                <p className="mt-1 text-[0.68rem] font-bold leading-tight text-slate-600 md:mt-2 md:text-sm">
                   {nextFeaturedMatch ? nextFeaturedMatch.kickoffLabel : dict.today.emptyText}
                 </p>
               </div>
