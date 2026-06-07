@@ -108,6 +108,31 @@ export default async function TodayPage() {
           </div>
         </section>
 
+        <section className="mt-5 overflow-hidden rounded-2xl border border-sky-300/30 bg-slate-950 p-5 text-white shadow-lg shadow-slate-300/40 md:p-6">
+          <div className="flex flex-col gap-5 md:flex-row md:items-stretch md:justify-between">
+            <div className="flex-1">
+              <p className="inline-flex rounded-full border border-sky-300/20 bg-sky-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-sky-100">
+                Oráculo Mundialista
+              </p>
+              <h2 className="mt-4 max-w-3xl text-3xl font-black leading-none text-white md:text-4xl">
+                EL ORÁCULO YA PUSO SU RAYA
+              </h2>
+              <p className="mt-3 max-w-3xl text-base font-semibold leading-7 text-slate-200 md:text-lg">
+                No es solo una polla. Aquí también juega el Oráculo: pronostica, se equivoca,
+                acierta y queda expuesto en la tribuna.
+              </p>
+            </div>
+            <a
+              href="https://chatgpt.com/g/g-6a259750fefc8191af804deb256e9616-paulgpt"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex min-h-16 w-full items-center justify-center rounded-lg border border-white/20 bg-white px-6 py-4 text-base font-black text-slate-950 shadow-sm transition hover:bg-sky-50 md:min-h-full md:w-auto md:min-w-56 md:text-lg"
+            >
+              RETAR AL ORÁCULO →
+            </a>
+          </div>
+        </section>
+
         <section id="tribuna" className="mt-5 grid gap-3 md:grid-cols-3">
           <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
             <p className="text-2xl">🔥</p>
@@ -170,31 +195,6 @@ export default async function TodayPage() {
           <p className="mt-4 text-xs font-semibold text-slate-500">
             Actividad demostrativa para mostrar la experiencia social. La tribuna real se alimentará con pronósticos enviados por los participantes.
           </p>
-        </section>
-
-        <section className="mt-5 overflow-hidden rounded-2xl border border-sky-300/30 bg-slate-950 p-5 text-white shadow-lg shadow-slate-300/40 md:p-6">
-          <div className="flex flex-col gap-5 md:flex-row md:items-stretch md:justify-between">
-            <div className="flex-1">
-              <p className="inline-flex rounded-full border border-sky-300/20 bg-sky-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-sky-100">
-                Oráculo Mundialista
-              </p>
-              <h2 className="mt-4 max-w-3xl text-3xl font-black leading-none text-white md:text-4xl">
-                EL ORÁCULO YA PUSO SU RAYA
-              </h2>
-              <p className="mt-3 max-w-3xl text-base font-semibold leading-7 text-slate-200 md:text-lg">
-                No es solo una polla. Aquí también juega el Oráculo: pronostica, se equivoca,
-                acierta y queda expuesto en la tribuna.
-              </p>
-            </div>
-            <a
-              href="https://chatgpt.com/g/g-6a259750fefc8191af804deb256e9616-paulgpt"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex min-h-16 w-full items-center justify-center rounded-lg border border-white/20 bg-white px-6 py-4 text-base font-black text-slate-950 shadow-sm transition hover:bg-sky-50 md:min-h-full md:w-auto md:min-w-56 md:text-lg"
-            >
-              RETAR AL ORÁCULO →
-            </a>
-          </div>
         </section>
 
         <section className="mt-5 grid gap-3 md:grid-cols-[1.15fr_0.85fr]">
