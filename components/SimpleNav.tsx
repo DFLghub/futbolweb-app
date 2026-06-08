@@ -15,6 +15,7 @@ export default function SimpleNav({ compact = false }: SimpleNavProps) {
     { href: "/", label: dict.nav.today },
     { href: "/upcoming", label: dict.nav.upcoming },
     { href: "/ranking", label: dict.nav.ranking },
+    { href: "/group-standings", label: dict.nav.groupStandings },
     { href: "/standings", label: dict.nav.groups },
     { href: "/rules", label: dict.nav.rules },
   ];

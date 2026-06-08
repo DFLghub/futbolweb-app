@@ -30,6 +30,7 @@ const es = {
     today: "Hoy",
     upcoming: "Próximos",
     ranking: "Ranking",
+    groupStandings: "Posiciones",
     groups: "Grupos",
     rules: "Cómo funciona",
   },
@@ -107,6 +108,24 @@ const es = {
       goalsAgainst: "GC",
       goalDifference: "DG",
       points: "Pts",
+    },
+  },
+  groupStandings: {
+    eyebrow: "Grupos de pronósticos",
+    title: "Posiciones por grupo",
+    description: "Tabla por código de grupo de FutbolWeb, calculada desde pronósticos puntuados sin cambiar las reglas de puntuación.",
+    selectorLabel: "Ver código de grupo",
+    emptyTitle: "Todavía no hay pronósticos puntuados para este grupo.",
+    emptyText: "Cuando haya pronósticos aceptados y puntuados, los alias del grupo aparecerán aquí.",
+    table: {
+      headers: {
+        rank: "Pos.",
+        alias: "Alias",
+        groupCode: "Grupo",
+        points: "Puntos",
+        predictions: "Pronósticos",
+        latestCalculatedAt: "Último cálculo",
+      },
     },
   },
   ranking: {

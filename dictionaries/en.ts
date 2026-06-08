@@ -30,6 +30,7 @@ const en = {
     today: "Today",
     upcoming: "Upcoming",
     ranking: "Ranking",
+    groupStandings: "Standings",
     groups: "Groups",
     rules: "How it works",
   },
@@ -107,6 +108,24 @@ const en = {
       goalsAgainst: "GA",
       goalDifference: "GD",
       points: "Pts",
+    },
+  },
+  groupStandings: {
+    eyebrow: "Prediction groups",
+    title: "Group Standings",
+    description: "Standings by FutbolWeb group code, calculated from scored predictions without changing the scoring rules.",
+    selectorLabel: "View group code",
+    emptyTitle: "There are no scored predictions for this group yet.",
+    emptyText: "When accepted predictions are scored, aliases in this group will appear here.",
+    table: {
+      headers: {
+        rank: "Rank",
+        alias: "Alias",
+        groupCode: "Group",
+        points: "Points",
+        predictions: "Predictions",
+        latestCalculatedAt: "Latest score",
+      },
     },
   },
   ranking: {
