@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useI18n } from "@/components/I18nProvider";
 import { formatMessage } from "@/lib/i18n";
 import { normalizeGroupCode } from "@/lib/group-code";
+import { predictionNationalTeams } from "@/lib/prediction-national-teams";
 
 type SavedPrediction = {
   id: string;
@@ -29,6 +30,7 @@ type PredictDemoFormProps = {
 const emptyForm = {
   alias: "",
   whatsappPhone: "",
+  supportedTeam: "",
   favoriteTeam: "",
   scoreA: "",
   scoreB: "",
@@ -40,7 +42,7 @@ const participantIdentityStorageKey = "futbolweb.participantIdentity.v1";
 
 type FormState = typeof emptyForm;
 
-type ParticipantIdentity = Pick<FormState, "alias" | "whatsappPhone" | "favoriteTeam" | "groupCode">;
+type ParticipantIdentity = Pick<FormState, "alias" | "whatsappPhone" | "supportedTeam" | "favoriteTeam" | "groupCode">;
 
 function createClientSubmissionId() {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -67,6 +69,7 @@ function readStoredParticipantIdentity(): ParticipantIdentity | null {
     return {
       alias: clampText(parsedValue.alias, 40),
       whatsappPhone: clampText(parsedValue.whatsappPhone, 20),
+      supportedTeam: clampText(parsedValue.supportedTeam, 60),
       favoriteTeam: clampText(parsedValue.favoriteTeam, 60),
       groupCode: clampText(parsedValue.groupCode, 80),
     };
@@ -126,6 +129,7 @@ export default function PredictDemoForm({
         ...current,
         alias: storedIdentity.alias,
         whatsappPhone: storedIdentity.whatsappPhone,
+        supportedTeam: storedIdentity.supportedTeam,
         favoriteTeam: storedIdentity.favoriteTeam,
         groupCode: initialGroupCode
           ? normalizedInitialGroupCode
@@ -149,6 +153,7 @@ export default function PredictDemoForm({
       ...current,
       alias: "",
       whatsappPhone: "",
+      supportedTeam: "",
       favoriteTeam: "",
       groupCode: initialGroupCode ? normalizedInitialGroupCode : "",
     }));
@@ -200,6 +205,7 @@ export default function PredictDemoForm({
       setHasStoredIdentity(writeStoredParticipantIdentity({
         alias: form.alias,
         whatsappPhone: form.whatsappPhone,
+        supportedTeam: form.supportedTeam,
         favoriteTeam: form.favoriteTeam,
         groupCode: form.groupCode,
       }));
@@ -275,18 +281,52 @@ export default function PredictDemoForm({
         </div>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-3">
-            <label className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500" htmlFor="favoriteTeam">
-              {formDict.favoriteTeam}
-            </label>
-            <input
-              className="mt-2 min-h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-              id="favoriteTeam"
-              maxLength={60}
-              name="favoriteTeam"
-              onChange={(event) => updateField("favoriteTeam", event.target.value)}
-              value={form.favoriteTeam}
-            />
+          <div className="grid gap-4">
+            <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-3">
+              <label className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500" htmlFor="supportedTeam">
+                {formDict.supportedTeam}
+              </label>
+              <select
+                className="mt-2 min-h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                id="supportedTeam"
+                name="supportedTeam"
+                onChange={(event) => updateField("supportedTeam", event.target.value)}
+                value={form.supportedTeam}
+              >
+                <option value="">{formDict.teamPlaceholder}</option>
+                {predictionNationalTeams.map((teamName) => (
+                  <option key={teamName} value={teamName}>
+                    {teamName}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-2 text-xs font-semibold text-slate-600">
+                {formDict.supportedTeamHelp}
+              </p>
+            </div>
+
+            <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-3">
+              <label className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500" htmlFor="favoriteTeam">
+                {formDict.favoriteTeam}
+              </label>
+              <select
+                className="mt-2 min-h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+                id="favoriteTeam"
+                name="favoriteTeam"
+                onChange={(event) => updateField("favoriteTeam", event.target.value)}
+                value={form.favoriteTeam}
+              >
+                <option value="">{formDict.teamPlaceholder}</option>
+                {predictionNationalTeams.map((teamName) => (
+                  <option key={teamName} value={teamName}>
+                    {teamName}
+                  </option>
+                ))}
+              </select>
+              <p className="mt-2 text-xs font-semibold text-slate-600">
+                {formDict.favoriteTeamHelp}
+              </p>
+            </div>
           </div>
 
           <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-3">
