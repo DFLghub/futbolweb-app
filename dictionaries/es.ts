@@ -211,7 +211,7 @@ const es = {
       supportedTeamHelp: "La selección que apoyas.",
       favoriteTeam: "Tu Equipo Favorito",
       favoriteTeamHelp: "La selección que ves como favorita o que más te gusta.",
-      teamPlaceholder: "Selecciona una selección",
+      teamPlaceholder: "Elige tu Selección",
       whatsappPhone: "Teléfono de WhatsApp",
       whatsappPhoneHelp: "Usa formato internacional, por ejemplo +573001234567.",
       whatsappPhoneFormat: "Ingresa el número en formato internacional, por ejemplo +573001234567.",
