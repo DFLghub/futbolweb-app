@@ -10,6 +10,10 @@ type PredictionScoreRow = {
   calculated_at: string;
 };
 
+type PredictionIntakeGroupRow = {
+  group_code: string | null;
+};
+
 export type PredictionGroupStanding = {
   rank: number;
   alias: string;
@@ -38,20 +42,20 @@ export const getPredictionStandingGroupCodes = unstable_cache(
   async (): Promise<string[]> => {
     try {
       const supabase = createSupabaseServerClient();
-      const { data, error } = await supabase.from("prediction_scores").select("group_code");
+      const { data, error } = await supabase.from("prediction_intake").select("group_code");
 
       if (error || !data) return [];
 
       return Array.from(
         new Set(
-          data.map((row) => normalizeStandingGroupCode(row.group_code)),
+          (data as PredictionIntakeGroupRow[]).map((row) => normalizeStandingGroupCode(row.group_code)),
         ),
       ).sort(sortGroupCodes);
     } catch {
       return [];
     }
   },
-  ["prediction-standing-group-codes"],
+  ["prediction-intake-standing-group-codes"],
   { revalidate: 60 },
 );
 

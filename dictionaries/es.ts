@@ -115,7 +115,7 @@ const es = {
     title: "Posiciones por grupo",
     description: "Tabla por código de grupo de FutbolWeb, calculada desde pronósticos puntuados sin cambiar las reglas de puntuación.",
     selectorLabel: "Ver código de grupo",
-    emptyTitle: "Todavía no hay pronósticos puntuados para este grupo.",
+    emptyTitle: "Este grupo todavía no tiene pronósticos puntuados.",
     emptyText: "Cuando haya pronósticos aceptados y puntuados, los alias del grupo aparecerán aquí.",
     table: {
       headers: {
