@@ -21,6 +21,7 @@ const predictionSelect =
 type SavedPrediction = {
   id: string;
   match_slug: string;
+  whatsapp_phone?: string | null;
   group_code: string | null;
 };
 
@@ -192,6 +193,33 @@ function optionalWhatsAppPhone(payload: PredictionPayload, dict: Dictionary) {
   return normalizedPhone;
 }
 
+function requiredWhatsAppPhone(payload: PredictionPayload, dict: Dictionary) {
+  const normalizedPhone = optionalWhatsAppPhone(payload, dict);
+
+  if (!normalizedPhone) {
+    throw new Error(formatMessage(dict.api.required, { label: dict.api.whatsappPhone }));
+  }
+
+  return normalizedPhone;
+}
+
+async function findExistingPredictionIdentity(
+  supabase: ReturnType<typeof createSupabaseServerClient>,
+  prediction: {
+    whatsapp_phone: string;
+    match_slug: string;
+    group_code: string;
+  },
+) {
+  return supabase
+    .from("prediction_intake")
+    .select(predictionSelect)
+    .eq("whatsapp_phone", prediction.whatsapp_phone)
+    .eq("match_slug", prediction.match_slug)
+    .eq("group_code", prediction.group_code)
+    .maybeSingle();
+}
+
 function requiredScore(
   payload: PredictionPayload,
   key: "score_a" | "score_b",
@@ -221,7 +249,7 @@ function parsePredictionPayload(payload: unknown, dict: Dictionary) {
   return {
     match_slug: requiredText(predictionPayload, "match_slug", dict.api.matchRequired, 120, dict),
     alias: requiredText(predictionPayload, "alias", dict.api.aliasRequired, 40, dict),
-    whatsapp_phone: optionalWhatsAppPhone(predictionPayload, dict),
+    whatsapp_phone: requiredWhatsAppPhone(predictionPayload, dict),
     favorite_team: optionalText(
       predictionPayload,
       "favorite_team",
@@ -310,6 +338,22 @@ export async function POST(request: Request) {
       }
     }
 
+    const { data: existingPredictionIdentity, error: existingPredictionIdentityError } =
+      await findExistingPredictionIdentity(supabase, prediction);
+
+    if (existingPredictionIdentityError) {
+      logSupabaseError(existingPredictionIdentityError);
+
+      return friendlyError(
+        dict.api.saveError,
+        500,
+      );
+    }
+
+    if (existingPredictionIdentity) {
+      return friendlyError(dict.api.duplicatePrediction, 409);
+    }
+
     const { data, error } = await supabase
       .from("prediction_intake")
       .insert({
@@ -321,6 +365,21 @@ export async function POST(request: Request) {
       .single();
 
     if (error) {
+      if (isUniqueViolation(error)) {
+        const {
+          data: existingPredictionIdentityAfterConflict,
+          error: existingPredictionIdentityAfterConflictError,
+        } = await findExistingPredictionIdentity(supabase, prediction);
+
+        if (!existingPredictionIdentityAfterConflictError && existingPredictionIdentityAfterConflict) {
+          return friendlyError(dict.api.duplicatePrediction, 409);
+        }
+
+        if (existingPredictionIdentityAfterConflictError) {
+          logSupabaseError(existingPredictionIdentityAfterConflictError);
+        }
+      }
+
       if (prediction.client_submission_id && isUniqueViolation(error)) {
         const { data: existingPrediction, error: existingPredictionError } = await supabase
           .from("prediction_intake")

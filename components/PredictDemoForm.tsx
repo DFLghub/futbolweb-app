@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useI18n } from "@/components/I18nProvider";
 import { formatMessage } from "@/lib/i18n";
 import { normalizeGroupCode } from "@/lib/group-code";
@@ -40,7 +40,7 @@ const participantIdentityStorageKey = "futbolweb.participantIdentity.v1";
 
 type FormState = typeof emptyForm;
 
-type ParticipantIdentity = Pick<FormState, "alias" | "favoriteTeam" | "groupCode">;
+type ParticipantIdentity = Pick<FormState, "alias" | "whatsappPhone" | "favoriteTeam" | "groupCode">;
 
 function createClientSubmissionId() {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -66,6 +66,7 @@ function readStoredParticipantIdentity(): ParticipantIdentity | null {
 
     return {
       alias: clampText(parsedValue.alias, 40),
+      whatsappPhone: clampText(parsedValue.whatsappPhone, 20),
       favoriteTeam: clampText(parsedValue.favoriteTeam, 60),
       groupCode: clampText(parsedValue.groupCode, 80),
     };
@@ -110,7 +111,7 @@ export default function PredictDemoForm({
   const [copyMessage, setCopyMessage] = useState("");
   const [hasStoredIdentity, setHasStoredIdentity] = useState(false);
   const [savedPrediction, setSavedPrediction] = useState<SavedPrediction | null>(null);
-  const clientSubmissionId = useMemo(() => createClientSubmissionId(), []);
+  const [clientSubmissionId, setClientSubmissionId] = useState(() => createClientSubmissionId());
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -124,6 +125,7 @@ export default function PredictDemoForm({
       setForm((current) => ({
         ...current,
         alias: storedIdentity.alias,
+        whatsappPhone: storedIdentity.whatsappPhone,
         favoriteTeam: storedIdentity.favoriteTeam,
         groupCode: initialGroupCode
           ? normalizedInitialGroupCode
@@ -146,6 +148,7 @@ export default function PredictDemoForm({
     setForm((current) => ({
       ...current,
       alias: "",
+      whatsappPhone: "",
       favoriteTeam: "",
       groupCode: initialGroupCode ? normalizedInitialGroupCode : "",
     }));
@@ -193,8 +196,10 @@ export default function PredictDemoForm({
       }
 
       setSavedPrediction(result.prediction);
+      setClientSubmissionId(createClientSubmissionId());
       setHasStoredIdentity(writeStoredParticipantIdentity({
         alias: form.alias,
+        whatsappPhone: form.whatsappPhone,
         favoriteTeam: form.favoriteTeam,
         groupCode: form.groupCode,
       }));
@@ -269,18 +274,51 @@ export default function PredictDemoForm({
           />
         </div>
 
-        <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-3">
-          <label className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500" htmlFor="favoriteTeam">
-            {formDict.favoriteTeam}
-          </label>
-          <input
-            className="mt-2 min-h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-            id="favoriteTeam"
-            maxLength={60}
-            name="favoriteTeam"
-            onChange={(event) => updateField("favoriteTeam", event.target.value)}
-            value={form.favoriteTeam}
-          />
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-3">
+            <label className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500" htmlFor="favoriteTeam">
+              {formDict.favoriteTeam}
+            </label>
+            <input
+              className="mt-2 min-h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+              id="favoriteTeam"
+              maxLength={60}
+              name="favoriteTeam"
+              onChange={(event) => updateField("favoriteTeam", event.target.value)}
+              value={form.favoriteTeam}
+            />
+          </div>
+
+          <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-3">
+            <label className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500" htmlFor="groupCode">
+              {formDict.groupCode}
+            </label>
+            <input
+              className="mt-2 min-h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+              id="groupCode"
+              maxLength={80}
+              name="groupCode"
+              onChange={(event) => updateField("groupCode", event.target.value)}
+              value={form.groupCode}
+            />
+            {initialGroupCode ? (
+              <p className="mt-2 text-xs font-semibold text-emerald-700">
+                {formDict.invitedHelp}
+              </p>
+            ) : null}
+            <p className="mt-2 text-xs font-semibold text-slate-600">
+              {formDict.groupFriendsHelp}
+            </p>
+            <p className="mt-2 text-xs font-semibold text-slate-600">
+              {formDict.solistaHelp}
+            </p>
+            <p className="mt-2 text-xs font-semibold text-slate-600">
+              {formDict.groupParticipationHelp}
+            </p>
+            <p className="mt-2 text-xs font-black text-slate-700">
+              {formDict.groupRule}
+            </p>
+          </div>
         </div>
 
         <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-3">
@@ -296,6 +334,7 @@ export default function PredictDemoForm({
             onChange={(event) => updateField("whatsappPhone", event.target.value)}
             pattern="^\+[1-9][0-9]{6,14}$"
             placeholder="+573001234567"
+            required
             title={formDict.whatsappPhoneFormat}
             type="tel"
             value={form.whatsappPhone}
@@ -369,29 +408,6 @@ export default function PredictDemoForm({
             onChange={(event) => updateField("comment", event.target.value)}
             value={form.comment}
           />
-        </div>
-
-        <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-3">
-          <label className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500" htmlFor="groupCode">
-            {formDict.groupCode}
-          </label>
-          <input
-            className="mt-2 min-h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
-            id="groupCode"
-            maxLength={80}
-            name="groupCode"
-            onChange={(event) => updateField("groupCode", event.target.value)}
-            value={form.groupCode}
-          />
-          {initialGroupCode ? (
-            <p className="mt-2 text-xs font-semibold text-emerald-700">
-              {formDict.invitedHelp}
-            </p>
-          ) : (
-            <p className="mt-2 text-xs font-semibold text-slate-600">
-              {formDict.solistaHelp}
-            </p>
-          )}
         </div>
 
         {errorMessage ? (
