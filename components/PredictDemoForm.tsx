@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useI18n } from "@/components/I18nProvider";
 import { formatMessage } from "@/lib/i18n";
 import { normalizeGroupCode } from "@/lib/group-code";
-import { predictionNationalTeams } from "@/lib/prediction-national-teams";
+import { predictionNationalTeamOptions } from "@/lib/prediction-national-teams";
 
 type SavedPrediction = {
   id: string;
@@ -102,7 +102,7 @@ export default function PredictDemoForm({
   awayTeamName,
   initialGroupCode = "",
 }: PredictDemoFormProps) {
-  const { dict } = useI18n();
+  const { dict, locale } = useI18n();
   const formDict = dict.predict.form;
   const normalizedInitialGroupCode = normalizeGroupCode(initialGroupCode);
   const [form, setForm] = useState({
@@ -294,9 +294,9 @@ export default function PredictDemoForm({
                 value={form.supportedTeam}
               >
                 <option value="">{formDict.teamPlaceholder}</option>
-                {predictionNationalTeams.map((teamName) => (
-                  <option key={teamName} value={teamName}>
-                    {teamName}
+                {predictionNationalTeamOptions.map((team) => (
+                  <option key={team.value} value={team.value}>
+                    {team.labels[locale]}
                   </option>
                 ))}
               </select>
@@ -317,9 +317,9 @@ export default function PredictDemoForm({
                 value={form.favoriteTeam}
               >
                 <option value="">{formDict.teamPlaceholder}</option>
-                {predictionNationalTeams.map((teamName) => (
-                  <option key={teamName} value={teamName}>
-                    {teamName}
+                {predictionNationalTeamOptions.map((team) => (
+                  <option key={team.value} value={team.value}>
+                    {team.labels[locale]}
                   </option>
                 ))}
               </select>

@@ -54,17 +54,16 @@ export default async function TodayPage() {
           <div className="grid gap-6 p-6 md:grid-cols-[1.25fr_0.75fr] md:p-8">
             <div>
               <p className="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-emerald-700">
-                Modo Mundial activo
+                {dict.today.heroBadge}
               </p>
 
               <h1 className="mt-5 max-w-3xl text-4xl font-black leading-[0.95] tracking-tight text-slate-950 md:text-6xl">
-                La tribuna ya empezó.
-                <span className="block text-emerald-700">Ponga su raya.</span>
+                {dict.today.heroTitle}
+                <span className="block text-emerald-700">{dict.today.heroTitleAccent}</span>
               </h1>
 
               <p className="mt-5 max-w-2xl text-base font-bold leading-7 text-slate-700 md:text-lg">
-                Pronostica, compite con tu gente y vive cada partido como si estuvieras en la gradería.
-                Aquí no hay apuestas: hay orgullo, pulso y Mundial.
+                {dict.today.heroText}
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3">
@@ -72,13 +71,13 @@ export default async function TodayPage() {
                   href="#partidos"
                   className="rounded-md bg-emerald-600 px-5 py-3 text-sm font-black text-white shadow-sm transition hover:bg-emerald-700"
                 >
-                  Ver próximos partidos
+                  {dict.today.heroMatchesCta}
                 </a>
                 <a
                   href="#tribuna"
                   className="rounded-md border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-800 shadow-sm transition hover:bg-slate-50"
                 >
-                  Entrar a la tribuna
+                  {dict.today.heroStandCta}
                 </a>
               </div>
             </div>
@@ -86,17 +85,17 @@ export default async function TodayPage() {
             <div className="grid grid-cols-[0.78fr_1.22fr] gap-2 md:grid-cols-1 md:gap-3">
               <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 md:p-5">
                 <p className="text-[0.6rem] font-black uppercase tracking-[0.12em] text-amber-700 md:text-xs md:tracking-[0.14em]">
-                  Cuenta regresiva
+                  {dict.today.countdownLabel}
                 </p>
                 <p className="mt-1 text-4xl font-black leading-none text-slate-950 md:mt-3 md:text-6xl">{daysLeft}</p>
                 <p className="mt-1 text-[0.68rem] font-bold leading-tight text-slate-600 md:mt-2 md:text-sm">
-                  días para que ruede la pelota
+                  {dict.today.countdownText}
                 </p>
               </div>
 
               <div className="rounded-lg border border-sky-200 bg-sky-50 p-3 md:p-5">
                 <p className="text-[0.6rem] font-black uppercase tracking-[0.12em] text-sky-700 md:text-xs md:tracking-[0.14em]">
-                  Próximo pitazo
+                  {dict.today.nextKickoffCardLabel}
                 </p>
                 <p className="mt-1 text-sm font-black leading-tight text-slate-950 md:mt-3 md:text-xl">
                   {nextFeaturedMatch
@@ -115,14 +114,13 @@ export default async function TodayPage() {
           <div className="flex flex-col gap-5 md:flex-row md:items-stretch md:justify-between">
             <div className="flex-1">
               <p className="inline-flex rounded-full border border-sky-300/20 bg-sky-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-sky-100">
-                Oráculo Mundialista
+                {dict.today.oracleEyebrow}
               </p>
               <h2 className="mt-4 max-w-3xl text-3xl font-black leading-none text-white md:text-4xl">
-                EL ORÁCULO YA PUSO SU RAYA
+                {dict.today.oracleTitle}
               </h2>
               <p className="mt-3 max-w-3xl text-base font-semibold leading-7 text-slate-200 md:text-lg">
-                No es solo una polla. Aquí también juega el Oráculo: pronostica, se equivoca,
-                acierta y queda expuesto en la tribuna.
+                {dict.today.oracleText}
               </p>
             </div>
             <a
@@ -131,38 +129,26 @@ export default async function TodayPage() {
               rel="noopener noreferrer"
               className="inline-flex min-h-16 w-full items-center justify-center rounded-lg border border-white/20 bg-white px-6 py-4 text-base font-black text-slate-950 shadow-sm transition hover:bg-sky-50 md:min-h-full md:w-auto md:min-w-56 md:text-lg"
             >
-              RETAR AL ORÁCULO →
+              {dict.today.oracleCta}
             </a>
           </div>
         </section>
 
         <section id="tribuna" className="mt-5 hidden gap-3 md:grid md:grid-cols-3">
-          <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <p className="text-2xl">🔥</p>
-            <p className="mt-2 text-sm font-black text-slate-950">Tribuna Viva</p>
-            <p className="mt-1 text-xs leading-5 text-slate-600">
-              Cada pronóstico cuenta. Cada acierto sube la temperatura.
-            </p>
-          </div>
-          <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <p className="text-2xl">⚽</p>
-            <p className="mt-2 text-sm font-black text-slate-950">Modo Mundial</p>
-            <p className="mt-1 text-xs leading-5 text-slate-600">
-              Partidos, banderas, tensión y orgullo de grupo.
-            </p>
-          </div>
-          <div className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-            <p className="text-2xl">🏆</p>
-            <p className="mt-2 text-sm font-black text-slate-950">Sin apuestas</p>
-            <p className="mt-1 text-xs leading-5 text-slate-600">
-              Competencia social. Cero gambling. Puro pulso futbolero.
-            </p>
-          </div>
+          {dict.today.standCards.map(([icon, title, text]) => (
+            <div key={title} className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+              <p className="text-2xl">{icon}</p>
+              <p className="mt-2 text-sm font-black text-slate-950">{title}</p>
+              <p className="mt-1 text-xs leading-5 text-slate-600">
+                {text}
+              </p>
+            </div>
+          ))}
         </section>
 
         <section className="mt-5 hidden rounded-lg border border-emerald-200 bg-emerald-50 p-4 md:block">
           <p className="text-xs font-black uppercase text-emerald-700">
-            {hasTodayMatches ? dict.today.livePanelLabel : "Partidos en cartelera"}
+            {hasTodayMatches ? dict.today.livePanelLabel : dict.today.lineupLabel}
           </p>
           <p className="mt-2 text-2xl font-black leading-none text-slate-950">
             {hasTodayMatches
@@ -170,7 +156,7 @@ export default async function TodayPage() {
               : dict.today.featuredCount.replace("{count}", String(visibleMatches.length))}
           </p>
           <p className="mt-2 text-xs leading-5 text-slate-600">
-            {hasTodayMatches ? dict.today.livePanelText : "La jornada se está armando. Empieza a mirar, escoger y calentar la tribuna."}
+            {hasTodayMatches ? dict.today.livePanelText : dict.today.lineupText}
           </p>
         </section>
 
@@ -179,10 +165,10 @@ export default async function TodayPage() {
             <div className="mb-3 flex items-end justify-between gap-3">
               <div>
                 <h2 className="text-xl font-black text-slate-950">
-                  {hasTodayMatches ? dict.today.liveSectionTitle : "Próximos partidos"}
+                  {hasTodayMatches ? dict.today.liveSectionTitle : dict.today.upcomingTitle}
                 </h2>
                 <p className="mt-1 text-sm font-semibold text-slate-600">
-                  {hasTodayMatches ? dict.today.liveSectionText : "Estos son los próximos partidos destacados. Para ver más partidos cargados, entra a Próximos."}
+                  {hasTodayMatches ? dict.today.liveSectionText : dict.today.upcomingText}
                 </p>
               </div>
             </div>
@@ -195,7 +181,7 @@ export default async function TodayPage() {
                   className="inline-flex min-h-11 items-center justify-center rounded-md border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-800 shadow-sm transition hover:bg-slate-50"
                   href="/upcoming"
                 >
-                  Ver todos los partidos
+                  {dict.today.viewAllMatches}
                 </Link>
               ) : null}
             </div>
@@ -213,12 +199,12 @@ export default async function TodayPage() {
         )}
 
         <section className="mt-5 rounded-lg border border-amber-200 bg-amber-50 p-4">
-          <p className="text-xs font-black uppercase text-amber-700">Grito de guerra</p>
+          <p className="text-xs font-black uppercase text-amber-700">{dict.today.chantLabel}</p>
           <p className="mt-2 text-lg font-black leading-tight text-slate-950">
-            El Mundial no se mira en silencio.
+            {dict.today.chantTitle}
           </p>
           <p className="mt-2 text-xs font-semibold text-slate-600">
-            Se pronostica, se discute, se celebra y se sufre con la tribu.
+            {dict.today.chantText}
           </p>
         </section>
 
@@ -226,29 +212,25 @@ export default async function TodayPage() {
           <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.18em] text-red-700">
-                🔥 La tribuna se calienta
+                {dict.today.socialProofEyebrow}
               </p>
               <h2 className="mt-2 text-2xl font-black text-slate-950 md:text-3xl">
-                Primeros gritos antes del pitazo inicial
+                {dict.today.socialProofTitle}
               </h2>
               <p className="mt-2 max-w-2xl text-sm font-semibold leading-6 text-slate-600">
-                Esto arranca como conversación social: pronósticos, orgullo de grupo y boconeo sano.
+                {dict.today.socialProofText}
               </p>
             </div>
             <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-center">
               <p className="text-3xl font-black text-slate-950">143</p>
               <p className="text-xs font-black uppercase tracking-[0.14em] text-emerald-700">
-                pronósticos de prueba
+                {dict.today.demoPredictionsLabel}
               </p>
             </div>
           </div>
 
           <div className="mt-5 grid gap-3 md:grid-cols-3">
-            {[
-              ["Alejo · Tuluá", "Brasil 2-1 Marruecos", "Brasil sigue siendo Brasil."],
-              ["Nacho · New York", "México 1-0 Sudáfrica", "No me bajo del Tri."],
-              ["John Jairo · Palmira", "España 3-0 Cabo Verde", "Empieza la reconquista."],
-            ].map(([name, pick, comment]) => (
+            {dict.today.demoPredictions.map(([name, pick, comment]) => (
               <article key={name} className="rounded-lg border border-slate-200 bg-slate-50 p-4">
                 <p className="text-xs font-black uppercase tracking-[0.14em] text-sky-700">{name}</p>
                 <p className="mt-3 text-lg font-black text-slate-950">{pick}</p>
@@ -258,7 +240,7 @@ export default async function TodayPage() {
           </div>
 
           <p className="mt-4 text-xs font-semibold text-slate-500">
-            Actividad demostrativa para mostrar la experiencia social. La tribuna real se alimentará con pronósticos enviados por los participantes.
+            {dict.today.socialProofFooter}
           </p>
         </section>
       </div>

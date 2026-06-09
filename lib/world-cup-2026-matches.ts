@@ -3,6 +3,10 @@ import type { FootballMatch } from "./football-utils";
 import type { GroupStanding } from "./mock-group-standings";
 
 const SOURCE_LABEL = "FIFA official match schedule";
+const LOCALIZED_SOURCE_LABELS: Record<Locale, string> = {
+  es: "Calendario oficial FIFA",
+  en: SOURCE_LABEL,
+};
 const SOURCE_CHECKED_AT = "2026-06-09";
 
 export type WorldCupStage = "Fase de grupos" | "Dieciseisavos de final" | "Octavos de final" | "Cuartos de final" | "Semifinal" | "Tercer puesto" | "Final";
@@ -25,7 +29,7 @@ export type WorldCupMatch = FootballMatch & {
   country: string;
   kickoffLabel: string;
   kickoffET: string;
-  sourceLabel: typeof SOURCE_LABEL;
+  sourceLabel: string;
   sourceCheckedAt: typeof SOURCE_CHECKED_AT;
 };
 
@@ -3739,6 +3743,50 @@ const localizedCountries: Record<string, Record<Locale, string>> = {
   "México": { es: "México", en: "Mexico" },
 };
 
+const weekdayLabels: Record<Locale, string[]> = {
+  es: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
+  en: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+};
+
+const monthLabels: Record<Locale, string[]> = {
+  es: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+  en: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+};
+
+function formatEasternKickoffLabel(kickoffUtc: string, locale: Locale) {
+  const kickoffDate = new Date(kickoffUtc);
+  const easternParts = new Intl.DateTimeFormat("en-US", {
+    day: "numeric",
+    hour: "numeric",
+    hour12: true,
+    minute: "2-digit",
+    month: "numeric",
+    timeZone: "America/New_York",
+    weekday: "short",
+    year: "numeric",
+  }).formatToParts(kickoffDate);
+  const parts = Object.fromEntries(
+    easternParts.map((part) => [part.type, part.value]),
+  );
+  const dateForWeekday = new Date(Date.UTC(
+    Number(parts.year),
+    Number(parts.month) - 1,
+    Number(parts.day),
+  ));
+  const weekday = weekdayLabels[locale][dateForWeekday.getUTCDay()];
+  const month = monthLabels[locale][Number(parts.month) - 1];
+  const hour = parts.hour;
+  const minute = parts.minute;
+  const dayPeriod = parts.dayPeriod ?? "";
+  const timeLabel = locale === "es"
+    ? `${hour}:${minute} ${dayPeriod === "AM" ? "a. m." : "p. m."} Hora Este`
+    : `${hour}:${minute} ${dayPeriod} ET`;
+
+  return locale === "es"
+    ? `${weekday}, ${parts.day} ${month} ${parts.year} · ${timeLabel}`
+    : `${weekday}, ${month} ${parts.day}, ${parts.year} · ${timeLabel}`;
+}
+
 function localizeGroupCode(groupCode: string, locale: Locale) {
   const groupMatch = groupCode.match(/^Grupo ([A-L])$/);
 
@@ -3800,6 +3848,8 @@ export function localizeWorldCupMatch(match: WorldCupMatch, locale: Locale): Wor
     homeTeam: { ...match.homeTeam, name: homeName },
     awayTeam: { ...match.awayTeam, name: awayName },
     country: localizedCountries[match.country]?.[locale] ?? match.country,
+    kickoffLabel: formatEasternKickoffLabel(match.kickoffUtc, locale),
+    sourceLabel: LOCALIZED_SOURCE_LABELS[locale],
   };
 }
 
