@@ -1,10 +1,16 @@
 import type { MetadataRoute } from "next";
+import { cookies } from "next/headers";
+import { getDictionary, localeCookieName, normalizeLocale } from "@/lib/i18n";
 
-export default function manifest(): MetadataRoute.Manifest {
+export default async function manifest(): Promise<MetadataRoute.Manifest> {
+  const cookieStore = await cookies();
+  const locale = normalizeLocale(cookieStore.get(localeCookieName)?.value);
+  const dict = getDictionary(locale);
+
   return {
     name: "FutbolWeb",
     short_name: "FutbolWeb",
-    description: "Oraculo Futbolero para predicciones, partidos y ranking.",
+    description: dict.metadata.description,
     start_url: "/",
     scope: "/",
     display: "standalone",

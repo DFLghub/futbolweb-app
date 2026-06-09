@@ -1,6 +1,7 @@
 import Link from "next/link";
 import BrandHeader from "@/components/BrandHeader";
 import MatchCard from "@/components/MatchCard";
+import OracleAskBox from "@/components/OracleAskBox";
 import SimpleNav from "@/components/SimpleNav";
 import { getCurrentDictionary, getCurrentLocale } from "@/lib/i18n-server";
 import { localizeWorldCupMatches, worldCup2026Matches } from "@/lib/world-cup-2026-matches";
@@ -134,17 +135,7 @@ export default async function TodayPage() {
           </div>
         </section>
 
-        <section id="tribuna" className="mt-5 hidden gap-3 md:grid md:grid-cols-3">
-          {dict.today.standCards.map(([icon, title, text]) => (
-            <div key={title} className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-              <p className="text-2xl">{icon}</p>
-              <p className="mt-2 text-sm font-black text-slate-950">{title}</p>
-              <p className="mt-1 text-xs leading-5 text-slate-600">
-                {text}
-              </p>
-            </div>
-          ))}
-        </section>
+        <OracleAskBox />
 
         <section className="mt-5 hidden rounded-lg border border-emerald-200 bg-emerald-50 p-4 md:block">
           <p className="text-xs font-black uppercase text-emerald-700">
