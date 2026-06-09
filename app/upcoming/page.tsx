@@ -1,13 +1,14 @@
 import BrandHeader from "@/components/BrandHeader";
 import MatchCard from "@/components/MatchCard";
 import SimpleNav from "@/components/SimpleNav";
-import { getCurrentDictionary } from "@/lib/i18n-server";
-import { worldCup2026Matches } from "@/lib/world-cup-2026-matches";
+import { getCurrentDictionary, getCurrentLocale } from "@/lib/i18n-server";
+import { localizeWorldCupMatches, worldCup2026Matches } from "@/lib/world-cup-2026-matches";
 
 export default async function UpcomingPage() {
   const dict = await getCurrentDictionary();
+  const locale = await getCurrentLocale();
   const now = new Date();
-  const matches = [...worldCup2026Matches]
+  const matches = localizeWorldCupMatches(worldCup2026Matches, locale)
     .filter((match) => new Date(match.kickoffUtc).getTime() > now.getTime())
     .sort((left, right) => {
       return new Date(left.kickoffUtc).getTime() - new Date(right.kickoffUtc).getTime();

@@ -2,9 +2,10 @@ import BrandHeader from "@/components/BrandHeader";
 import GroupStandingsSelector from "@/components/GroupStandingsSelector";
 import SimpleNav from "@/components/SimpleNav";
 import { groupCodeToStandingGroupId } from "@/lib/group-code";
-import { getCurrentDictionary } from "@/lib/i18n-server";
+import { getCurrentDictionary, getCurrentLocale } from "@/lib/i18n-server";
 import { mockWorldCupGroupStandings } from "@/lib/mock-group-standings";
 import { getRealGroupStandings } from "@/lib/real-group-standings";
+import { localizeWorldCupGroupStandings } from "@/lib/world-cup-2026-matches";
 
 type StandingsPageProps = {
   searchParams: Promise<{
@@ -14,6 +15,7 @@ type StandingsPageProps = {
 
 export default async function StandingsPage({ searchParams }: StandingsPageProps) {
   const dict = await getCurrentDictionary();
+  const locale = await getCurrentLocale();
   const { group } = await searchParams;
   const initialGroupId = groupCodeToStandingGroupId(group);
   let standings = mockWorldCupGroupStandings;
@@ -23,6 +25,8 @@ export default async function StandingsPage({ searchParams }: StandingsPageProps
   } catch (error) {
     console.error("[standings-page] fallback to mock standings", error);
   }
+
+  standings = localizeWorldCupGroupStandings(standings, locale);
 
   return (
     <main className="min-h-screen bg-[#f3f6fb] px-5 py-6 text-slate-950 md:px-10 md:py-8">

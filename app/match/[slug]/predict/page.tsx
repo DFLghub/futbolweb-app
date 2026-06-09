@@ -6,9 +6,14 @@ import PredictDemoForm from "@/components/PredictDemoForm";
 import SimpleNav from "@/components/SimpleNav";
 import { groupCodeToStandingGroupId } from "@/lib/group-code";
 import { getTimezoneLabel } from "@/lib/football-utils";
-import { getCurrentDictionary } from "@/lib/i18n-server";
+import { getCurrentDictionary, getCurrentLocale } from "@/lib/i18n-server";
 import { mockWorldCupGroupStandings } from "@/lib/mock-group-standings";
-import { worldCup2026Matches } from "@/lib/world-cup-2026-matches";
+import {
+  localizeWorldCupGroupStandings,
+  localizeWorldCupMatch,
+  worldCup2026Matches,
+  type WorldCupMatch,
+} from "@/lib/world-cup-2026-matches";
 
 type PredictPageProps = {
   params: Promise<{
@@ -27,11 +32,9 @@ function titleCase(value: string) {
     .join(" ");
 }
 
-function formatMatchLabel(slug: string, unknownMatchLabel: string) {
-  const knownMatch = worldCup2026Matches.find((match) => match.slug === slug);
-
-  if (knownMatch) {
-    return `${knownMatch.homeTeam.name} vs ${knownMatch.awayTeam.name} (${knownMatch.kickoffET})`;
+function formatMatchLabel(slug: string, unknownMatchLabel: string, match?: WorldCupMatch) {
+  if (match) {
+    return `${match.homeTeam.name} vs ${match.awayTeam.name} (${match.kickoffET})`;
   }
 
   const normalized = slug
@@ -67,15 +70,18 @@ function formatMatchLabel(slug: string, unknownMatchLabel: string) {
 
 export default async function PredictPage({ params, searchParams }: PredictPageProps) {
   const dict = await getCurrentDictionary();
+  const locale = await getCurrentLocale();
   const { slug } = await params;
   const { group } = await searchParams;
   const initialGroupCode = group?.trim() || "";
-  const matchLabel = formatMatchLabel(slug, dict.predict.unknownMatch);
-  const knownMatch = worldCup2026Matches.find((match) => match.slug === slug);
+  const knownMatchBase = worldCup2026Matches.find((match) => match.slug === slug);
+  const knownMatch = knownMatchBase ? localizeWorldCupMatch(knownMatchBase, locale) : undefined;
+  const matchLabel = formatMatchLabel(slug, dict.predict.unknownMatch, knownMatch);
   const homeTeamName = knownMatch?.homeTeam.name || dict.predict.fallbackHome;
   const awayTeamName = knownMatch?.awayTeam.name || dict.predict.fallbackAway;
-  const relatedGroupId = groupCodeToStandingGroupId(knownMatch?.groupCode);
-  const relatedGroup = mockWorldCupGroupStandings.find((groupStanding) => {
+  const relatedGroupId = groupCodeToStandingGroupId(knownMatchBase?.groupCode);
+  const localizedStandings = localizeWorldCupGroupStandings(mockWorldCupGroupStandings, locale);
+  const relatedGroup = localizedStandings.find((groupStanding) => {
     return groupStanding.groupId === relatedGroupId;
   });
 
@@ -169,7 +175,7 @@ function MatchContextPanel({
     match: string;
     venue: string;
   };
-  match?: (typeof worldCup2026Matches)[number];
+  match?: WorldCupMatch;
   matchLabel: string;
   timezoneLabels: {
     eastern: string;

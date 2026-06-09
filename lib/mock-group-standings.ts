@@ -31,7 +31,7 @@ const canonicalWorldCup2026Groups = [
   },
   {
     groupLetter: "B",
-    teams: ["Canadá", "Suiza", "Catar", "Bosnia y Herzegovina"],
+    teams: ["Canadá", "Bosnia y Herzegovina", "Qatar", "Suiza"],
   },
   {
     groupLetter: "C",
@@ -59,7 +59,7 @@ const canonicalWorldCup2026Groups = [
   },
   {
     groupLetter: "I",
-    teams: ["Francia", "Senegal", "Noruega", "Irak"],
+    teams: ["Francia", "Senegal", "Irak", "Noruega"],
   },
   {
     groupLetter: "J",
@@ -67,7 +67,7 @@ const canonicalWorldCup2026Groups = [
   },
   {
     groupLetter: "K",
-    teams: ["Portugal", "Colombia", "Uzbekistán", "RD Congo"],
+    teams: ["Portugal", "RD Congo", "Uzbekistán", "Colombia"],
   },
   {
     groupLetter: "L",

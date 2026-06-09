@@ -2,8 +2,8 @@ import Link from "next/link";
 import BrandHeader from "@/components/BrandHeader";
 import MatchCard from "@/components/MatchCard";
 import SimpleNav from "@/components/SimpleNav";
-import { getCurrentDictionary } from "@/lib/i18n-server";
-import { worldCup2026Matches } from "@/lib/world-cup-2026-matches";
+import { getCurrentDictionary, getCurrentLocale } from "@/lib/i18n-server";
+import { localizeWorldCupMatches, worldCup2026Matches } from "@/lib/world-cup-2026-matches";
 
 function dateKeyInEasternTime(date: Date) {
   return new Intl.DateTimeFormat("en-CA", {
@@ -22,7 +22,8 @@ function daysUntilWorldCup(now: Date) {
 
 export default async function TodayPage() {
   const dict = await getCurrentDictionary();
-  const matches = [...worldCup2026Matches].sort((left, right) => {
+  const locale = await getCurrentLocale();
+  const matches = localizeWorldCupMatches(worldCup2026Matches, locale).sort((left, right) => {
     return new Date(left.kickoffUtc).getTime() - new Date(right.kickoffUtc).getTime();
   });
 
