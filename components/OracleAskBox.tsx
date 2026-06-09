@@ -3,27 +3,83 @@
 import { FormEvent, useState } from "react";
 import { useI18n } from "@/components/I18nProvider";
 
-const oracleUrl = "https://chatgpt.com/g/g-6a259750fefc8191af804deb256e9616-paulgpt";
-
-function buildOracleUrl(question: string) {
-  const trimmedQuestion = question.trim();
-
-  if (!trimmedQuestion) {
-    return oracleUrl;
-  }
-
-  const url = new URL(oracleUrl);
-  url.searchParams.set("q", trimmedQuestion);
-  return url.toString();
-}
+type OracleMessage = {
+  id: string;
+  role: "oracle" | "user";
+  text: string;
+};
 
 export default function OracleAskBox() {
-  const { dict } = useI18n();
+  const { dict, locale } = useI18n();
   const [question, setQuestion] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [messages, setMessages] = useState<OracleMessage[]>([
+    {
+      id: "welcome",
+      role: "oracle",
+      text: dict.today.oracleAskWelcome,
+    },
+  ]);
+
+  async function askOracle(nextQuestion: string) {
+    const trimmedQuestion = nextQuestion.trim();
+
+    if (!trimmedQuestion || isLoading) {
+      return;
+    }
+
+    const userMessage: OracleMessage = {
+      id: `user-${Date.now()}`,
+      role: "user",
+      text: trimmedQuestion,
+    };
+
+    setMessages((currentMessages) => [...currentMessages, userMessage]);
+    setQuestion("");
+    setIsLoading(true);
+
+    try {
+      const response = await fetch("/api/oracle", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          locale,
+          question: trimmedQuestion,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Oracle request failed.");
+      }
+
+      const payload = await response.json() as { answer?: string };
+      setMessages((currentMessages) => [
+        ...currentMessages,
+        {
+          id: `oracle-${Date.now()}`,
+          role: "oracle",
+          text: payload.answer ?? dict.today.oracleAskError,
+        },
+      ]);
+    } catch {
+      setMessages((currentMessages) => [
+        ...currentMessages,
+        {
+          id: `oracle-error-${Date.now()}`,
+          role: "oracle",
+          text: dict.today.oracleAskError,
+        },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    window.open(buildOracleUrl(question), "_blank", "noopener,noreferrer");
+    void askOracle(question);
   }
 
   return (
@@ -48,6 +104,32 @@ export default function OracleAskBox() {
         </div>
 
         <div className="grid gap-4 p-4 md:p-5">
+          <div className="grid max-h-72 gap-3 overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-3">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={message.role === "user" ? "ml-7 rounded-lg bg-slate-950 p-3 text-white" : "mr-7 rounded-lg border border-sky-200 bg-white p-3 text-slate-800"}
+              >
+                <p className={message.role === "user" ? "text-[0.68rem] font-black uppercase tracking-[0.12em] text-sky-100" : "text-[0.68rem] font-black uppercase tracking-[0.12em] text-sky-700"}>
+                  {message.role === "user" ? dict.today.oracleAskUserLabel : dict.today.oracleAskOracleLabel}
+                </p>
+                <p className="mt-1 whitespace-pre-line text-sm font-semibold leading-6">
+                  {message.text}
+                </p>
+              </div>
+            ))}
+            {isLoading ? (
+              <div className="mr-7 rounded-lg border border-sky-200 bg-white p-3 text-slate-800">
+                <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-sky-700">
+                  {dict.today.oracleAskOracleLabel}
+                </p>
+                <p className="mt-1 text-sm font-semibold leading-6">
+                  {dict.today.oracleAskThinking}
+                </p>
+              </div>
+            ) : null}
+          </div>
+
           <form
             className="grid gap-2 rounded-lg border border-sky-200 bg-sky-50 p-3 md:grid-cols-[minmax(0,1fr)_auto] md:p-4"
             onSubmit={handleSubmit}
@@ -60,11 +142,13 @@ export default function OracleAskBox() {
               className="min-h-11 rounded-md border border-sky-200 bg-white px-3 py-2 text-sm font-semibold text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
               onChange={(event) => setQuestion(event.target.value)}
               placeholder={dict.today.oracleAskPlaceholder}
+              disabled={isLoading}
               type="search"
               value={question}
             />
             <button
               className="min-h-11 rounded-md bg-slate-950 px-4 py-2 text-sm font-black text-white shadow-sm transition hover:bg-slate-800"
+              disabled={isLoading}
               type="submit"
             >
               {dict.today.oracleAskButton}
@@ -73,17 +157,24 @@ export default function OracleAskBox() {
 
           <div className="grid gap-2 sm:grid-cols-2">
             {dict.today.oracleAskSuggestions.map((suggestion) => (
-              <a
+              <button
                 key={suggestion}
-                className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-left text-xs font-bold leading-5 text-slate-700 transition hover:border-sky-300 hover:bg-sky-50 hover:text-slate-950"
-                href={buildOracleUrl(suggestion)}
-                rel="noopener noreferrer"
-                target="_blank"
+                className="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-left text-xs font-bold leading-5 text-slate-700 transition hover:border-sky-300 hover:bg-sky-50 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={isLoading}
+                onClick={() => void askOracle(suggestion)}
+                type="button"
               >
                 {suggestion}
-              </a>
+              </button>
             ))}
           </div>
+
+          <p className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold leading-5 text-slate-600">
+            {dict.today.oracleAskContactText}{" "}
+            <a className="font-black text-sky-700 hover:text-sky-900" href="mailto:jorge@deepfeelingslabs.com">
+              {dict.today.oracleAskContactCta}
+            </a>
+          </p>
         </div>
       </div>
     </section>
