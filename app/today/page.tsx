@@ -50,60 +50,60 @@ export default async function TodayPage() {
           <SimpleNav compact />
         </div>
 
-        <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm shadow-slate-200/70">
-          <div className="h-2 bg-gradient-to-r from-emerald-600 via-sky-500 to-red-600" />
-          <div className="grid gap-6 p-6 md:grid-cols-[1.25fr_0.75fr] md:p-8">
+        <section className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm shadow-slate-200/70 md:rounded-2xl">
+          <div className="h-1.5 bg-gradient-to-r from-emerald-600 via-sky-500 to-red-600 md:h-2" />
+          <div className="grid gap-3 p-4 md:grid-cols-[1.25fr_0.75fr] md:gap-6 md:p-8">
             <div>
-              <p className="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.18em] text-emerald-700">
+              <p className="inline-flex rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-700 md:px-3 md:py-1 md:text-[11px] md:tracking-[0.18em]">
                 {dict.today.heroBadge}
               </p>
 
-              <h1 className="mt-5 max-w-3xl text-4xl font-black leading-[0.95] tracking-tight text-slate-950 md:text-6xl">
+              <h1 className="mt-3 max-w-3xl text-3xl font-black leading-[0.95] tracking-tight text-slate-950 md:mt-5 md:text-6xl">
                 {dict.today.heroTitle}
                 <span className="block text-emerald-700">{dict.today.heroTitleAccent}</span>
               </h1>
 
-              <p className="mt-5 max-w-2xl text-base font-bold leading-7 text-slate-700 md:text-lg">
+              <p className="mt-3 max-w-2xl line-clamp-2 text-sm font-bold leading-5 text-slate-700 md:mt-5 md:line-clamp-none md:text-lg md:leading-7">
                 {dict.today.heroText}
               </p>
 
-              <div className="mt-6 flex flex-wrap gap-3">
+              <div className="mt-4 flex flex-wrap gap-2 md:mt-6 md:gap-3">
                 <a
                   href="#partidos"
-                  className="rounded-md bg-emerald-600 px-5 py-3 text-sm font-black text-white shadow-sm transition hover:bg-emerald-700"
+                  className="rounded-md bg-emerald-600 px-3.5 py-2 text-xs font-black text-white shadow-sm transition hover:bg-emerald-700 md:px-5 md:py-3 md:text-sm"
                 >
                   {dict.today.heroMatchesCta}
                 </a>
                 <a
                   href="#tribuna"
-                  className="rounded-md border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-800 shadow-sm transition hover:bg-slate-50"
+                  className="rounded-md border border-slate-300 bg-white px-3.5 py-2 text-xs font-black text-slate-800 shadow-sm transition hover:bg-slate-50 md:px-5 md:py-3 md:text-sm"
                 >
                   {dict.today.heroStandCta}
                 </a>
               </div>
             </div>
 
-            <div className="grid grid-cols-[0.78fr_1.22fr] gap-2 md:grid-cols-1 md:gap-3">
-              <div className="rounded-lg border border-amber-200 bg-amber-50 p-3 md:p-5">
+            <div className="grid grid-cols-[0.72fr_1.28fr] gap-2 md:grid-cols-1 md:gap-3">
+              <div className="rounded-lg border border-amber-200 bg-amber-50 p-2.5 md:p-5">
                 <p className="text-[0.6rem] font-black uppercase tracking-[0.12em] text-amber-700 md:text-xs md:tracking-[0.14em]">
                   {dict.today.countdownLabel}
                 </p>
-                <p className="mt-1 text-4xl font-black leading-none text-slate-950 md:mt-3 md:text-6xl">{daysLeft}</p>
-                <p className="mt-1 text-[0.68rem] font-bold leading-tight text-slate-600 md:mt-2 md:text-sm">
+                <p className="mt-0.5 text-3xl font-black leading-none text-slate-950 md:mt-3 md:text-6xl">{daysLeft}</p>
+                <p className="mt-0.5 text-[0.65rem] font-bold leading-tight text-slate-600 md:mt-2 md:text-sm">
                   {dict.today.countdownText}
                 </p>
               </div>
 
-              <div className="rounded-lg border border-sky-200 bg-sky-50 p-3 md:p-5">
+              <div className="rounded-lg border border-sky-200 bg-sky-50 p-2.5 md:p-5">
                 <p className="text-[0.6rem] font-black uppercase tracking-[0.12em] text-sky-700 md:text-xs md:tracking-[0.14em]">
                   {dict.today.nextKickoffCardLabel}
                 </p>
-                <p className="mt-1 text-sm font-black leading-tight text-slate-950 md:mt-3 md:text-xl">
+                <p className="mt-0.5 line-clamp-2 text-xs font-black leading-tight text-slate-950 md:mt-3 md:line-clamp-none md:text-xl">
                   {nextFeaturedMatch
                     ? `${nextFeaturedMatch.homeTeam.flagEmoji} ${nextFeaturedMatch.homeTeam.name} vs ${nextFeaturedMatch.awayTeam.flagEmoji} ${nextFeaturedMatch.awayTeam.name}`
                     : dict.today.emptyTitle}
                 </p>
-                <p className="mt-1 text-[0.68rem] font-bold leading-tight text-slate-600 md:mt-2 md:text-sm">
+                <p className="mt-0.5 text-[0.65rem] font-bold leading-tight text-slate-600 md:mt-2 md:text-sm">
                   {nextFeaturedMatch ? nextFeaturedMatch.kickoffLabel : dict.today.emptyText}
                 </p>
               </div>
