@@ -168,6 +168,7 @@ const en = {
     emptyTitle: "There are no scored predictions for this group yet.",
     emptyText: "When accepted predictions are scored, aliases in this group will appear here.",
     table: {
+      pending: "Pending",
       headers: {
         rank: "Rank",
         alias: "Alias",
@@ -280,6 +281,7 @@ const en = {
       submitting: "Saving prediction...",
       genericError: "We could not save the prediction. Check the data and try again.",
       connectionError: "We could not connect to the server. Try again.",
+      highTrafficError: "There's a lot of traffic right now. Wait a moment and try again. If you already submitted this prediction, it won't be duplicated.",
       received: "Prediction received. It was saved and is pending review.",
       copyButton: "Copy prediction for WhatsApp",
       copied: "Prediction copied for WhatsApp.",

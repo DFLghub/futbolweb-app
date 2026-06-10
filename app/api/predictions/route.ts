@@ -36,8 +36,11 @@ function getRequestDictionary(request: Request) {
   return getDictionary(locale);
 }
 
-function friendlyError(message: string, status = 400) {
-  return Response.json({ ok: false, message }, { status });
+function friendlyError(message: string, status = 400, code?: string) {
+  return Response.json(
+    { ok: false, message, ...(code ? { code } : {}) },
+    { status },
+  );
 }
 
 function errorMessage(error: unknown) {
@@ -104,7 +107,9 @@ function findKnownMatch(matchSlug: string) {
 }
 
 function canAcceptPrediction(match: NonNullable<ReturnType<typeof findKnownMatch>>) {
-  return match.status !== "final" && new Date(match.kickoffUtc).getTime() > Date.now();
+  const predictionCutoffMs = 5 * 60 * 1000;
+
+  return match.status !== "final" && new Date(match.kickoffUtc).getTime() - predictionCutoffMs > Date.now();
 }
 
 function cleanText(value: string) {
@@ -220,6 +225,17 @@ async function findExistingPredictionIdentity(
     .maybeSingle();
 }
 
+async function findExistingPredictionBySubmissionId(
+  supabase: ReturnType<typeof createSupabaseServerClient>,
+  clientSubmissionId: string,
+) {
+  return supabase
+    .from("prediction_intake")
+    .select(predictionSelect)
+    .eq("client_submission_id", clientSubmissionId)
+    .maybeSingle();
+}
+
 function requiredScore(
   payload: PredictionPayload,
   key: "score_a" | "score_b",
@@ -316,11 +332,8 @@ export async function POST(request: Request) {
     const supabase = createSupabaseServerClient();
 
     if (prediction.client_submission_id) {
-      const { data: existingPrediction, error: existingPredictionError } = await supabase
-        .from("prediction_intake")
-        .select(predictionSelect)
-        .eq("client_submission_id", prediction.client_submission_id)
-        .maybeSingle();
+      const { data: existingPrediction, error: existingPredictionError } =
+        await findExistingPredictionBySubmissionId(supabase, prediction.client_submission_id);
 
       if (existingPredictionError) {
         logSupabaseError(existingPredictionError);
@@ -365,6 +378,23 @@ export async function POST(request: Request) {
       .single();
 
     if (error) {
+      if (prediction.client_submission_id && isUniqueViolation(error)) {
+        const { data: existingPrediction, error: existingPredictionError } =
+          await findExistingPredictionBySubmissionId(supabase, prediction.client_submission_id);
+
+        if (!existingPredictionError && existingPrediction) {
+          await recordPredictionSubmittedEvent(supabase, existingPrediction);
+
+          return Response.json({ ok: true, prediction: existingPrediction });
+        }
+
+        if (existingPredictionError) {
+          logSupabaseError(existingPredictionError);
+        }
+
+        return friendlyError(dict.api.saveError, 503, "high_traffic");
+      }
+
       if (isUniqueViolation(error)) {
         const {
           data: existingPredictionIdentityAfterConflict,
@@ -378,24 +408,8 @@ export async function POST(request: Request) {
         if (existingPredictionIdentityAfterConflictError) {
           logSupabaseError(existingPredictionIdentityAfterConflictError);
         }
-      }
 
-      if (prediction.client_submission_id && isUniqueViolation(error)) {
-        const { data: existingPrediction, error: existingPredictionError } = await supabase
-          .from("prediction_intake")
-          .select(predictionSelect)
-          .eq("client_submission_id", prediction.client_submission_id)
-          .single();
-
-        if (!existingPredictionError && existingPrediction) {
-          await recordPredictionSubmittedEvent(supabase, existingPrediction);
-
-          return Response.json({ ok: true, prediction: existingPrediction });
-        }
-
-        if (existingPredictionError) {
-          logSupabaseError(existingPredictionError);
-        }
+        return friendlyError(dict.api.saveError, 503, "high_traffic");
       }
 
       logSupabaseError(error);

@@ -14,7 +14,11 @@ function formatPoints(points: number, locale: string) {
   });
 }
 
-function formatCalculatedAt(value: string, locale: string) {
+function formatCalculatedAt(value: string | null, locale: string, pendingLabel: string) {
+  if (!value) {
+    return pendingLabel;
+  }
+
   return new Intl.DateTimeFormat(locale, {
     dateStyle: "medium",
     timeStyle: "short",
@@ -60,7 +64,7 @@ export default function PredictionGroupStandingsTable({
             <Stat label={tableDict.headers.predictions} value={standing.predictionsCounted} />
             <Stat
               label={tableDict.headers.latestCalculatedAt}
-              value={formatCalculatedAt(standing.latestCalculatedAt, locale)}
+              value={formatCalculatedAt(standing.latestCalculatedAt, locale, tableDict.pending)}
             />
           </article>
         ))}

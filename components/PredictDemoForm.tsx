@@ -71,7 +71,7 @@ function readStoredParticipantIdentity(): ParticipantIdentity | null {
       whatsappPhone: clampText(parsedValue.whatsappPhone, 20),
       supportedTeam: clampText(parsedValue.supportedTeam, 60),
       favoriteTeam: clampText(parsedValue.favoriteTeam, 60),
-      groupCode: clampText(parsedValue.groupCode, 80),
+      groupCode: clampText(parsedValue.groupCode, 40),
     };
   } catch {
     return null;
@@ -163,6 +163,11 @@ export default function PredictDemoForm({
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
+
     setIsSubmitting(true);
     setErrorMessage("");
     setCopyMessage("");
@@ -193,7 +198,9 @@ export default function PredictDemoForm({
 
       if (!response.ok || !result.ok) {
         setErrorMessage(
-          typeof result.message === "string"
+          response.status === 503 || result.code === "high_traffic"
+            ? formDict.highTrafficError
+            : typeof result.message === "string"
             ? result.message
             : formDict.genericError,
         );
@@ -336,7 +343,7 @@ export default function PredictDemoForm({
             <input
               className="mt-2 min-h-10 w-full rounded-md border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-800 outline-none transition placeholder:text-slate-400 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
               id="groupCode"
-              maxLength={80}
+              maxLength={40}
               name="groupCode"
               onChange={(event) => updateField("groupCode", event.target.value)}
               value={form.groupCode}

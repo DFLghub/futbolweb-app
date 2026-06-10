@@ -168,6 +168,7 @@ const es = {
     emptyTitle: "Este grupo todavía no tiene pronósticos puntuados.",
     emptyText: "Cuando haya pronósticos aceptados y puntuados, los alias del grupo aparecerán aquí.",
     table: {
+      pending: "Pendiente",
       headers: {
         rank: "Pos.",
         alias: "Alias",
@@ -280,6 +281,7 @@ const es = {
       submitting: "Guardando pronóstico...",
       genericError: "No pudimos guardar el pronóstico. Revisa los datos e intenta otra vez.",
       connectionError: "No pudimos conectar con el servidor. Intenta otra vez.",
+      highTrafficError: "Hay mucho tráfico en este momento. Espera un minuto e inténtalo de nuevo. Si ya habías enviado este pronóstico, no se duplicará.",
       received: "Pronóstico recibido. Quedó guardado y pendiente de revisión.",
       copyButton: "Copiar pronóstico para WhatsApp",
       copied: "Pronóstico copiado para WhatsApp.",

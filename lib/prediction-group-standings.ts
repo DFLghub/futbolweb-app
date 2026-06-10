@@ -14,13 +14,18 @@ type PredictionIntakeGroupRow = {
   group_code: string | null;
 };
 
+type PredictionIntakeStandingRow = {
+  alias: string;
+  group_code: string | null;
+};
+
 export type PredictionGroupStanding = {
   rank: number;
   alias: string;
   groupCode: string;
   totalPoints: number;
   predictionsCounted: number;
-  latestCalculatedAt: string;
+  latestCalculatedAt: string | null;
 };
 
 function normalizeStandingGroupCode(groupCode: string | null | undefined) {
@@ -75,10 +80,46 @@ export const getPredictionGroupStandings = unstable_cache(
         query = query.eq("group_code", selectedGroupCode);
       }
 
-      const { data, error } = await query;
-      if (error || !data) return [];
+      let intakeQuery = supabase
+        .from("prediction_intake")
+        .select("alias, group_code")
+        .in("status", ["pending_review", "accepted"]);
+
+      if (isSolistaGroupCode(selectedGroupCode)) {
+        intakeQuery = intakeQuery.or(`group_code.eq.${SOLISTA_GROUP_CODE},group_code.is.null`);
+      } else {
+        intakeQuery = intakeQuery.eq("group_code", selectedGroupCode);
+      }
+
+      const [
+        { data, error },
+        { data: intakeData, error: intakeError },
+      ] = await Promise.all([query, intakeQuery]);
+
+      if (error || intakeError || !data || !intakeData) return [];
 
       const standingsByAlias = new Map<string, Omit<PredictionGroupStanding, "rank">>();
+
+      for (const row of intakeData as PredictionIntakeStandingRow[]) {
+        const rowGroupCode = normalizeStandingGroupCode(row.group_code);
+
+        if (
+          !isSolistaGroupCode(selectedGroupCode) &&
+          rowGroupCode !== selectedGroupCode
+        ) {
+          continue;
+        }
+
+        if (!standingsByAlias.has(row.alias)) {
+          standingsByAlias.set(row.alias, {
+            alias: row.alias,
+            groupCode: selectedGroupCode,
+            totalPoints: 0,
+            predictionsCounted: 0,
+            latestCalculatedAt: null,
+          });
+        }
+      }
 
       for (const row of data as PredictionScoreRow[]) {
         const rowGroupCode = normalizeStandingGroupCode(row.group_code);
@@ -106,7 +147,10 @@ export const getPredictionGroupStandings = unstable_cache(
         current.totalPoints += Number(row.points);
         current.predictionsCounted += 1;
 
-        if (Date.parse(row.calculated_at) > Date.parse(current.latestCalculatedAt)) {
+        if (
+          !current.latestCalculatedAt ||
+          Date.parse(row.calculated_at) > Date.parse(current.latestCalculatedAt)
+        ) {
           current.latestCalculatedAt = row.calculated_at;
         }
       }
