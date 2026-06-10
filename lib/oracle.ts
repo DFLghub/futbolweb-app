@@ -7,6 +7,7 @@ type OracleLabels = {
   classificationUnavailable: string;
   contact: string;
   fallback: string;
+  forTeam: string;
   groupInitial: string;
   groupNotFound: string;
   groupStagePath: string;
@@ -24,8 +25,9 @@ const labelsByLocale: Record<Locale, OracleLabels> = {
   es: {
     allTied: "El Mundial todavía no empezó para ese grupo: todos están con 0 puntos.",
     classificationUnavailable: "Todavía no hay resultados suficientes para calcular escenarios reales de clasificación.",
-    contact: "Si ves un dato raro, escribe a jorge@deepfeelingslabs.com.",
+    contact: "Mejoras, sugerencias, soporte o aportes: jorge@deepfeelingslabs.com.",
     fallback: "Puedo ayudarte con partidos, grupos, sedes, rivales, próximos juegos y estados iniciales de la tabla. Prueba con: ¿Cuándo juega Colombia?",
+    forTeam: "de",
     groupInitial: "Tabla inicial",
     groupNotFound: "No encontré ese grupo en el Mundial 2026.",
     groupStagePath: "En la fase de grupos clasifican los dos primeros de cada grupo y los mejores terceros disponibles según el formato del Mundial 2026.",
@@ -41,8 +43,9 @@ const labelsByLocale: Record<Locale, OracleLabels> = {
   en: {
     allTied: "The World Cup has not started for that group yet: everyone is on 0 points.",
     classificationUnavailable: "There are not enough results yet to calculate real qualification scenarios.",
-    contact: "If something looks off, contact jorge@deepfeelingslabs.com.",
+    contact: "Improvements, suggestions, support, or contributions: jorge@deepfeelingslabs.com.",
     fallback: "I can help with matches, groups, venues, opponents, upcoming games, and initial standings. Try: When does Colombia play?",
+    forTeam: "for",
     groupInitial: "Initial table",
     groupNotFound: "I could not find that group in the 2026 World Cup.",
     groupStagePath: "In the group stage, the top two teams from each group qualify, plus the available best third-place teams under the 2026 World Cup format.",
@@ -170,10 +173,10 @@ function answerTeamQuestion(question: string, locale: Locale, labels: OracleLabe
     normalizedQuestion.includes("venue") ||
     normalizedQuestion.includes("where")
   ) {
-    return `${labels.venues} de ${team.name}:\n${matches.slice(0, 5).map((match) => formatMatchLine(match, labels)).join("\n")}`;
+    return `${labels.venues} ${labels.forTeam} ${team.name}:\n${matches.slice(0, 5).map((match) => formatMatchLine(match, labels)).join("\n")}`;
   }
 
-  return `${labels.nextMatches} de ${team.name}:\n${matches.slice(0, 5).map((match) => formatMatchLine(match, labels)).join("\n")}`;
+  return `${labels.nextMatches} ${labels.forTeam} ${team.name}:\n${matches.slice(0, 5).map((match) => formatMatchLine(match, labels)).join("\n")}`;
 }
 
 function answerToday(locale: Locale, labels: OracleLabels) {

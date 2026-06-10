@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useI18n } from "@/components/I18nProvider";
 
 type OracleMessage = {
@@ -13,6 +13,10 @@ export default function OracleAskBox() {
   const { dict, locale } = useI18n();
   const [question, setQuestion] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const isRequestInFlightRef = useRef(false);
+  const messageIdRef = useRef(0);
+  const messagesRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [messages, setMessages] = useState<OracleMessage[]>([
     {
       id: "welcome",
@@ -21,15 +25,29 @@ export default function OracleAskBox() {
     },
   ]);
 
+  function createMessageId(role: OracleMessage["role"]) {
+    messageIdRef.current += 1;
+    return `${role}-${messageIdRef.current}`;
+  }
+
+  useEffect(() => {
+    const messageList = messagesRef.current;
+    if (!messageList) return;
+
+    messageList.scrollTop = messageList.scrollHeight;
+  }, [isLoading, messages]);
+
   async function askOracle(nextQuestion: string) {
     const trimmedQuestion = nextQuestion.trim();
 
-    if (!trimmedQuestion || isLoading) {
+    if (!trimmedQuestion || isRequestInFlightRef.current) {
       return;
     }
 
+    isRequestInFlightRef.current = true;
+
     const userMessage: OracleMessage = {
-      id: `user-${Date.now()}`,
+      id: createMessageId("user"),
       role: "user",
       text: trimmedQuestion,
     };
@@ -58,7 +76,7 @@ export default function OracleAskBox() {
       setMessages((currentMessages) => [
         ...currentMessages,
         {
-          id: `oracle-${Date.now()}`,
+          id: createMessageId("oracle"),
           role: "oracle",
           text: payload.answer ?? dict.today.oracleAskError,
         },
@@ -67,19 +85,24 @@ export default function OracleAskBox() {
       setMessages((currentMessages) => [
         ...currentMessages,
         {
-          id: `oracle-error-${Date.now()}`,
+          id: createMessageId("oracle"),
           role: "oracle",
           text: dict.today.oracleAskError,
         },
       ]);
     } finally {
+      isRequestInFlightRef.current = false;
       setIsLoading(false);
+      inputRef.current?.focus();
     }
   }
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    void askOracle(question);
+    const formData = new FormData(event.currentTarget);
+    const submittedQuestion = formData.get("question");
+
+    void askOracle(typeof submittedQuestion === "string" ? submittedQuestion : question);
   }
 
   return (
@@ -104,7 +127,11 @@ export default function OracleAskBox() {
         </div>
 
         <div className="grid gap-4 p-4 md:p-5">
-          <div className="grid max-h-72 gap-3 overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-3">
+          <div
+            ref={messagesRef}
+            className="grid max-h-72 gap-3 overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-3"
+            aria-live="polite"
+          >
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -139,15 +166,17 @@ export default function OracleAskBox() {
             </label>
             <input
               id="oracle-question"
+              ref={inputRef}
               className="min-h-11 rounded-md border border-sky-200 bg-white px-3 py-2 text-sm font-semibold text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-500 focus:ring-2 focus:ring-sky-100"
+              autoComplete="off"
+              name="question"
               onChange={(event) => setQuestion(event.target.value)}
               placeholder={dict.today.oracleAskPlaceholder}
-              disabled={isLoading}
-              type="search"
+              type="text"
               value={question}
             />
             <button
-              className="min-h-11 rounded-md bg-slate-950 px-4 py-2 text-sm font-black text-white shadow-sm transition hover:bg-slate-800"
+              className="min-h-11 rounded-md bg-slate-950 px-4 py-2 text-sm font-black text-white shadow-sm transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
               disabled={isLoading}
               type="submit"
             >

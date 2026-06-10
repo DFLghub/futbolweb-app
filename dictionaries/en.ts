@@ -114,7 +114,7 @@ const en = {
     oracleAskUserLabel: "You",
     oracleAskOracleLabel: "Oracle",
     oracleAskWelcome: "I live inside FutbolWeb. Ask me about matches, groups, venues, opponents, or qualification.",
-    oracleAskContactText: "Issues, support, suggestions, or general contact:",
+    oracleAskContactText: "Improvements, suggestions, support, or contributions:",
     oracleAskContactCta: "jorge@deepfeelingslabs.com",
     oracleAskSuggestions: [
       "When does Colombia play?",

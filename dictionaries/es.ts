@@ -114,7 +114,7 @@ const es = {
     oracleAskUserLabel: "Tú",
     oracleAskOracleLabel: "Oráculo",
     oracleAskWelcome: "Estoy dentro de FutbolWeb. Pregúntame por partidos, grupos, sedes, rivales o clasificación.",
-    oracleAskContactText: "Errores, soporte, sugerencias o contacto general:",
+    oracleAskContactText: "Mejoras, sugerencias, soporte o aportes:",
     oracleAskContactCta: "jorge@deepfeelingslabs.com",
     oracleAskSuggestions: [
       "¿Cuándo juega Colombia?",
