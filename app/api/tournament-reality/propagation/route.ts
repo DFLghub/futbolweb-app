@@ -46,12 +46,12 @@ export async function POST(request: Request) {
 
   try {
     const completedResults = getCompletedMatchResults(await getOfficialMatchResults());
-    const scoringRuns = await runScoringForPendingResults(completedResults);
+    const propagation = await runScoringForPendingResults(completedResults);
     const status = await getScoringPropagationStatus(completedResults);
 
     return NextResponse.json({
       ok: true,
-      scoringRuns,
+      ...propagation,
       status,
     });
   } catch (error) {

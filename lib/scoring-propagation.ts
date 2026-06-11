@@ -38,6 +38,16 @@ export type ScoringRunResult = {
   scoredRows: number;
 };
 
+export type ScoringRunFailure = {
+  error: string;
+  matchSlug: string;
+};
+
+export type ScoringPropagationRun = {
+  scoringFailures: ScoringRunFailure[];
+  scoringRuns: ScoringRunResult[];
+};
+
 type ScoringPropagationClient = {
   getRankingParticipantCount: () => Promise<number>;
   getScoredCountsByMatch: () => Promise<Map<string, number>>;
@@ -178,18 +188,29 @@ export async function getScoringPropagationStatus(
 export async function runScoringForPendingResults(
   results: MatchResultRow[],
   client: ScoringPropagationClient = defaultClient,
-): Promise<ScoringRunResult[]> {
+): Promise<ScoringPropagationRun> {
   const status = await getScoringPropagationStatus(results, client);
   const runs: ScoringRunResult[] = [];
+  const failures: ScoringRunFailure[] = [];
 
   for (const pendingMatch of status.pendingScoring) {
-    const scoredRows = await client.runScoringForMatch(pendingMatch.matchSlug);
+    try {
+      const scoredRows = await client.runScoringForMatch(pendingMatch.matchSlug);
 
-    runs.push({
-      matchSlug: pendingMatch.matchSlug,
-      scoredRows: scoredRows.length,
-    });
+      runs.push({
+        matchSlug: pendingMatch.matchSlug,
+        scoredRows: scoredRows.length,
+      });
+    } catch (error) {
+      failures.push({
+        matchSlug: pendingMatch.matchSlug,
+        error: error instanceof Error ? error.message : "Unknown scoring error",
+      });
+    }
   }
 
-  return runs;
+  return {
+    scoringFailures: failures,
+    scoringRuns: runs,
+  };
 }

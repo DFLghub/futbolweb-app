@@ -29,13 +29,13 @@ export async function POST(request: Request) {
     const results = await fetchEspnWorldCupFinalResults();
     const upserted = await upsertOfficialMatchResults(results);
     const completedResults = getCompletedMatchResults(await getOfficialMatchResults());
-    const scoringRuns = await runScoringForPendingResults(completedResults);
+    const propagation = await runScoringForPendingResults(completedResults);
 
     return NextResponse.json({
       ok: true,
       source: "ESPN FIFA World Cup scoreboard",
       imported: results.length,
-      scoringRuns,
+      ...propagation,
       upserted,
     });
   } catch (error) {
