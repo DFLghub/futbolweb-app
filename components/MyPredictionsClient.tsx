@@ -276,6 +276,7 @@ function PredictionCard({
             label={labels.predictedAtLabel}
             value={formatDateTime(prediction.created_at, locale)}
           />
+          <InfoItem label={labels.aliasLabel} value={prediction.alias} />
           <InfoItem
             label={labels.predictionLabel}
             value={formatMessage(labels.scoreValue, {

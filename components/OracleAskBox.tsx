@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { useI18n } from "@/components/I18nProvider";
+import { isOracleCharacter, type OracleCharacter } from "@/lib/oracle-characters";
 
 type OracleMessage = {
   characterName?: string;
@@ -10,11 +11,9 @@ type OracleMessage = {
   text: string;
 };
 
-type OracleCharacterId = "paulgpt" | "vargpt" | "insultistagpt";
-
 export default function OracleAskBox() {
   const { dict, locale } = useI18n();
-  const [activeCharacter, setActiveCharacter] = useState<OracleCharacterId>("paulgpt");
+  const [activeCharacter, setActiveCharacter] = useState<OracleCharacter>("paulgpt");
   const [question, setQuestion] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const isRequestInFlightRef = useRef(false);
@@ -111,7 +110,7 @@ export default function OracleAskBox() {
   }
 
   function selectCharacter(characterId: string, characterName: string) {
-    if (characterId !== "paulgpt" && characterId !== "vargpt" && characterId !== "insultistagpt") {
+    if (!isOracleCharacter(characterId)) {
       return;
     }
 
@@ -278,6 +277,25 @@ export default function OracleAskBox() {
                 {suggestion}
               </button>
             ))}
+          </div>
+
+          <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
+            <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] text-amber-700">
+              {dict.today.worldCupHistoryEyebrow}
+            </p>
+            <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm font-semibold leading-6 text-slate-700">
+                {dict.today.worldCupHistoryText}
+              </p>
+              <button
+                className="inline-flex min-h-10 shrink-0 items-center justify-center rounded-md bg-amber-600 px-3 py-2 text-xs font-black text-white shadow-sm transition hover:bg-amber-700 disabled:cursor-not-allowed disabled:opacity-60"
+                disabled={isLoading}
+                onClick={() => void askOracle(dict.today.worldCupHistoryPrompt)}
+                type="button"
+              >
+                {dict.today.worldCupHistoryCta}
+              </button>
+            </div>
           </div>
 
           <p className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-semibold leading-5 text-slate-600">

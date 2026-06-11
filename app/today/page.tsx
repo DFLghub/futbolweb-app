@@ -4,6 +4,7 @@ import BrandHeader from "@/components/BrandHeader";
 import MatchCard from "@/components/MatchCard";
 import OracleAskBox from "@/components/OracleAskBox";
 import SimpleNav from "@/components/SimpleNav";
+import SupportContactBlock from "@/components/SupportContactBlock";
 import { getCurrentDictionary, getCurrentLocale } from "@/lib/i18n-server";
 import { getTournamentReality, type TournamentReality } from "@/lib/tournament-reality";
 
@@ -165,6 +166,8 @@ export default async function TodayPage() {
         </section>
 
         <OracleAskBox />
+
+        <SupportContactBlock className="mt-5" />
 
         <section className="mt-5 hidden rounded-lg border border-emerald-200 bg-emerald-50 p-4 md:block">
           <p className="text-xs font-black uppercase text-emerald-700">

@@ -1,6 +1,7 @@
 import BrandHeader from "@/components/BrandHeader";
 import MyPredictionsClient from "@/components/MyPredictionsClient";
 import SimpleNav from "@/components/SimpleNav";
+import SupportContactBlock from "@/components/SupportContactBlock";
 import { getCurrentDictionary } from "@/lib/i18n-server";
 
 export default async function MyPredictionsPage() {
@@ -27,6 +28,8 @@ export default async function MyPredictionsPage() {
         </header>
 
         <MyPredictionsClient />
+
+        <SupportContactBlock className="mt-5" />
       </div>
     </main>
   );

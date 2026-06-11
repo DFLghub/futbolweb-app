@@ -3,6 +3,11 @@ import { localizeWorldCupGroupStandings, localizeWorldCupMatches, worldCup2026Ma
 import { mockWorldCupGroupStandings } from "@/lib/mock-group-standings";
 import { getTournamentReality, type RealityMatch, type TournamentReality } from "@/lib/tournament-reality";
 import { getRealGroupStandings } from "@/lib/real-group-standings";
+import {
+  defaultOracleCharacter,
+  isOracleCharacter,
+  type OracleCharacter,
+} from "@/lib/oracle-characters";
 
 type OracleLabels = {
   allTied: string;
@@ -27,12 +32,8 @@ type OracleLabels = {
   vs: string;
 };
 
-export type OracleCharacter = "paulgpt" | "vargpt" | "insultistagpt";
-
-const defaultOracleCharacter: OracleCharacter = "paulgpt";
-
 export function normalizeOracleCharacter(value: unknown): OracleCharacter {
-  if (value === "vargpt" || value === "insultistagpt" || value === "paulgpt") {
+  if (isOracleCharacter(value)) {
     return value;
   }
 
@@ -461,6 +462,22 @@ function applyOraclePersonality(answer: string, character: OracleCharacter, loca
     }
 
     return `Decisión VARGPT: ${refereeAnswer}\n\nClaro, reglamentario y sin vender humo.`;
+  }
+
+  if (character === "optimistagpt") {
+    if (locale === "en") {
+      return `OptimistaGPT: ${answer}\n\nMeasured optimism: hope with the scoreboard in view.`;
+    }
+
+    return `OptimistaGPT: ${answer}\n\nOptimismo medido: ilusión con el marcador a la vista.`;
+  }
+
+  if (character === "tribunerogpt") {
+    if (locale === "en") {
+      return `TribuneroGPT from the stand: ${answer}\n\nCrowd mood, real data, no betting talk.`;
+    }
+
+    return `TribuneroGPT desde la tribuna: ${answer}\n\nAmbiente de grada, datos reales y cero apuestas.`;
   }
 
   const roastAnswer = answer
