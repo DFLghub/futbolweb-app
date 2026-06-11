@@ -22,6 +22,18 @@ type OracleLabels = {
   vs: string;
 };
 
+export type OracleCharacter = "paulgpt" | "vargpt" | "insultistagpt";
+
+const defaultOracleCharacter: OracleCharacter = "paulgpt";
+
+export function normalizeOracleCharacter(value: unknown): OracleCharacter {
+  if (value === "vargpt" || value === "insultistagpt" || value === "paulgpt") {
+    return value;
+  }
+
+  return defaultOracleCharacter;
+}
+
 const labelsByLocale: Record<Locale, OracleLabels> = {
   es: {
     allTied: "El Mundial todavía no empezó para ese grupo: todos están con 0 puntos.",
@@ -317,6 +329,63 @@ function answerLastFinalBefore2026(locale: Locale) {
   return `La última final mundialista antes de 2026 fue Catar 2022: ${champion} vs ${runnerUp}, 3-3 tras tiempo extra, y ${champion} ganó 4-2 por penales. Messi levantó la copa; Francia los hizo sudar hasta el último suspiro.`;
 }
 
+function answerRulesQuestion(question: string, locale: Locale) {
+  const normalizedQuestion = ` ${normalizeText(question)} `;
+
+  if (
+    normalizedQuestion.includes(" perro ") ||
+    normalizedQuestion.includes(" dog ") ||
+    normalizedQuestion.includes(" animal ")
+  ) {
+    if (locale === "en") {
+      return "If a dog or any outside agent enters the pitch, the referee stops play only if it interferes. The field is cleared, then play normally restarts with a dropped ball from the position required by the Laws of the Game.";
+    }
+
+    return "Si entra un perro o cualquier agente externo a la cancha, el árbitro detiene el juego solo si interfiere. Se despeja el campo y normalmente se reanuda con balón a tierra según el lugar que indiquen las Reglas de Juego.";
+  }
+
+  if (
+    normalizedQuestion.includes(" rayo ") ||
+    normalizedQuestion.includes(" tormenta ") ||
+    normalizedQuestion.includes(" lightning ") ||
+    normalizedQuestion.includes(" storm ")
+  ) {
+    if (locale === "en") {
+      return "If lightning or a dangerous storm hits, player safety wins. The referee can suspend the match, send teams to a safe area, and resume only when conditions are safe. If it cannot continue, competition rules decide the next step.";
+    }
+
+    return "Si cae un rayo o hay tormenta peligrosa, manda la seguridad. El árbitro puede suspender el partido, mandar a los equipos a zona segura y reanudar solo cuando haya condiciones. Si no se puede seguir, decide el reglamento de la competición.";
+  }
+
+  if (
+    normalizedQuestion.includes(" fuera de juego ") ||
+    normalizedQuestion.includes(" offside ")
+  ) {
+    if (locale === "en") {
+      return "Offside is judged when the teammate plays or touches the ball. Being in an offside position is not enough: the player must interfere with play, an opponent, or gain an advantage.";
+    }
+
+    return "El fuera de juego se juzga cuando un compañero juega o toca el balón. Estar adelantado no basta: debe intervenir en el juego, interferir a un rival o ganar ventaja.";
+  }
+
+  if (
+    normalizedQuestion.includes(" tarjeta ") ||
+    normalizedQuestion.includes(" roja ") ||
+    normalizedQuestion.includes(" amarilla ") ||
+    normalizedQuestion.includes(" card ") ||
+    normalizedQuestion.includes(" red card ") ||
+    normalizedQuestion.includes(" yellow card ")
+  ) {
+    if (locale === "en") {
+      return "Cards depend on the offense: careless fouls are usually just fouls, reckless actions are yellow, and excessive force or denying an obvious goal-scoring opportunity can be red. Context matters.";
+    }
+
+    return "Las tarjetas dependen de la infracción: una falta imprudente puede quedar en falta, una acción temeraria suele ser amarilla y la fuerza excesiva o impedir una ocasión manifiesta puede ser roja. El contexto manda.";
+  }
+
+  return null;
+}
+
 function answerWorldCupHistory(question: string, locale: Locale) {
   const normalizedQuestion = ` ${normalizeText(question)} `;
 
@@ -364,6 +433,34 @@ function answerWorldCupHistory(question: string, locale: Locale) {
   }
 
   return null;
+}
+
+function applyOraclePersonality(answer: string, character: OracleCharacter, locale: Locale) {
+  if (character === "paulgpt") {
+    return answer;
+  }
+
+  if (character === "vargpt") {
+    const refereeAnswer = answer
+      .replace("Memoria de PaulGPT:", "Consta en acta:")
+      .replace("PaulGPT memory check:", "VARGPT ruling:");
+
+    if (locale === "en") {
+      return `VARGPT decision: ${refereeAnswer}\n\nClear ruling, no extra drama.`;
+    }
+
+    return `Decisión VARGPT: ${refereeAnswer}\n\nClaro, reglamentario y sin vender humo.`;
+  }
+
+  const roastAnswer = answer
+    .replace("Memoria de PaulGPT:", "Archivo del Insultista:")
+    .replace("PaulGPT memory check:", "InsultistaGPT memory check:");
+
+  if (locale === "en") {
+    return `InsultistaGPT from the stand: ${roastAnswer}\n\nHealthy roast: solid football, zero cheap shots.`;
+  }
+
+  return `InsultistaGPT desde la tribuna: ${roastAnswer}\n\nVacile sano: con fútbol, sin mala leche y sin pegarle a nadie por fuera de la cancha.`;
 }
 
 function dateKeyInEasternTime(date: Date) {
@@ -464,6 +561,15 @@ function answerTeamQuestion(question: string, locale: Locale, labels: OracleLabe
   }
 
   if (
+    normalizedQuestion.includes("campeon") ||
+    normalizedQuestion.includes("champion") ||
+    normalizedQuestion.includes("win it all")
+  ) {
+    const nextMatch = matches[0] ? formatMatchLine(matches[0], labels) : null;
+    return `${team.name}: no puedo coronar a nadie antes de jugar. ${group ? `${team.name} ${labels.playsInGroup} ${group}. ` : ""}${nextMatch ? `${labels.nextMatches}: ${nextMatch}` : labels.classificationUnavailable}`;
+  }
+
+  if (
     normalizedQuestion.includes("donde") ||
     normalizedQuestion.includes("sede") ||
     normalizedQuestion.includes("venue") ||
@@ -489,32 +595,37 @@ function answerToday(locale: Locale, labels: OracleLabels) {
   return `${labels.noMatchesToday}\n${matches.slice(0, 4).map((match) => formatMatchLine(match, labels)).join("\n")}`;
 }
 
-export function answerOracleQuestion(question: string, locale: Locale) {
+export function answerOracleQuestion(question: string, locale: Locale, character: OracleCharacter = defaultOracleCharacter) {
   const labels = labelsByLocale[locale];
   const trimmedQuestion = question.trim();
   const normalizedQuestion = normalizeText(trimmedQuestion);
 
   if (!trimmedQuestion) {
-    return labels.noQuestion;
+    return applyOraclePersonality(labels.noQuestion, character, locale);
   }
 
   if (normalizedQuestion.includes("hoy") || normalizedQuestion.includes("today")) {
-    return answerToday(locale, labels);
+    return applyOraclePersonality(answerToday(locale, labels), character, locale);
   }
 
   const historyAnswer = answerWorldCupHistory(trimmedQuestion, locale);
   if (historyAnswer) {
-    return `${historyAnswer}\n\n${labels.contact}`;
+    return `${applyOraclePersonality(historyAnswer, character, locale)}\n\n${labels.contact}`;
   }
 
   const teamAnswer = answerTeamQuestion(trimmedQuestion, locale, labels);
   if (teamAnswer) {
-    return `${teamAnswer}\n\n${labels.contact}`;
+    return `${applyOraclePersonality(teamAnswer, character, locale)}\n\n${labels.contact}`;
   }
 
   const groupAnswer = answerGroup(trimmedQuestion, locale, labels);
   if (groupAnswer) {
-    return `${groupAnswer}\n\n${labels.contact}`;
+    return `${applyOraclePersonality(groupAnswer, character, locale)}\n\n${labels.contact}`;
+  }
+
+  const rulesAnswer = answerRulesQuestion(trimmedQuestion, locale);
+  if (rulesAnswer) {
+    return `${applyOraclePersonality(rulesAnswer, character, locale)}\n\n${labels.contact}`;
   }
 
   if (
@@ -526,8 +637,8 @@ export function answerOracleQuestion(question: string, locale: Locale) {
     normalizedQuestion.includes("apuesta") ||
     normalizedQuestion.includes("bet")
   ) {
-    return `${labels.offTopic}\n\n${labels.contact}`;
+    return `${applyOraclePersonality(labels.offTopic, character, locale)}\n\n${labels.contact}`;
   }
 
-  return `${labels.fallback}\n\n${labels.contact}`;
+  return `${applyOraclePersonality(labels.fallback, character, locale)}\n\n${labels.contact}`;
 }

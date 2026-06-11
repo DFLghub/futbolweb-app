@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { isLocale, normalizeLocale } from "@/lib/i18n";
-import { answerOracleQuestion } from "@/lib/oracle";
+import { answerOracleQuestion, normalizeOracleCharacter } from "@/lib/oracle";
 
 type OracleRequest = {
+  character?: string;
   locale?: string;
   question?: string;
 };
@@ -18,8 +19,9 @@ export async function POST(request: Request) {
 
   const locale = isLocale(body.locale) ? body.locale : normalizeLocale(undefined);
   const question = typeof body.question === "string" ? body.question : "";
+  const character = normalizeOracleCharacter(body.character);
 
   return NextResponse.json({
-    answer: answerOracleQuestion(question, locale),
+    answer: answerOracleQuestion(question, locale, character),
   });
 }
