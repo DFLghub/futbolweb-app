@@ -251,28 +251,58 @@ describe("oracle context", () => {
     expect(answer).not.toContain("clima");
   });
 
-  it("keeps every persona layered over the same facts without overriding them", async () => {
+  it("keeps every persona layered over the same facts with a distinct voice", async () => {
     const context: OracleContext = {
       detectedIntent: "latest_result",
       facts: ["Último resultado: México 2-0 Sudáfrica."],
       limitations: [],
       safeContextText: "Intent: latest_result\nFacts:\n- Último resultado: México 2-0 Sudáfrica.\nLimitations: none",
     };
-    const personas: Array<[OracleCharacter, string]> = [
-      ["paulgpt", "PaulGPT"],
-      ["vargpt", "VARGPT"],
-      ["insultistagpt", "InsultistaGPT"],
-      ["optimistagpt", "OptimistaGPT"],
-      ["tribunerogpt", "TribuneroGPT"],
+    const personas: Array<[OracleCharacter, string, string]> = [
+      ["paulgpt", "PaulGPT desde la cabina", "Lectura de estadio"],
+      ["vargpt", "Decisión VARGPT", "Claro, reglamentario"],
+      ["insultistagpt", "InsultistaGPT desde la tribuna", "Vacile sano"],
+      ["optimistagpt", "OptimistaGPT", "Lado positivo"],
+      ["tribunerogpt", "TribuneroGPT desde la tribuna", "¿Qué dice la banda?"],
     ];
+    const answers = new Set<string>();
 
-    for (const [character, identity] of personas) {
+    for (const [character, identity, marker] of personas) {
       const answer = await answerOracleQuestion("último resultado", "es", character, context);
 
       expect(answer).toContain(identity);
+      expect(answer).toContain(marker);
       expect(answer).toContain("México 2-0 Sudáfrica");
       expect(answer).not.toContain("México 3-0 Sudáfrica");
+      answers.add(answer);
     }
+
+    expect(answers.size).toBe(personas.length);
+  });
+
+  it("renders unknown fallback differently by persona while staying grounded", async () => {
+    const context = await buildOracleContext("¿Qué clima hace en la luna?", "paulgpt", "es", {
+      reality,
+    });
+    const paul = await answerOracleQuestion("¿Qué clima hace en la luna?", "es", "paulgpt", context);
+    const vargpt = await answerOracleQuestion("¿Qué clima hace en la luna?", "es", "vargpt", context);
+    const insultista = await answerOracleQuestion("¿Qué clima hace en la luna?", "es", "insultistagpt", context);
+    const optimista = await answerOracleQuestion("¿Qué clima hace en la luna?", "es", "optimistagpt", context);
+    const tribunero = await answerOracleQuestion("¿Qué clima hace en la luna?", "es", "tribunerogpt", context);
+    const answers = [paul, vargpt, insultista, optimista, tribunero];
+
+    answers.forEach((answer) => {
+      expect(answer).toContain("No pude conectar esa pregunta");
+      expect(answer).toContain("Último resultado confirmado");
+      expect(answer).toContain("Próximo partido conocido");
+      expect(answer).toContain("Prueba con:");
+    });
+    expect(paul).toContain("PaulGPT desde la cabina");
+    expect(vargpt).toContain("Decisión VARGPT");
+    expect(insultista).toContain("Vacile sano");
+    expect(optimista).toContain("Lado positivo");
+    expect(tribunero).toContain("¿Qué dice la banda?");
+    expect(new Set(answers).size).toBe(answers.length);
   });
 
   it("supports English context and answers with grounded facts", async () => {
@@ -322,6 +352,7 @@ describe("oracle context", () => {
 
     expect(context.detectedIntent).toBe("latest_result");
     expect(answer).toContain("PaulGPT");
+    expect(answer).toContain("broadcast booth");
     expect(answer).toContain("Latest result");
     expect(answer).toContain("Mexico 2-0 South Africa");
   });

@@ -448,9 +448,13 @@ function answerWorldCupHistory(question: string, locale: Locale) {
   return null;
 }
 
-function applyOraclePersonality(answer: string, character: OracleCharacter, locale: Locale) {
+function renderOracleAnswer(answer: string, character: OracleCharacter, locale: Locale) {
   if (character === "paulgpt") {
-    return `PaulGPT: ${answer}`;
+    if (locale === "en") {
+      return `PaulGPT from the broadcast booth: the World Cup pulse is here.\n${answer}\n\nStadium read: real data, heart switched on.`;
+    }
+
+    return `PaulGPT desde la cabina: se mueve el Mundial y ruge la grada.\n${answer}\n\nLectura de estadio: dato real, corazón encendido.`;
   }
 
   if (character === "vargpt") {
@@ -467,18 +471,18 @@ function applyOraclePersonality(answer: string, character: OracleCharacter, loca
 
   if (character === "optimistagpt") {
     if (locale === "en") {
-      return `OptimistaGPT: ${answer}\n\nMeasured optimism: hope with the scoreboard in view.`;
+      return `OptimistaGPT: there is always a good angle when the facts are clear.\n${answer}\n\nBright side, scoreboard first.`;
     }
 
-    return `OptimistaGPT: ${answer}\n\nOptimismo medido: ilusión con el marcador a la vista.`;
+    return `OptimistaGPT: siempre hay un lado bueno cuando el dato está claro.\n${answer}\n\nLado positivo, marcador primero.`;
   }
 
   if (character === "tribunerogpt") {
     if (locale === "en") {
-      return `TribuneroGPT from the stand: ${answer}\n\nCrowd mood, real data, no betting talk.`;
+      return `TribuneroGPT from the stand: quick take for the timeline.\n${answer}\n\nWhat are we saying in the group chat? Real data, no betting talk.`;
     }
 
-    return `TribuneroGPT desde la tribuna: ${answer}\n\nAmbiente de grada, datos reales y cero apuestas.`;
+    return `TribuneroGPT desde la tribuna: lectura corta para prender el chat.\n${answer}\n\n¿Qué dice la banda? Datos reales y cero apuestas.`;
   }
 
   const roastAnswer = answer
@@ -486,10 +490,10 @@ function applyOraclePersonality(answer: string, character: OracleCharacter, loca
     .replace("PaulGPT memory check:", "InsultistaGPT memory check:");
 
   if (locale === "en") {
-    return `InsultistaGPT from the stand: ${roastAnswer}\n\nHealthy roast: solid football, zero cheap shots.`;
+    return `InsultistaGPT from the stand: tiny roast, clean studs.\n${roastAnswer}\n\nHealthy roast: football spice, zero cheap shots.`;
   }
 
-  return `InsultistaGPT desde la tribuna: ${roastAnswer}\n\nVacile sano: con fútbol, sin mala leche y sin pegarle a nadie por fuera de la cancha.`;
+  return `InsultistaGPT desde la tribuna: vacilecito con los guayos limpios.\n${roastAnswer}\n\nVacile sano: picante futbolero, cero golpes bajos.`;
 }
 
 function answerFromContext(context: OracleContext, locale: Locale) {
@@ -692,7 +696,7 @@ export async function answerOracleQuestion(
   const normalizedQuestion = normalizeText(trimmedQuestion);
 
   if (!trimmedQuestion) {
-    return applyOraclePersonality(labels.noQuestion, character, locale);
+    return renderOracleAnswer(labels.noQuestion, character, locale);
   }
 
   const context = contextOverride ?? await buildOracleContext(trimmedQuestion, character, locale);
@@ -706,33 +710,33 @@ export async function answerOracleQuestion(
     context.detectedIntent === "rules" ||
     context.detectedIntent === "unknown"
   ) {
-    return `${applyOraclePersonality(answerFromContext(context, locale), character, locale)}\n\n${labels.contact}`;
+    return `${renderOracleAnswer(answerFromContext(context, locale), character, locale)}\n\n${labels.contact}`;
   }
 
   const reality = await getTournamentReality(locale);
 
   if (normalizedQuestion.includes("hoy") || normalizedQuestion.includes("today")) {
-    return applyOraclePersonality(answerToday(reality, labels), character, locale);
+    return renderOracleAnswer(answerToday(reality, labels), character, locale);
   }
 
   const historyAnswer = answerWorldCupHistory(trimmedQuestion, locale);
   if (historyAnswer) {
-    return `${applyOraclePersonality(historyAnswer, character, locale)}\n\n${labels.contact}`;
+    return `${renderOracleAnswer(historyAnswer, character, locale)}\n\n${labels.contact}`;
   }
 
   const teamAnswer = await answerTeamQuestion(trimmedQuestion, locale, labels, reality);
   if (teamAnswer) {
-    return `${applyOraclePersonality(teamAnswer, character, locale)}\n\n${labels.contact}`;
+    return `${renderOracleAnswer(teamAnswer, character, locale)}\n\n${labels.contact}`;
   }
 
   const groupAnswer = await answerGroup(trimmedQuestion, locale, labels);
   if (groupAnswer) {
-    return `${applyOraclePersonality(groupAnswer, character, locale)}\n\n${labels.contact}`;
+    return `${renderOracleAnswer(groupAnswer, character, locale)}\n\n${labels.contact}`;
   }
 
   const rulesAnswer = answerRulesQuestion(trimmedQuestion, locale);
   if (rulesAnswer) {
-    return `${applyOraclePersonality(rulesAnswer, character, locale)}\n\n${labels.contact}`;
+    return `${renderOracleAnswer(rulesAnswer, character, locale)}\n\n${labels.contact}`;
   }
 
   if (
@@ -744,8 +748,8 @@ export async function answerOracleQuestion(
     normalizedQuestion.includes("apuesta") ||
     normalizedQuestion.includes("bet")
   ) {
-    return `${applyOraclePersonality(labels.offTopic, character, locale)}\n\n${labels.contact}`;
+    return `${renderOracleAnswer(labels.offTopic, character, locale)}\n\n${labels.contact}`;
   }
 
-  return `${applyOraclePersonality(labels.fallback, character, locale)}\n\n${labels.contact}`;
+  return `${renderOracleAnswer(labels.fallback, character, locale)}\n\n${labels.contact}`;
 }
