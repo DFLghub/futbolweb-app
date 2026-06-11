@@ -233,7 +233,11 @@ function mentionsFinalQuestion(normalizedQuestion: string) {
   return (
     normalizedQuestion.includes("final") ||
     normalizedQuestion.includes("ultima") ||
-    normalizedQuestion.includes("last")
+    normalizedQuestion.includes("ultimo") ||
+    normalizedQuestion.includes("last") ||
+    normalizedQuestion.includes("last match") ||
+    normalizedQuestion.includes("previous final") ||
+    normalizedQuestion.includes("previous world cup")
   );
 }
 
@@ -343,7 +347,11 @@ function answerWorldCupHistory(question: string, locale: Locale) {
     mentionsFinalQuestion(normalizedQuestion) &&
     (normalizedQuestion.includes("antes de 2026") ||
       normalizedQuestion.includes("before 2026") ||
+      normalizedQuestion.includes("anterior") ||
+      normalizedQuestion.includes("previo") ||
+      normalizedQuestion.includes("previous") ||
       normalizedQuestion.includes("ultima final") ||
+      normalizedQuestion.includes("ultimo partido") ||
       normalizedQuestion.includes("last final"))
   ) {
     return answerLastFinalBefore2026(locale);
