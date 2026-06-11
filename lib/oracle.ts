@@ -8,6 +8,7 @@ import {
   isOracleCharacter,
   type OracleCharacter,
 } from "@/lib/oracle-characters";
+import { buildOracleContext, type OracleContext } from "@/lib/oracle/context";
 
 type OracleLabels = {
   allTied: string;
@@ -449,7 +450,7 @@ function answerWorldCupHistory(question: string, locale: Locale) {
 
 function applyOraclePersonality(answer: string, character: OracleCharacter, locale: Locale) {
   if (character === "paulgpt") {
-    return answer;
+    return `PaulGPT: ${answer}`;
   }
 
   if (character === "vargpt") {
@@ -489,6 +490,45 @@ function applyOraclePersonality(answer: string, character: OracleCharacter, loca
   }
 
   return `InsultistaGPT desde la tribuna: ${roastAnswer}\n\nVacile sano: con fútbol, sin mala leche y sin pegarle a nadie por fuera de la cancha.`;
+}
+
+function answerFromContext(context: OracleContext, locale: Locale) {
+  const facts = context.facts.join("\n");
+  const limitations = context.limitations.join("\n");
+
+  if (context.detectedIntent === "incident_detail") {
+    if (locale === "en") {
+      return [
+        "I do not yet have official play-by-play incident detail inside FutbolWeb. I can see results, fixtures, groups, rankings, and general rules, but I should not invent the reason for a sending-off.",
+        "In general, a player can be sent off for serious foul play, violent conduct, denying an obvious goal-scoring opportunity, a second yellow card, or offensive/abusive language.",
+      ].join("\n");
+    }
+
+    return [
+      "No tengo todavía el detalle oficial de incidencias jugada a jugada en FutbolWeb. Puedo ver resultados, partidos, grupos, rankings y reglas generales, pero no debo inventar la razón de una expulsión.",
+      "En general, una expulsión puede venir por juego brusco grave, conducta violenta, impedir una ocasión manifiesta de gol, segunda amarilla o lenguaje ofensivo/abusivo.",
+    ].join("\n");
+  }
+
+  if (context.detectedIntent === "unknown") {
+    const contextLines = [facts, limitations].filter(Boolean).join("\n");
+
+    if (locale === "en") {
+      return `I could not map that to a specific FutbolWeb fact yet.${contextLines ? `\n${contextLines}` : ""}`;
+    }
+
+    return `No pude conectar esa pregunta con un dato específico de FutbolWeb todavía.${contextLines ? `\n${contextLines}` : ""}`;
+  }
+
+  if (context.facts.length > 0) {
+    return facts;
+  }
+
+  if (locale === "en") {
+    return limitations || "That data is not available in FutbolWeb yet.";
+  }
+
+  return limitations || "Ese dato todavía no está disponible en FutbolWeb.";
 }
 
 function formatMatchLine(match: ReturnType<typeof localizeWorldCupMatches>[number] | RealityMatch, labels: OracleLabels) {
@@ -641,13 +681,32 @@ function answerToday(reality: TournamentReality, labels: OracleLabels) {
   return `${labels.noMatchesToday}\n${nextMatches.map((match) => formatMatchLine(match, labels)).join("\n")}`;
 }
 
-export async function answerOracleQuestion(question: string, locale: Locale, character: OracleCharacter = defaultOracleCharacter) {
+export async function answerOracleQuestion(
+  question: string,
+  locale: Locale,
+  character: OracleCharacter = defaultOracleCharacter,
+  contextOverride?: OracleContext,
+) {
   const labels = labelsByLocale[locale];
   const trimmedQuestion = question.trim();
   const normalizedQuestion = normalizeText(trimmedQuestion);
 
   if (!trimmedQuestion) {
     return applyOraclePersonality(labels.noQuestion, character, locale);
+  }
+
+  const context = contextOverride ?? await buildOracleContext(trimmedQuestion, character, locale);
+
+  if (
+    context.detectedIntent === "incident_detail" ||
+    context.detectedIntent === "latest_result" ||
+    context.detectedIntent === "next_match" ||
+    context.detectedIntent === "ranking" ||
+    context.detectedIntent === "var_rules" ||
+    context.detectedIntent === "rules" ||
+    context.detectedIntent === "unknown"
+  ) {
+    return `${applyOraclePersonality(answerFromContext(context, locale), character, locale)}\n\n${labels.contact}`;
   }
 
   const reality = await getTournamentReality(locale);
