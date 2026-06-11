@@ -500,13 +500,13 @@ function answerFromContext(context: OracleContext, locale: Locale) {
     if (locale === "en") {
       return [
         "I do not yet have official play-by-play incident detail inside FutbolWeb. I can see results, fixtures, groups, rankings, and general rules, but I should not invent the reason for a sending-off.",
-        "In general, a player can be sent off for serious foul play, violent conduct, denying an obvious goal-scoring opportunity, a second yellow card, or offensive/abusive language.",
+        "Ask me for red-card rules separately and I can explain the general framework without attaching it to this incident.",
       ].join("\n");
     }
 
     return [
       "No tengo todavía el detalle oficial de incidencias jugada a jugada en FutbolWeb. Puedo ver resultados, partidos, grupos, rankings y reglas generales, pero no debo inventar la razón de una expulsión.",
-      "En general, una expulsión puede venir por juego brusco grave, conducta violenta, impedir una ocasión manifiesta de gol, segunda amarilla o lenguaje ofensivo/abusivo.",
+      "Pregúntame por reglas de tarjeta roja por separado y puedo explicar el marco general sin atribuirlo a esta incidencia.",
     ].join("\n");
   }
 
@@ -514,10 +514,10 @@ function answerFromContext(context: OracleContext, locale: Locale) {
     const contextLines = [facts, limitations].filter(Boolean).join("\n");
 
     if (locale === "en") {
-      return `I could not map that to a specific FutbolWeb fact yet.${contextLines ? `\n${contextLines}` : ""}`;
+      return `I could not map that to a specific FutbolWeb fact yet.${contextLines ? `\n${contextLines}` : ""}\nTry: What is the next match?`;
     }
 
-    return `No pude conectar esa pregunta con un dato específico de FutbolWeb todavía.${contextLines ? `\n${contextLines}` : ""}`;
+    return `No pude conectar esa pregunta con un dato específico de FutbolWeb todavía.${contextLines ? `\n${contextLines}` : ""}\nPrueba con: ¿Cuál es el próximo partido?`;
   }
 
   if (context.facts.length > 0) {
