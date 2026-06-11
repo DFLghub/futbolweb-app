@@ -20,6 +20,7 @@ type PredictPageProps = {
     slug: string;
   }>;
   searchParams: Promise<{
+    edit?: string;
     group?: string;
   }>;
 };
@@ -72,7 +73,7 @@ export default async function PredictPage({ params, searchParams }: PredictPageP
   const dict = await getCurrentDictionary();
   const locale = await getCurrentLocale();
   const { slug } = await params;
-  const { group } = await searchParams;
+  const { edit, group } = await searchParams;
   const initialGroupCode = group?.trim() || "";
   const knownMatchBase = worldCup2026Matches.find((match) => match.slug === slug);
   const knownMatch = knownMatchBase ? localizeWorldCupMatch(knownMatchBase, locale) : undefined;
@@ -132,6 +133,7 @@ export default async function PredictPage({ params, searchParams }: PredictPageP
 
             <PredictDemoForm
               awayTeamName={awayTeamName}
+              editingPredictionId={edit?.trim() || undefined}
               homeTeamName={homeTeamName}
               initialGroupCode={initialGroupCode}
               matchLabel={matchLabel}

@@ -24,6 +24,7 @@ type PredictDemoFormProps = {
   matchLabel: string;
   homeTeamName: string;
   awayTeamName: string;
+  editingPredictionId?: string;
   initialGroupCode?: string;
 };
 
@@ -100,6 +101,7 @@ export default function PredictDemoForm({
   matchLabel,
   homeTeamName,
   awayTeamName,
+  editingPredictionId,
   initialGroupCode = "",
 }: PredictDemoFormProps) {
   const { dict, locale } = useI18n();
@@ -135,10 +137,47 @@ export default function PredictDemoForm({
           ? normalizedInitialGroupCode
           : storedIdentity.groupCode,
       }));
+
+      if (!editingPredictionId) {
+        return;
+      }
+
+      const whatsappPhone = storedIdentity.whatsappPhone.replace(/[\s().-]/g, "");
+
+      fetch(`/api/my-predictions?whatsapp_phone=${encodeURIComponent(whatsappPhone)}`)
+        .then(async (response) => {
+          const result = await response.json();
+
+          if (!response.ok || !result.ok || !Array.isArray(result.predictions)) {
+            return;
+          }
+
+          const editablePrediction = result.predictions.find((prediction: SavedPrediction) => {
+            return prediction.id === editingPredictionId && prediction.match_slug === matchSlug;
+          }) as SavedPrediction | undefined;
+
+          if (!editablePrediction) {
+            return;
+          }
+
+          setForm((current) => ({
+            ...current,
+            alias: editablePrediction.alias,
+            whatsappPhone,
+            favoriteTeam: editablePrediction.favorite_team || current.favoriteTeam,
+            scoreA: String(editablePrediction.score_a),
+            scoreB: String(editablePrediction.score_b),
+            comment: editablePrediction.comment || "",
+            groupCode: editablePrediction.group_code || "",
+          }));
+        })
+        .catch(() => {
+          // The regular prediction form remains usable if the edit prefill cannot load.
+        });
     }, 0);
 
     return () => window.clearTimeout(timeoutId);
-  }, [initialGroupCode, normalizedInitialGroupCode]);
+  }, [editingPredictionId, initialGroupCode, matchSlug, normalizedInitialGroupCode]);
 
   function updateField(field: keyof typeof emptyForm, value: string) {
     setForm((current) => ({ ...current, [field]: value }));
@@ -176,23 +215,28 @@ export default function PredictDemoForm({
     const scoreB = Number(form.scoreB);
 
     try {
-      const response = await fetch("/api/predictions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        editingPredictionId
+          ? `/api/predictions/${encodeURIComponent(editingPredictionId)}`
+          : "/api/predictions",
+        {
+          method: editingPredictionId ? "PATCH" : "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            match_slug: matchSlug,
+            alias: form.alias,
+            whatsapp_phone: form.whatsappPhone,
+            favorite_team: form.favoriteTeam,
+            score_a: scoreA,
+            score_b: scoreB,
+            comment: form.comment,
+            group_code: form.groupCode,
+            client_submission_id: clientSubmissionId,
+          }),
         },
-        body: JSON.stringify({
-          match_slug: matchSlug,
-          alias: form.alias,
-          whatsapp_phone: form.whatsappPhone,
-          favorite_team: form.favoriteTeam,
-          score_a: scoreA,
-          score_b: scoreB,
-          comment: form.comment,
-          group_code: form.groupCode,
-          client_submission_id: clientSubmissionId,
-        }),
-      });
+      );
 
       const result = await response.json();
 
@@ -202,6 +246,8 @@ export default function PredictDemoForm({
             ? formDict.highTrafficError
             : typeof result.message === "string"
             ? result.message
+            : editingPredictionId
+            ? formDict.updateGenericError
             : formDict.genericError,
         );
         return;
@@ -468,14 +514,20 @@ export default function PredictDemoForm({
           disabled={isSubmitting}
           type="submit"
         >
-          {isSubmitting ? formDict.submitting : formDict.submit}
+          {isSubmitting
+            ? editingPredictionId
+              ? formDict.updating
+              : formDict.submitting
+            : editingPredictionId
+            ? formDict.updateSubmit
+            : formDict.submit}
         </button>
       </form>
 
       {savedPrediction ? (
         <div className="mt-5 rounded-md border border-emerald-200 bg-emerald-50 p-4">
           <p className="text-sm font-bold text-emerald-800">
-            {formDict.received}
+            {editingPredictionId ? formDict.updated : formDict.received}
           </p>
           <button
             className="mt-4 min-h-11 w-full rounded-md border border-emerald-300 bg-white px-4 py-3 text-sm font-black text-emerald-800 transition hover:bg-emerald-100"
