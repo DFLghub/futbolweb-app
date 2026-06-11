@@ -1,15 +1,10 @@
-import { unstable_cache } from "next/cache";
-
 import { mockWorldCupGroupStandings, type GroupStanding } from "@/lib/mock-group-standings";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
+import {
+  getCompletedMatchResults,
+  getOfficialMatchResults,
+} from "@/lib/tournament-reality";
 
 import { worldCup2026Matches } from "./world-cup-2026-matches";
-
-type MatchResultRow = {
-  match_slug: string;
-  score_a: number;
-  score_b: number;
-};
 
 function groupCodeToGroupId(groupCode: string) {
   return groupCode
@@ -38,86 +33,76 @@ function cloneInitialStandings(): GroupStanding[] {
   }));
 }
 
-export const getRealGroupStandings = unstable_cache(
-  async (): Promise<GroupStanding[]> => {
-    const supabase = createSupabaseServerClient();
-    const { data, error } = await supabase
-      .from("match_results")
-      .select("match_slug, score_a, score_b");
+export async function getRealGroupStandings(now = new Date()): Promise<GroupStanding[]> {
+  const standings = cloneInitialStandings();
+  const resultsBySlug = new Map(
+    getCompletedMatchResults(await getOfficialMatchResults(), now).map((result) => [
+      result.match_slug,
+      result,
+    ]),
+  );
+  const groupsById = new Map(standings.map((group) => [group.groupId, group]));
 
-    if (error) {
-      throw error;
+  for (const match of worldCup2026Matches) {
+    const result = resultsBySlug.get(match.slug);
+
+    if (!result) {
+      continue;
     }
 
-    const standings = cloneInitialStandings();
-    const resultsBySlug = new Map(
-      ((data ?? []) as MatchResultRow[]).map((result) => [result.match_slug, result]),
-    );
-    const groupsById = new Map(standings.map((group) => [group.groupId, group]));
+    const groupId = groupCodeToGroupId(match.groupCode);
+    const group = groupsById.get(groupId);
 
-    for (const match of worldCup2026Matches) {
-      const result = resultsBySlug.get(match.slug);
-
-      if (!result) {
-        continue;
-      }
-
-      const groupId = groupCodeToGroupId(match.groupCode);
-      const group = groupsById.get(groupId);
-
-      if (!group) {
-        continue;
-      }
-
-      const homeTeam = group.teams.find((team) => team.teamName === match.homeTeam.name);
-      const awayTeam = group.teams.find((team) => team.teamName === match.awayTeam.name);
-
-      if (!homeTeam || !awayTeam) {
-        continue;
-      }
-
-      homeTeam.played += 1;
-      awayTeam.played += 1;
-      homeTeam.goalsFor += result.score_a;
-      homeTeam.goalsAgainst += result.score_b;
-      awayTeam.goalsFor += result.score_b;
-      awayTeam.goalsAgainst += result.score_a;
-
-      if (result.score_a > result.score_b) {
-        homeTeam.won += 1;
-        homeTeam.points += 3;
-        awayTeam.lost += 1;
-      } else if (result.score_a < result.score_b) {
-        awayTeam.won += 1;
-        awayTeam.points += 3;
-        homeTeam.lost += 1;
-      } else {
-        homeTeam.drawn += 1;
-        awayTeam.drawn += 1;
-        homeTeam.points += 1;
-        awayTeam.points += 1;
-      }
+    if (!group) {
+      continue;
     }
 
-    for (const group of standings) {
-      group.teams.forEach((team) => {
-        team.goalDifference = team.goalsFor - team.goalsAgainst;
-      });
+    const homeTeam = group.teams.find((team) => team.teamName === match.homeTeam.name);
+    const awayTeam = group.teams.find((team) => team.teamName === match.awayTeam.name);
 
-      group.teams.sort((teamA, teamB) => (
-        teamB.points - teamA.points ||
-        teamB.goalDifference - teamA.goalDifference ||
-        teamB.goalsFor - teamA.goalsFor ||
-        teamA.teamName.localeCompare(teamB.teamName)
-      ));
-
-      group.teams.forEach((team, index) => {
-        team.rank = index + 1;
-      });
+    if (!homeTeam || !awayTeam) {
+      continue;
     }
 
-    return standings;
-  },
-  ["real-group-standings"],
-  { revalidate: 60 },
-);
+    homeTeam.played += 1;
+    awayTeam.played += 1;
+    homeTeam.goalsFor += result.score_a;
+    homeTeam.goalsAgainst += result.score_b;
+    awayTeam.goalsFor += result.score_b;
+    awayTeam.goalsAgainst += result.score_a;
+
+    if (result.score_a > result.score_b) {
+      homeTeam.won += 1;
+      homeTeam.points += 3;
+      awayTeam.lost += 1;
+    } else if (result.score_a < result.score_b) {
+      awayTeam.won += 1;
+      awayTeam.points += 3;
+      homeTeam.lost += 1;
+    } else {
+      homeTeam.drawn += 1;
+      awayTeam.drawn += 1;
+      homeTeam.points += 1;
+      awayTeam.points += 1;
+    }
+  }
+
+  for (const group of standings) {
+    group.teams.forEach((team) => {
+      team.goalDifference = team.goalsFor - team.goalsAgainst;
+    });
+
+    group.teams.sort((teamA, teamB) => (
+      teamB.points - teamA.points ||
+      teamB.goalDifference - teamA.goalDifference ||
+      teamB.goalsFor - teamA.goalsFor ||
+      teamA.teamName.localeCompare(teamB.teamName)
+    ));
+
+    group.teams.forEach((team, index) => {
+      team.rank = index + 1;
+    });
+  }
+
+  return standings;
+}

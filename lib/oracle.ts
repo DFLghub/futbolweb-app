@@ -1,12 +1,15 @@
 import type { Locale } from "@/lib/i18n";
 import { localizeWorldCupGroupStandings, localizeWorldCupMatches, worldCup2026Matches } from "@/lib/world-cup-2026-matches";
 import { mockWorldCupGroupStandings } from "@/lib/mock-group-standings";
+import { getTournamentReality, type RealityMatch, type TournamentReality } from "@/lib/tournament-reality";
+import { getRealGroupStandings } from "@/lib/real-group-standings";
 
 type OracleLabels = {
   allTied: string;
   classificationUnavailable: string;
   contact: string;
   fallback: string;
+  final: string;
   forTeam: string;
   groupInitial: string;
   groupNotFound: string;
@@ -16,6 +19,8 @@ type OracleLabels = {
   noTeamFound: string;
   offTopic: string;
   nextMatches: string;
+  live: string;
+  pendingResult: string;
   playsInGroup: string;
   todayMatches: string;
   venues: string;
@@ -40,6 +45,7 @@ const labelsByLocale: Record<Locale, OracleLabels> = {
     classificationUnavailable: "Todavía no hay resultados suficientes para calcular escenarios reales de clasificación.",
     contact: "Mejoras, sugerencias, soporte o aportes: jorge@deepfeelingslabs.com.",
     fallback: "Puedo ayudarte con partidos, grupos, sedes, rivales, próximos juegos y estados iniciales de la tabla. Prueba con: ¿Cuándo juega Colombia?",
+    final: "Finalizado",
     forTeam: "de",
     groupInitial: "Tabla inicial",
     groupNotFound: "No encontré ese grupo en el Mundial 2026.",
@@ -49,6 +55,8 @@ const labelsByLocale: Record<Locale, OracleLabels> = {
     noTeamFound: "No encontré esa selección en el calendario cargado. Prueba con el nombre completo.",
     offTopic: "PaulGPT se queda en la cancha: Mundiales FIFA masculinos, FutbolWeb 2026, partidos, grupos, sedes y memoria mundialista. Loterías, chefs y trucos raros van para otro camerino.",
     nextMatches: "Próximos partidos",
+    live: "En vivo",
+    pendingResult: "Resultado pendiente",
     playsInGroup: "está en",
     todayMatches: "Partidos de hoy",
     venues: "Sedes",
@@ -59,6 +67,7 @@ const labelsByLocale: Record<Locale, OracleLabels> = {
     classificationUnavailable: "There are not enough results yet to calculate real qualification scenarios.",
     contact: "Improvements, suggestions, support, or contributions: jorge@deepfeelingslabs.com.",
     fallback: "I can help with matches, groups, venues, opponents, upcoming games, and initial standings. Try: When does Colombia play?",
+    final: "Final",
     forTeam: "for",
     groupInitial: "Initial table",
     groupNotFound: "I could not find that group in the 2026 World Cup.",
@@ -68,6 +77,8 @@ const labelsByLocale: Record<Locale, OracleLabels> = {
     noTeamFound: "I could not find that team in the loaded schedule. Try the full team name.",
     offTopic: "PaulGPT stays on the pitch: men's FIFA World Cups, FutbolWeb 2026, matches, groups, venues, and World Cup memory. Lotteries, chefs, and random tricks belong in another locker room.",
     nextMatches: "Upcoming matches",
+    live: "Live",
+    pendingResult: "Pending result",
     playsInGroup: "is in",
     todayMatches: "Today's matches",
     venues: "Venues",
@@ -463,16 +474,19 @@ function applyOraclePersonality(answer: string, character: OracleCharacter, loca
   return `InsultistaGPT desde la tribuna: ${roastAnswer}\n\nVacile sano: con fútbol, sin mala leche y sin pegarle a nadie por fuera de la cancha.`;
 }
 
-function dateKeyInEasternTime(date: Date) {
-  return new Intl.DateTimeFormat("en-CA", {
-    day: "2-digit",
-    month: "2-digit",
-    timeZone: "America/New_York",
-    year: "numeric",
-  }).format(date);
-}
+function formatMatchLine(match: ReturnType<typeof localizeWorldCupMatches>[number] | RealityMatch, labels: OracleLabels) {
+  if (match.status === "final") {
+    return `${match.homeTeam.flagEmoji} ${match.homeTeam.name} ${match.homeScore} - ${match.awayScore} ${match.awayTeam.flagEmoji} ${match.awayTeam.name} · ${labels.final}`;
+  }
 
-function formatMatchLine(match: ReturnType<typeof localizeWorldCupMatches>[number], labels: OracleLabels) {
+  if (match.status === "live") {
+    return `${match.homeTeam.flagEmoji} ${match.homeTeam.name} ${labels.vs} ${match.awayTeam.flagEmoji} ${match.awayTeam.name} · ${labels.live}${"displayClock" in match && match.displayClock ? ` · ${match.displayClock}` : ""}`;
+  }
+
+  if ("realityStatus" in match && match.realityStatus === "finished_pending_result") {
+    return `${match.homeTeam.flagEmoji} ${match.homeTeam.name} ${labels.vs} ${match.awayTeam.flagEmoji} ${match.awayTeam.name} · ${labels.pendingResult}`;
+  }
+
   return `${match.homeTeam.flagEmoji} ${match.homeTeam.name} ${labels.vs} ${match.awayTeam.flagEmoji} ${match.awayTeam.name} · ${match.kickoffLabel} · ${match.venueName}`;
 }
 
@@ -512,41 +526,50 @@ function findTeam(question: string, locale: Locale) {
   return aliases.find(([alias]) => normalizedQuestion.includes(` ${alias} `))?.[1];
 }
 
-function getTeamMatches(teamCode: string, locale: Locale) {
-  return localizeWorldCupMatches(worldCup2026Matches, locale)
+function getTeamMatches(teamCode: string, locale: Locale, reality?: TournamentReality) {
+  return (reality?.allMatches ?? localizeWorldCupMatches(worldCup2026Matches, locale))
     .filter((match) => match.homeTeamCode === teamCode || match.awayTeamCode === teamCode)
     .sort((left, right) => new Date(left.kickoffUtc).getTime() - new Date(right.kickoffUtc).getTime());
 }
 
-function getGroupStandingByLetter(groupLetter: string, locale: Locale) {
-  return localizeWorldCupGroupStandings(mockWorldCupGroupStandings, locale).find((group) => {
+async function getGroupStandingByLetter(groupLetter: string, locale: Locale) {
+  let standings = mockWorldCupGroupStandings;
+
+  try {
+    standings = await getRealGroupStandings();
+  } catch (error) {
+    console.error("[oracle] fallback to mock standings", error);
+  }
+
+  return localizeWorldCupGroupStandings(standings, locale).find((group) => {
     return group.groupName.endsWith(groupLetter);
   });
 }
 
-function answerGroup(question: string, locale: Locale, labels: OracleLabels) {
+async function answerGroup(question: string, locale: Locale, labels: OracleLabels) {
   const groupLetter = getGroupLetter(question);
   if (!groupLetter) return null;
 
-  const group = getGroupStandingByLetter(groupLetter, locale);
+  const group = await getGroupStandingByLetter(groupLetter, locale);
   if (!group) return labels.groupNotFound;
 
   const table = group.teams.map((team) => `${team.rank}. ${team.teamName} · ${team.points} pts`).join("\n");
-  return `${labels.allTied}\n\n${labels.groupInitial} ${group.groupName}:\n${table}`;
+  const hasResults = group.teams.some((team) => team.played > 0);
+  return `${hasResults ? group.groupName : labels.allTied}\n\n${labels.groupInitial} ${group.groupName}:\n${table}`;
 }
 
-function answerTeamQuestion(question: string, locale: Locale, labels: OracleLabels) {
+async function answerTeamQuestion(question: string, locale: Locale, labels: OracleLabels, reality?: TournamentReality) {
   const team = findTeam(question, locale);
   if (!team) return null;
 
-  const matches = getTeamMatches(team.code, locale);
+  const matches = getTeamMatches(team.code, locale, reality);
   if (matches.length === 0) return labels.noTeamFound;
 
   const group = matches.find((match) => /(?:Grupo|Group) [A-L]/.test(match.groupCode))?.groupCode;
   const normalizedQuestion = normalizeText(question);
 
   if (normalizedQuestion.includes("grupo") || normalizedQuestion.includes("group")) {
-    const groupStanding = group ? getGroupStandingByLetter(group.at(-1) ?? "", locale) : null;
+    const groupStanding = group ? await getGroupStandingByLetter(group.at(-1) ?? "", locale) : null;
     const teams = groupStanding?.teams.map((standingTeam) => standingTeam.teamName).join(", ");
     return `${team.name} ${labels.playsInGroup} ${group}.${teams ? `\n${labels.groupInitial}: ${teams}.` : ""}`;
   }
@@ -565,8 +588,9 @@ function answerTeamQuestion(question: string, locale: Locale, labels: OracleLabe
     normalizedQuestion.includes("champion") ||
     normalizedQuestion.includes("win it all")
   ) {
-    const nextMatch = matches[0] ? formatMatchLine(matches[0], labels) : null;
-    return `${team.name}: no puedo coronar a nadie antes de jugar. ${group ? `${team.name} ${labels.playsInGroup} ${group}. ` : ""}${nextMatch ? `${labels.nextMatches}: ${nextMatch}` : labels.classificationUnavailable}`;
+    const nextMatch = matches.find((match) => match.status !== "final");
+    const nextMatchLine = nextMatch ? formatMatchLine(nextMatch, labels) : null;
+    return `${team.name}: no puedo coronar a nadie antes de jugar. ${group ? `${team.name} ${labels.playsInGroup} ${group}. ` : ""}${nextMatchLine ? `${labels.nextMatches}: ${nextMatchLine}` : labels.classificationUnavailable}`;
   }
 
   if (
@@ -581,21 +605,26 @@ function answerTeamQuestion(question: string, locale: Locale, labels: OracleLabe
   return `${labels.nextMatches} ${labels.forTeam} ${team.name}:\n${matches.slice(0, 5).map((match) => formatMatchLine(match, labels)).join("\n")}`;
 }
 
-function answerToday(locale: Locale, labels: OracleLabels) {
-  const matches = localizeWorldCupMatches(worldCup2026Matches, locale).sort((left, right) => {
-    return new Date(left.kickoffUtc).getTime() - new Date(right.kickoffUtc).getTime();
-  });
-  const todayKey = dateKeyInEasternTime(new Date());
-  const todayMatches = matches.filter((match) => dateKeyInEasternTime(new Date(match.kickoffUtc)) === todayKey);
+function answerToday(reality: TournamentReality, labels: OracleLabels) {
+  const todayMatches = [
+    ...reality.todayFinishedMatches,
+    ...reality.liveMatches,
+    ...reality.todayFinishedPendingResultMatches,
+    ...reality.todayUpcomingMatches,
+  ];
 
   if (todayMatches.length > 0) {
     return `${labels.todayMatches}:\n${todayMatches.map((match) => formatMatchLine(match, labels)).join("\n")}`;
   }
 
-  return `${labels.noMatchesToday}\n${matches.slice(0, 4).map((match) => formatMatchLine(match, labels)).join("\n")}`;
+  const nextMatches = reality.allMatches
+    .filter((match) => match.realityStatus === "upcoming")
+    .slice(0, 4);
+
+  return `${labels.noMatchesToday}\n${nextMatches.map((match) => formatMatchLine(match, labels)).join("\n")}`;
 }
 
-export function answerOracleQuestion(question: string, locale: Locale, character: OracleCharacter = defaultOracleCharacter) {
+export async function answerOracleQuestion(question: string, locale: Locale, character: OracleCharacter = defaultOracleCharacter) {
   const labels = labelsByLocale[locale];
   const trimmedQuestion = question.trim();
   const normalizedQuestion = normalizeText(trimmedQuestion);
@@ -604,8 +633,10 @@ export function answerOracleQuestion(question: string, locale: Locale, character
     return applyOraclePersonality(labels.noQuestion, character, locale);
   }
 
+  const reality = await getTournamentReality(locale);
+
   if (normalizedQuestion.includes("hoy") || normalizedQuestion.includes("today")) {
-    return applyOraclePersonality(answerToday(locale, labels), character, locale);
+    return applyOraclePersonality(answerToday(reality, labels), character, locale);
   }
 
   const historyAnswer = answerWorldCupHistory(trimmedQuestion, locale);
@@ -613,12 +644,12 @@ export function answerOracleQuestion(question: string, locale: Locale, character
     return `${applyOraclePersonality(historyAnswer, character, locale)}\n\n${labels.contact}`;
   }
 
-  const teamAnswer = answerTeamQuestion(trimmedQuestion, locale, labels);
+  const teamAnswer = await answerTeamQuestion(trimmedQuestion, locale, labels, reality);
   if (teamAnswer) {
     return `${applyOraclePersonality(teamAnswer, character, locale)}\n\n${labels.contact}`;
   }
 
-  const groupAnswer = answerGroup(trimmedQuestion, locale, labels);
+  const groupAnswer = await answerGroup(trimmedQuestion, locale, labels);
   if (groupAnswer) {
     return `${applyOraclePersonality(groupAnswer, character, locale)}\n\n${labels.contact}`;
   }

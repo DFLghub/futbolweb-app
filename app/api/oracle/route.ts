@@ -14,7 +14,7 @@ export async function POST(request: Request) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ answer: answerOracleQuestion("", "es") }, { status: 400 });
+    return NextResponse.json({ answer: await answerOracleQuestion("", "es") }, { status: 400 });
   }
 
   const locale = isLocale(body.locale) ? body.locale : normalizeLocale(undefined);
@@ -22,6 +22,6 @@ export async function POST(request: Request) {
   const character = normalizeOracleCharacter(body.character);
 
   return NextResponse.json({
-    answer: answerOracleQuestion(question, locale, character),
+    answer: await answerOracleQuestion(question, locale, character),
   });
 }

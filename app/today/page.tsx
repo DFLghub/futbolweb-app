@@ -5,7 +5,7 @@ import MatchCard from "@/components/MatchCard";
 import OracleAskBox from "@/components/OracleAskBox";
 import SimpleNav from "@/components/SimpleNav";
 import { getCurrentDictionary, getCurrentLocale } from "@/lib/i18n-server";
-import { deriveHomeMatchState, type TournamentState } from "@/lib/tournament-state";
+import { getTournamentReality, type TournamentReality } from "@/lib/tournament-reality";
 
 function daysUntilWorldCup(now: Date) {
   const opener = new Date("2026-06-11T19:00:00Z");
@@ -19,12 +19,12 @@ export default async function TodayPage() {
   const dict = await getCurrentDictionary();
   const locale = await getCurrentLocale();
   const now = new Date();
-  let tournamentState: TournamentState;
+  let tournamentState: TournamentReality;
   try {
-    tournamentState = await deriveHomeMatchState(locale, now);
+    tournamentState = await getTournamentReality(locale, now);
   } catch (error) {
     console.error("[today-page] could not load live tournament state", error);
-    tournamentState = await deriveHomeMatchState(locale, now, []);
+    tournamentState = await getTournamentReality(locale, now, []);
   }
 
   const daysLeft = daysUntilWorldCup(now);
