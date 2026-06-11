@@ -113,20 +113,63 @@ export default function OracleAskBox() {
       <div className="grid gap-0 lg:grid-cols-[0.95fr_1.05fr]">
         <div className="bg-slate-950 p-5 text-white md:p-6">
           <p className="inline-flex rounded-full border border-sky-300/20 bg-sky-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-sky-100">
-            {dict.today.oracleAskLabel}
+            {dict.today.oracleCastEyebrow}
           </p>
-          <h3 className="mt-4 text-2xl font-black leading-tight text-white md:text-3xl">
-            {dict.today.oracleAskTitle}
+          <h3 className="mt-4 text-xl font-black leading-tight text-white md:text-3xl">
+            {dict.today.oracleCastTitle}
           </h3>
-          <p className="mt-3 text-sm font-semibold leading-6 text-slate-200 md:text-base">
-            {dict.today.oracleAskText}
+          <p className="mt-3 break-words text-sm font-semibold leading-6 text-slate-200">
+            {dict.today.oracleCastText}
           </p>
-          <p className="mt-4 text-xs font-bold leading-5 text-sky-100 md:text-sm">
-            {dict.today.oracleAskHint}
-          </p>
+
+          <div className="mt-5 grid gap-2">
+            {dict.today.oracleCastCharacters.map(([name, role, example, status]) => (
+              <article
+                key={name}
+                className="rounded-lg border border-white/10 bg-white/[0.06] p-3"
+              >
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+                  <div className="min-w-0">
+                    <p className="text-base font-black leading-tight text-white">{name}</p>
+                    <p className="mt-1 text-[0.68rem] font-black uppercase tracking-[0.12em] text-sky-100">
+                      {role}
+                    </p>
+                  </div>
+                  <span className={status === "active" ? "w-fit rounded-full bg-emerald-300 px-2 py-0.5 text-[0.62rem] font-black uppercase text-emerald-950" : "w-fit rounded-full border border-white/15 px-2 py-0.5 text-[0.62rem] font-black uppercase text-slate-300"}>
+                    {status === "active" ? "ON" : dict.today.oracleCastSoonAction}
+                  </span>
+                </div>
+                <p className="mt-3 text-xs font-semibold leading-5 text-slate-200">
+                  {example}
+                </p>
+                {status === "active" ? (
+                  <button
+                    className="mt-3 inline-flex min-h-9 w-full items-center justify-center rounded-md bg-white px-3 py-2 text-xs font-black text-slate-950 transition hover:bg-sky-50 disabled:cursor-not-allowed disabled:opacity-60"
+                    disabled={isLoading}
+                    onClick={() => void askOracle(example)}
+                    type="button"
+                  >
+                    {dict.today.oracleCastPrimaryAction}
+                  </button>
+                ) : null}
+              </article>
+            ))}
+          </div>
         </div>
 
         <div className="grid min-w-0 gap-4 p-4 md:p-5">
+          <div>
+            <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] text-sky-700">
+              {dict.today.oracleAskLabel}
+            </p>
+            <h4 className="mt-1 text-xl font-black leading-tight text-slate-950">
+              {dict.today.oracleAskTitle}
+            </h4>
+            <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">
+              {dict.today.oracleAskText}
+            </p>
+          </div>
+
           <div
             ref={messagesRef}
             className="grid max-h-72 gap-3 overflow-y-auto rounded-lg border border-slate-200 bg-slate-50 p-3"
@@ -204,62 +247,6 @@ export default function OracleAskBox() {
               {dict.today.oracleAskContactCta}
             </a>
           </p>
-
-          <div className="min-w-0 rounded-lg border border-slate-200 bg-white p-3">
-            <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-              <div>
-                <p className="text-[0.68rem] font-black uppercase tracking-[0.14em] text-red-700">
-                  {dict.today.oracleCastEyebrow}
-                </p>
-                <h4 className="mt-1 text-base font-black leading-tight text-slate-950">
-                  {dict.today.oracleCastTitle}
-                </h4>
-              </div>
-              <p className="max-w-sm text-xs font-semibold leading-5 text-slate-600">
-                {dict.today.oracleCastText}
-              </p>
-            </div>
-
-            <div className="mt-3 grid min-w-0 max-w-full gap-2 sm:grid-cols-3">
-              {dict.today.oracleCastCharacters.map(([name, role, example, status]) => (
-                <article
-                  key={name}
-                  className="min-w-0 rounded-lg border border-slate-200 bg-slate-50 p-3"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <p className="text-sm font-black leading-tight text-slate-950">{name}</p>
-                      <p className="mt-1 text-[0.68rem] font-black uppercase tracking-[0.1em] text-sky-700">
-                        {role}
-                      </p>
-                    </div>
-                    {status === "active" ? (
-                      <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[0.62rem] font-black uppercase text-emerald-700">
-                        ON
-                      </span>
-                    ) : null}
-                  </div>
-                  <p className="mt-3 min-h-10 text-xs font-semibold leading-5 text-slate-700">
-                    {example}
-                  </p>
-                  {status === "active" ? (
-                    <button
-                      className="mt-3 inline-flex min-h-9 w-full items-center justify-center rounded-md bg-slate-950 px-3 py-2 text-xs font-black text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-                      disabled={isLoading}
-                      onClick={() => void askOracle(example)}
-                      type="button"
-                    >
-                      {dict.today.oracleCastPrimaryAction}
-                    </button>
-                  ) : (
-                    <span className="mt-3 inline-flex min-h-9 w-full items-center justify-center rounded-md border border-slate-200 bg-white px-3 py-2 text-xs font-black text-slate-500">
-                      {dict.today.oracleCastSoonAction}
-                    </span>
-                  )}
-                </article>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </section>

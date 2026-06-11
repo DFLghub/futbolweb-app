@@ -111,22 +111,34 @@ export default async function TodayPage() {
           </div>
         </section>
 
-        <section className="mt-5 overflow-hidden rounded-2xl border border-sky-300/30 bg-slate-950 p-5 text-white shadow-lg shadow-slate-300/40 md:p-6">
-          <div className="flex flex-col gap-5 md:flex-row md:items-stretch md:justify-between">
-            <div className="flex-1">
+        <section className="mt-5 overflow-hidden rounded-2xl border border-sky-300/30 bg-slate-950 p-4 text-white shadow-lg shadow-slate-300/40 md:p-5">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="min-w-0 flex-1">
               <p className="inline-flex rounded-full border border-sky-300/20 bg-sky-300/10 px-3 py-1 text-xs font-black uppercase tracking-[0.16em] text-sky-100">
                 {dict.today.oracleEyebrow}
               </p>
-              <h2 className="mt-4 max-w-3xl text-3xl font-black leading-none text-white md:text-4xl">
+              <h2 className="mt-3 text-2xl font-black leading-none text-white md:text-3xl">
                 {dict.today.oracleTitle}
               </h2>
-              <p className="mt-3 max-w-3xl text-base font-semibold leading-7 text-slate-200 md:text-lg">
+              <p className="mt-2 text-sm font-bold leading-5 text-slate-200 md:text-base">
                 {dict.today.oracleText}
               </p>
             </div>
+            <div className="flex flex-wrap gap-2 md:justify-center">
+              {dict.today.oracleQuickLinks.map(([icon, label, href]) => (
+                <a
+                  key={label}
+                  className="inline-flex min-h-10 items-center gap-2 rounded-md border border-white/15 bg-white/5 px-3 py-2 text-xs font-black text-white transition hover:bg-white/10"
+                  href={href}
+                >
+                  <span aria-hidden="true">{icon}</span>
+                  {label}
+                </a>
+              ))}
+            </div>
             <a
               href="#tribuna"
-              className="inline-flex min-h-16 w-full items-center justify-center rounded-lg border border-white/20 bg-white px-6 py-4 text-base font-black text-slate-950 shadow-sm transition hover:bg-sky-50 md:min-h-full md:w-auto md:min-w-56 md:text-lg"
+              className="inline-flex min-h-12 w-full items-center justify-center rounded-lg border border-white/20 bg-white px-5 py-3 text-sm font-black text-slate-950 shadow-sm transition hover:bg-sky-50 md:w-auto md:min-w-56"
             >
               {dict.today.oracleCta}
             </a>
