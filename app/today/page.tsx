@@ -1,19 +1,11 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import BrandHeader from "@/components/BrandHeader";
 import MatchCard from "@/components/MatchCard";
 import OracleAskBox from "@/components/OracleAskBox";
 import SimpleNav from "@/components/SimpleNav";
 import { getCurrentDictionary, getCurrentLocale } from "@/lib/i18n-server";
-import { localizeWorldCupMatches, worldCup2026Matches } from "@/lib/world-cup-2026-matches";
-
-function dateKeyInEasternTime(date: Date) {
-  return new Intl.DateTimeFormat("en-CA", {
-    day: "2-digit",
-    month: "2-digit",
-    timeZone: "America/New_York",
-    year: "numeric",
-  }).format(date);
-}
+import { deriveHomeMatchState, type TournamentState } from "@/lib/tournament-state";
 
 function daysUntilWorldCup(now: Date) {
   const opener = new Date("2026-06-11T19:00:00Z");
@@ -22,25 +14,39 @@ function daysUntilWorldCup(now: Date) {
 }
 
 export default async function TodayPage() {
+  await connection();
+
   const dict = await getCurrentDictionary();
   const locale = await getCurrentLocale();
-  const matches = localizeWorldCupMatches(worldCup2026Matches, locale).sort((left, right) => {
-    return new Date(left.kickoffUtc).getTime() - new Date(right.kickoffUtc).getTime();
-  });
-
   const now = new Date();
+  let tournamentState: TournamentState;
+  try {
+    tournamentState = await deriveHomeMatchState(locale, now);
+  } catch (error) {
+    console.error("[today-page] could not load live tournament state", error);
+    tournamentState = await deriveHomeMatchState(locale, now, []);
+  }
+
   const daysLeft = daysUntilWorldCup(now);
-  const todayKey = dateKeyInEasternTime(now);
-
-  const todayMatches = matches.filter((match) => {
-    return dateKeyInEasternTime(new Date(match.kickoffUtc)) === todayKey;
-  });
-
-  const upcomingMatches = matches.filter((match) => new Date(match.kickoffUtc).getTime() > now.getTime());
-  const hasTodayMatches = todayMatches.length > 0;
-  const visibleMatches = hasTodayMatches ? todayMatches : upcomingMatches.slice(0, 7);
+  const todayMatches = [
+    ...tournamentState.todayFinishedMatches,
+    ...tournamentState.liveMatches,
+    ...tournamentState.todayFinishedPendingResultMatches,
+    ...tournamentState.todayUpcomingMatches,
+  ].sort((left, right) => new Date(left.kickoffUtc).getTime() - new Date(right.kickoffUtc).getTime());
+  const visibleMatches = todayMatches.length > 0
+    ? todayMatches
+    : tournamentState.nextMatch
+      ? [tournamentState.nextMatch]
+      : [];
   const mobileVisibleMatches = visibleMatches.slice(0, 3);
-  const nextFeaturedMatch = upcomingMatches[0];
+  const nextFeaturedMatch = tournamentState.nextMatch;
+  const latestFinishedMatch = tournamentState.latestFinishedMatch;
+  const hasTodayMatches = todayMatches.length > 0;
+  const todaySummary = dict.today.todayStateSummary
+    .replace("{finished}", String(tournamentState.todayFinishedMatches.length))
+    .replace("{live}", String(tournamentState.liveMatches.length))
+    .replace("{upcoming}", String(tournamentState.todayUpcomingMatches.length));
 
   return (
     <main className="min-h-screen bg-[#f3f6fb] px-5 py-6 text-slate-950 md:px-10 md:py-8">
@@ -86,17 +92,30 @@ export default async function TodayPage() {
             <div className="grid grid-cols-[0.72fr_1.28fr] gap-2 md:grid-cols-1 md:gap-3">
               <div className="rounded-lg border border-amber-200 bg-amber-50 p-2.5 md:p-5">
                 <p className="text-[0.6rem] font-black uppercase tracking-[0.12em] text-amber-700 md:text-xs md:tracking-[0.14em]">
-                  {dict.today.countdownLabel}
+                  {latestFinishedMatch ? dict.today.latestResultLabel : dict.today.countdownLabel}
                 </p>
-                <p className="mt-0.5 text-3xl font-black leading-none text-slate-950 md:mt-3 md:text-6xl">{daysLeft}</p>
-                <p className="mt-0.5 text-[0.65rem] font-bold leading-tight text-slate-600 md:mt-2 md:text-sm">
-                  {dict.today.countdownText}
-                </p>
+                {latestFinishedMatch ? (
+                  <>
+                    <p className="mt-0.5 text-xl font-black leading-tight text-slate-950 md:mt-3 md:text-3xl">
+                      {latestFinishedMatch.homeTeam.name} {latestFinishedMatch.homeScore} - {latestFinishedMatch.awayScore} {latestFinishedMatch.awayTeam.name}
+                    </p>
+                    <p className="mt-0.5 text-[0.65rem] font-bold uppercase leading-tight text-slate-600 md:mt-2 md:text-sm">
+                      {dict.today.finalLabel}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className="mt-0.5 text-3xl font-black leading-none text-slate-950 md:mt-3 md:text-6xl">{daysLeft}</p>
+                    <p className="mt-0.5 text-[0.65rem] font-bold leading-tight text-slate-600 md:mt-2 md:text-sm">
+                      {dict.today.countdownText}
+                    </p>
+                  </>
+                )}
               </div>
 
               <div className="rounded-lg border border-sky-200 bg-sky-50 p-2.5 md:p-5">
                 <p className="text-[0.6rem] font-black uppercase tracking-[0.12em] text-sky-700 md:text-xs md:tracking-[0.14em]">
-                  {dict.today.nextKickoffCardLabel}
+                  {nextFeaturedMatch?.status === "live" ? dict.today.liveLabel : dict.today.nextMatchLabel}
                 </p>
                 <p className="mt-0.5 line-clamp-2 text-xs font-black leading-tight text-slate-950 md:mt-3 md:line-clamp-none md:text-xl">
                   {nextFeaturedMatch
@@ -149,12 +168,10 @@ export default async function TodayPage() {
 
         <section className="mt-5 hidden rounded-lg border border-emerald-200 bg-emerald-50 p-4 md:block">
           <p className="text-xs font-black uppercase text-emerald-700">
-            {hasTodayMatches ? dict.today.livePanelLabel : dict.today.lineupLabel}
+            {dict.today.livePanelLabel}
           </p>
           <p className="mt-2 text-2xl font-black leading-none text-slate-950">
-            {hasTodayMatches
-              ? dict.today.todayCount.replace("{count}", String(todayMatches.length))
-              : dict.today.featuredCount.replace("{count}", String(visibleMatches.length))}
+            {hasTodayMatches ? todaySummary : dict.today.featuredCount.replace("{count}", String(visibleMatches.length))}
           </p>
           <p className="mt-2 text-xs leading-5 text-slate-600">
             {hasTodayMatches ? dict.today.livePanelText : dict.today.lineupText}
@@ -169,7 +186,7 @@ export default async function TodayPage() {
                   {hasTodayMatches ? dict.today.liveSectionTitle : dict.today.upcomingTitle}
                 </h2>
                 <p className="mt-1 text-sm font-semibold text-slate-600">
-                  {hasTodayMatches ? dict.today.liveSectionText : dict.today.upcomingText}
+                  {hasTodayMatches ? todaySummary : dict.today.upcomingText}
                 </p>
               </div>
             </div>
