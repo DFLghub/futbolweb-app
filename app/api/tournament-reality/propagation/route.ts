@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 
 import {
-  fetchEspnWorldCupFinalResults,
-  upsertOfficialMatchResults,
-} from "@/lib/espn-world-cup";
-import { runScoringForPendingResults } from "@/lib/scoring-propagation";
+  getScoringPropagationStatus,
+  runScoringForPendingResults,
+} from "@/lib/scoring-propagation";
 import {
   getCompletedMatchResults,
   getOfficialMatchResults,
@@ -20,29 +19,46 @@ function isAuthorized(request: Request) {
   return request.headers.get("authorization") === `Bearer ${secret}`;
 }
 
+export async function GET() {
+  try {
+    const completedResults = getCompletedMatchResults(await getOfficialMatchResults());
+    const status = await getScoringPropagationStatus(completedResults);
+
+    return NextResponse.json({
+      ok: true,
+      status,
+    });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        ok: false,
+        error: error instanceof Error ? error.message : "Unknown propagation status error",
+      },
+      { status: 502 },
+    );
+  }
+}
+
 export async function POST(request: Request) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    const results = await fetchEspnWorldCupFinalResults();
-    const upserted = await upsertOfficialMatchResults(results);
     const completedResults = getCompletedMatchResults(await getOfficialMatchResults());
     const scoringRuns = await runScoringForPendingResults(completedResults);
+    const status = await getScoringPropagationStatus(completedResults);
 
     return NextResponse.json({
       ok: true,
-      source: "ESPN FIFA World Cup scoreboard",
-      imported: results.length,
       scoringRuns,
-      upserted,
+      status,
     });
   } catch (error) {
     return NextResponse.json(
       {
         ok: false,
-        error: error instanceof Error ? error.message : "Unknown sync error",
+        error: error instanceof Error ? error.message : "Unknown propagation error",
       },
       { status: 502 },
     );
