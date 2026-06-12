@@ -3,6 +3,7 @@ import { localizeWorldCupGroupStandings, localizeWorldCupMatches, worldCup2026Ma
 import { mockWorldCupGroupStandings } from "@/lib/mock-group-standings";
 import { getTournamentReality, type RealityMatch, type TournamentReality } from "@/lib/tournament-reality";
 import { getRealGroupStandings } from "@/lib/real-group-standings";
+import { getLiveMatchContext, needsLiveContext } from "@/lib/live-match-context";
 import {
   defaultOracleCharacter,
   isOracleCharacter,
@@ -686,9 +687,21 @@ export async function answerOracleQuestion(
   const labels = labelsByLocale[locale];
   const trimmedQuestion = question.trim();
   const normalizedQuestion = normalizeText(trimmedQuestion);
+  let livePrefix = "";
+
+  if (needsLiveContext(trimmedQuestion)) {
+    const liveText = await getLiveMatchContext(trimmedQuestion);
+    if (liveText) {
+      livePrefix = `${liveText}\n\n`;
+    }
+  }
+
+  const renderWithLiveContext = (answer: string) => {
+    return renderOracleAnswer(`${livePrefix}${answer}`, character, locale);
+  };
 
   if (!trimmedQuestion) {
-    return renderOracleAnswer(labels.noQuestion, character, locale);
+    return renderWithLiveContext(labels.noQuestion);
   }
 
   const context = contextOverride ?? await buildOracleContext(trimmedQuestion, character, locale);
@@ -702,33 +715,33 @@ export async function answerOracleQuestion(
     context.detectedIntent === "rules" ||
     context.detectedIntent === "unknown"
   ) {
-    return `${renderOracleAnswer(answerFromContext(context, locale), character, locale)}\n\n${labels.contact}`;
+    return `${renderWithLiveContext(answerFromContext(context, locale))}\n\n${labels.contact}`;
   }
 
   const reality = await getTournamentReality(locale);
 
   if (normalizedQuestion.includes("hoy") || normalizedQuestion.includes("today")) {
-    return renderOracleAnswer(answerToday(reality, labels), character, locale);
+    return renderWithLiveContext(answerToday(reality, labels));
   }
 
   const historyAnswer = answerWorldCupHistory(trimmedQuestion, locale);
   if (historyAnswer) {
-    return `${renderOracleAnswer(historyAnswer, character, locale)}\n\n${labels.contact}`;
+    return `${renderWithLiveContext(historyAnswer)}\n\n${labels.contact}`;
   }
 
   const teamAnswer = await answerTeamQuestion(trimmedQuestion, locale, labels, reality);
   if (teamAnswer) {
-    return `${renderOracleAnswer(teamAnswer, character, locale)}\n\n${labels.contact}`;
+    return `${renderWithLiveContext(teamAnswer)}\n\n${labels.contact}`;
   }
 
   const groupAnswer = await answerGroup(trimmedQuestion, locale, labels);
   if (groupAnswer) {
-    return `${renderOracleAnswer(groupAnswer, character, locale)}\n\n${labels.contact}`;
+    return `${renderWithLiveContext(groupAnswer)}\n\n${labels.contact}`;
   }
 
   const rulesAnswer = answerRulesQuestion(trimmedQuestion, locale);
   if (rulesAnswer) {
-    return `${renderOracleAnswer(rulesAnswer, character, locale)}\n\n${labels.contact}`;
+    return `${renderWithLiveContext(rulesAnswer)}\n\n${labels.contact}`;
   }
 
   if (
@@ -740,8 +753,8 @@ export async function answerOracleQuestion(
     normalizedQuestion.includes("apuesta") ||
     normalizedQuestion.includes("bet")
   ) {
-    return `${renderOracleAnswer(labels.offTopic, character, locale)}\n\n${labels.contact}`;
+    return `${renderWithLiveContext(labels.offTopic)}\n\n${labels.contact}`;
   }
 
-  return `${renderOracleAnswer(labels.fallback, character, locale)}\n\n${labels.contact}`;
+  return `${renderWithLiveContext(labels.fallback)}\n\n${labels.contact}`;
 }
