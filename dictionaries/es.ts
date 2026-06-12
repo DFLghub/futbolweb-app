@@ -250,6 +250,13 @@ const es = {
       viewRanking: "Ver ranking: {url}",
       copied: "Resumen copiado para WhatsApp",
       copyError: "No se pudo copiar",
+      playerShareHeader: "🐯 FutbolWeb resumen:",
+      shareAlias: "Alias",
+      shareGroup: "Grupo",
+      shareResult: "Resultado",
+      shareExactHit: "le pegaste al marcador exacto",
+      shareKeepPlaying: "sigues sumando presión en la tabla",
+      shareInGroup: "en",
       headers: {
         position: "Pos.",
         positionLong: "Posición",
@@ -263,6 +270,7 @@ const es = {
       },
       bocon: "Bocón Mode",
       copyButton: "Copiar resumen para WhatsApp",
+      copyPlayerButton: "Copiar mi resumen",
       podium: {
         leader: "Líder",
         second: "Escolta",

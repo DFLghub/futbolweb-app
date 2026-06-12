@@ -250,6 +250,13 @@ const en = {
       viewRanking: "View ranking: {url}",
       copied: "Summary copied for WhatsApp",
       copyError: "Could not copy",
+      playerShareHeader: "🐯 FutbolWeb summary:",
+      shareAlias: "Alias",
+      shareGroup: "Group",
+      shareResult: "Result",
+      shareExactHit: "you hit the exact score",
+      shareKeepPlaying: "you are still applying pressure in the table",
+      shareInGroup: "in",
       headers: {
         position: "Pos.",
         positionLong: "Position",
@@ -263,6 +270,7 @@ const en = {
       },
       bocon: "Big Talk Mode",
       copyButton: "Copy summary for WhatsApp",
+      copyPlayerButton: "Copy my summary",
       podium: {
         leader: "Leader",
         second: "Chaser",

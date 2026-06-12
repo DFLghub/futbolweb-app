@@ -690,7 +690,7 @@ export async function answerOracleQuestion(
   let livePrefix = "";
 
   if (needsLiveContext(trimmedQuestion)) {
-    const liveText = await getLiveMatchContext(trimmedQuestion);
+    const liveText = await getLiveMatchContext(trimmedQuestion, locale);
     if (liveText) {
       livePrefix = `${liveText}\n\n`;
     }

@@ -33,8 +33,9 @@ function formatPoints(points: number, singular: string, plural: string): string 
 export default function RankingTable({ participants, groupCode }: RankingTableProps) {
   const { dict } = useI18n();
   const rankingDict = dict.ranking.table;
-  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "error">("idle");
+  const [copyStatus, setCopyStatus] = useState<{ type: "idle" | "copied" | "error"; key?: string }>({ type: "idle" });
   const clearFeedbackTimeout = useRef<number | null>(null);
+  const isGlobalRanking = !groupCode;
   const topThree = participants.slice(0, 3);
   const topThreePositions = new Set(topThree.map((participant) => participant.position));
   const redZone = participants.filter(
@@ -45,17 +46,22 @@ export default function RankingTable({ participants, groupCode }: RankingTablePr
   const rankingTitle = groupCode
     ? formatMessage(rankingDict.groupShareTitle, { group: groupCode })
     : rankingDict.globalShareTitle;
+  const participantLabel = (participant: RankingParticipant) => (
+    isGlobalRanking && participant.groupCode
+      ? `${participant.name} (${participant.groupCode})`
+      : participant.name
+  );
 
   const topLines =
     topThree.length > 0
       ? topThree
-          .map((participant) => `#${participant.position} ${participant.name} — ${formatPoints(participant.points, rankingDict.pointsSingular, rankingDict.pointsPlural)}`)
+          .map((participant) => `#${participant.position} ${participantLabel(participant)} — ${formatPoints(participant.points, rankingDict.pointsSingular, rankingDict.pointsPlural)}`)
           .join("\n")
       : rankingDict.noScores;
 
   const redLines =
     redZone.length > 0
-      ? ["", rankingDict.redZone, ...redZone.map((participant) => `#${participant.position} ${participant.name} — ${formatPoints(participant.points, rankingDict.pointsSingular, rankingDict.pointsPlural)}`)]
+      ? ["", rankingDict.redZone, ...redZone.map((participant) => `#${participant.position} ${participantLabel(participant)} — ${formatPoints(participant.points, rankingDict.pointsSingular, rankingDict.pointsPlural)}`)]
       : [];
 
   const shareText = [
@@ -69,46 +75,73 @@ export default function RankingTable({ participants, groupCode }: RankingTablePr
     formatMessage(rankingDict.viewRanking, { url: rankingUrl }),
   ].join("\n");
 
+  function participantKey(participant: RankingParticipant) {
+    return `${participant.position}-${participant.name}-${participant.groupCode ?? "global"}`;
+  }
+
+  function participantShareText(participant: RankingParticipant) {
+    const groupLine = participant.groupCode
+      ? `${rankingDict.shareGroup}: ${participant.groupCode}`
+      : null;
+
+    return [
+      rankingDict.playerShareHeader,
+      `${rankingDict.shareAlias}: ${participant.name}`,
+      `${rankingDict.headers.points}: ${formatPoints(participant.points, rankingDict.pointsSingular, rankingDict.pointsPlural)}`,
+      groupLine,
+      `${rankingDict.shareResult}: ${participant.exactScores > 0 ? rankingDict.shareExactHit : rankingDict.shareKeepPlaying}`,
+      `${rankingDict.headers.positionLong}: #${participant.position}${participant.groupCode ? ` ${rankingDict.shareInGroup} ${participant.groupCode}` : ""}`,
+      "futbolweb.app",
+    ].filter(Boolean).join("\n");
+  }
+
   function clearFeedbackLater() {
     if (clearFeedbackTimeout.current) {
       window.clearTimeout(clearFeedbackTimeout.current);
     }
 
     clearFeedbackTimeout.current = window.setTimeout(() => {
-      setCopyStatus("idle");
+      setCopyStatus({ type: "idle" });
       clearFeedbackTimeout.current = null;
     }, 2400);
   }
 
-  async function handleCopySummary() {
+  async function copyText(text: string, key: string) {
     try {
       if (!navigator.clipboard) {
-        setCopyStatus("error");
+        setCopyStatus({ type: "error", key });
         clearFeedbackLater();
         return;
       }
 
-      await navigator.clipboard.writeText(shareText);
-      setCopyStatus("copied");
+      await navigator.clipboard.writeText(text);
+      setCopyStatus({ type: "copied", key });
       clearFeedbackLater();
     } catch {
-      setCopyStatus("error");
+      setCopyStatus({ type: "error", key });
       clearFeedbackLater();
     }
   }
 
-  const feedbackMessage =
-    copyStatus === "copied"
+  async function handleCopySummary() {
+    await copyText(shareText, "ranking");
+  }
+
+  function feedbackMessage(key: string) {
+    if (copyStatus.key !== key) return "";
+
+    return copyStatus.type === "copied"
       ? rankingDict.copied
-      : copyStatus === "error"
+      : copyStatus.type === "error"
         ? rankingDict.copyError
         : "";
+  }
 
   return (
     <section className="mt-8">
       <div className="grid gap-3 md:grid-cols-3">
         {topThree.map((participant) => (
-          <PodiumCard key={participant.position} participant={participant} />
+          <PodiumCard key={participantKey(participant)} participant={participant} showGroup={isGlobalRanking} />
         ))}
       </div>
 
@@ -123,10 +156,13 @@ export default function RankingTable({ participants, groupCode }: RankingTablePr
         </div>
 
         <div className="divide-y divide-slate-200">
-          {participants.map((participant) => (
+          {participants.map((participant) => {
+            const key = participantKey(participant);
+
+            return (
             <article
               className={`grid gap-3 border-l-4 px-4 py-4 md:grid-cols-[80px_1.25fr_100px_130px_140px_190px] md:items-center ${rowClasses[participant.status]}`}
-              key={participant.position}
+              key={key}
             >
               <div className="flex items-center justify-between gap-3 md:block">
                 <span className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500 md:hidden">
@@ -138,6 +174,11 @@ export default function RankingTable({ participants, groupCode }: RankingTablePr
               <div>
                 <div className="flex flex-wrap items-center gap-2">
                   <h2 className="text-lg font-black leading-tight text-slate-950">{participant.name}</h2>
+                  {isGlobalRanking && participant.groupCode ? (
+                    <span className="rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-black text-slate-700">
+                      {participant.groupCode}
+                    </span>
+                  ) : null}
                   {participant.isBocon ? (
                     <span className="rounded-full border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-black text-sky-700">
                       {rankingDict.bocon}
@@ -154,10 +195,29 @@ export default function RankingTable({ participants, groupCode }: RankingTablePr
                 <span className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500 md:hidden">
                   {rankingDict.headers.status}
                 </span>
-                <StatusBadge status={participant.status} labels={rankingDict.statuses} />
+                <div className="flex flex-col gap-2">
+                  <StatusBadge status={participant.status} labels={rankingDict.statuses} />
+                  <button
+                    className="w-fit rounded-md border border-slate-300 bg-white px-3 py-1.5 text-xs font-black text-slate-800 transition hover:bg-slate-50"
+                    onClick={() => copyText(participantShareText(participant), key)}
+                    type="button"
+                  >
+                    {rankingDict.copyPlayerButton}
+                  </button>
+                  <span
+                    className={`min-h-4 text-xs font-semibold ${
+                      copyStatus.type === "error" ? "text-rose-700" : "text-emerald-700"
+                    }`}
+                    role="status"
+                    aria-live="polite"
+                  >
+                    {feedbackMessage(key)}
+                  </span>
+                </div>
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       </div>
 
@@ -171,19 +231,19 @@ export default function RankingTable({ participants, groupCode }: RankingTablePr
         </button>
         <p
           className={`min-h-5 text-sm font-semibold ${
-            copyStatus === "error" ? "text-rose-700" : "text-emerald-700"
+            copyStatus.type === "error" ? "text-rose-700" : "text-emerald-700"
           }`}
           role="status"
           aria-live="polite"
         >
-          {feedbackMessage}
+          {feedbackMessage("ranking")}
         </p>
       </div>
     </section>
   );
 }
 
-function PodiumCard({ participant }: { participant: RankingParticipant }) {
+function PodiumCard({ participant, showGroup }: { participant: RankingParticipant; showGroup: boolean }) {
   const { dict } = useI18n();
   const rankingDict = dict.ranking.table;
   const placeLabel =
@@ -216,6 +276,9 @@ function PodiumCard({ participant }: { participant: RankingParticipant }) {
         <div>
           <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-600">{placeLabel}</p>
           <h2 className="mt-2 text-2xl font-black text-slate-950">{participant.name}</h2>
+          {showGroup && participant.groupCode ? (
+            <p className="mt-1 text-xs font-black uppercase tracking-[0.12em] text-slate-600">{participant.groupCode}</p>
+          ) : null}
         </div>
         <span className={`rounded-full border px-3 py-1 text-sm font-black ${badgeTone}`}>
           #{participant.position}

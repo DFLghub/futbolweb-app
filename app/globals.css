@@ -36,3 +36,23 @@ body {
   background: #16a34a;
   color: #ffffff;
 }
+
+@keyframes fw-ticker {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-fw-ticker {
+  animation: fw-ticker 36s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fw-ticker {
+    animation: none;
+  }
+}

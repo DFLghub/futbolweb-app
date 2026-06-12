@@ -1,3 +1,6 @@
+import type { Locale } from "@/lib/i18n";
+import { getRealityHubLiveContext } from "@/lib/reality-hub";
+
 const ESPN_SCOREBOARD_URL =
   "https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard";
 
@@ -170,7 +173,7 @@ export function needsLiveContext(question: string): boolean {
   return liveIntentPatterns.some((pattern) => pattern.test(normalizedQuestion));
 }
 
-export async function getLiveMatchContext(question: string): Promise<string | null> {
+export async function getLiveMatchContext(question: string, locale: Locale = "es"): Promise<string | null> {
   try {
     const response = await fetch(ESPN_SCOREBOARD_URL, {
       headers: {
@@ -182,7 +185,7 @@ export async function getLiveMatchContext(question: string): Promise<string | nu
     });
 
     if (!response.ok) {
-      return LIVE_FALLBACK;
+      return getRealityHubLiveContext(question, locale);
     }
 
     const scoreboard = await response.json() as EspnScoreboard;
@@ -192,7 +195,7 @@ export async function getLiveMatchContext(question: string): Promise<string | nu
     const selectedEvents = selectEvents(events, question);
 
     if (selectedEvents.length === 0) {
-      return LIVE_FALLBACK;
+      return getRealityHubLiveContext(question, locale);
     }
 
     return [
@@ -201,6 +204,6 @@ export async function getLiveMatchContext(question: string): Promise<string | nu
       "Fuente: ESPN scoreboard (best-effort, no oficial)",
     ].join("\n");
   } catch {
-    return LIVE_FALLBACK;
+    return getRealityHubLiveContext(question, locale).catch(() => LIVE_FALLBACK);
   }
 }

@@ -12,13 +12,34 @@ function deriveStatus(position: number, points: number): RankingParticipant["sta
   return "red";
 }
 
+function assignDenseGlobalPositions(rows: RankingParticipant[]) {
+  let currentPosition = 0;
+  let previousPoints: number | null = null;
+
+  return rows.map((participant, index) => {
+    if (previousPoints === null || participant.points < previousPoints) {
+      currentPosition += 1;
+      previousPoints = participant.points;
+    }
+
+    const position = currentPosition || index + 1;
+
+    return {
+      ...participant,
+      position,
+      status: deriveStatus(position, participant.points),
+    };
+  });
+}
+
 async function fetchRanking(groupCode?: string): Promise<RankingParticipant[]> {
   try {
     const supabase = createSupabaseServerClient();
     let query = supabase
       .from("ranking_summary")
       .select("position, name, group_code, points, exact_scores, correct_results")
-      .order("position", { ascending: true });
+      .order(groupCode ? "position" : "points", { ascending: Boolean(groupCode), nullsFirst: false })
+      .order("name", { ascending: true });
 
     if (groupCode) {
       query = query.eq("group_code", groupCode);
@@ -27,7 +48,7 @@ async function fetchRanking(groupCode?: string): Promise<RankingParticipant[]> {
     const { data, error } = await query;
     if (error || !data) return [];
 
-    return data.map((r, index) => ({
+    const participants = data.map((r, index) => ({
       position: groupCode ? index + 1 : r.position,
       name: r.name,
       points: Number(r.points),
@@ -37,6 +58,12 @@ async function fetchRanking(groupCode?: string): Promise<RankingParticipant[]> {
       status: deriveStatus(groupCode ? index + 1 : r.position, Number(r.points)),
       isBocon: false,
     }));
+
+    if (!groupCode) {
+      return assignDenseGlobalPositions(participants);
+    }
+
+    return participants;
   } catch {
     return [];
   }

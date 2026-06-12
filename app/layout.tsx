@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { I18nProvider } from "@/components/I18nProvider";
 import InstallFutbolWebPrompt from "@/components/InstallFutbolWebPrompt";
+import NewsTicker from "@/components/NewsTicker";
 import { getCurrentDictionary, getCurrentLocale } from "@/lib/i18n-server";
+import { getRealityHub } from "@/lib/reality-hub";
 import "./globals.css";
 
 const appName = "FutbolWeb";
@@ -57,12 +59,14 @@ export default function RootLayout({
 async function RootLayoutContent({ children }: { children: React.ReactNode }) {
   const locale = await getCurrentLocale();
   const dict = await getCurrentDictionary();
+  const hub = await getRealityHub(locale);
 
   return (
     <html lang={locale} className="h-full antialiased">
       <body className="min-h-full flex flex-col">
         <I18nProvider dict={dict} locale={locale}>
           <InstallFutbolWebPrompt />
+          <NewsTicker items={hub.tickerItems} />
           {children}
         </I18nProvider>
       </body>
