@@ -134,6 +134,17 @@ export default function OracleAskBox() {
     void askOracle(typeof submittedQuestion === "string" ? submittedQuestion : question);
   }
 
+  function shareOracleMessage(message: OracleMessage) {
+    const text = `🎙️ ${message.characterName ?? activeCharacterName} dice:\n\n${message.text}\n\n⚽ futbolweb.app`;
+
+    if (!navigator.clipboard) {
+      console.warn("Clipboard no disponible");
+      return;
+    }
+
+    navigator.clipboard.writeText(text).catch(() => console.warn("Clipboard no disponible"));
+  }
+
   return (
     <section
       id="tribuna"
@@ -224,6 +235,15 @@ export default function OracleAskBox() {
                 <p className="mt-1 whitespace-pre-line text-sm font-semibold leading-6">
                   {message.text}
                 </p>
+                {message.role === "oracle" ? (
+                  <button
+                    className="mt-3 inline-flex min-h-8 items-center justify-center rounded-md border border-sky-200 bg-sky-50 px-3 py-1.5 text-xs font-black text-sky-800 transition hover:border-sky-300 hover:bg-sky-100"
+                    onClick={() => shareOracleMessage(message)}
+                    type="button"
+                  >
+                    Compartir
+                  </button>
+                ) : null}
               </div>
             ))}
             {isLoading ? (

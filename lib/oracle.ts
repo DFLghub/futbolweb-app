@@ -451,49 +451,41 @@ function answerWorldCupHistory(question: string, locale: Locale) {
 function renderOracleAnswer(answer: string, character: OracleCharacter, locale: Locale) {
   if (character === "paulgpt") {
     if (locale === "en") {
-      return `PaulGPT from the broadcast booth: the World Cup pulse is here.\n${answer}\n\nStadium read: real data, heart switched on.`;
+      return `PaulGPT from the broadcast booth: balanced read, facts first.\n\n${answer}\n\nThat is the picture from the data. Now the debate: is this a turning point or just one more chapter?`;
     }
 
-    return `PaulGPT desde la cabina: se mueve el Mundial y ruge la grada.\n${answer}\n\nLectura de estadio: dato real, corazón encendido.`;
+    return `PaulGPT desde la cabina: lectura equilibrada, dato primero.\n\n${answer}\n\nEse es el panorama con la información disponible. Ahora el debate: ¿esto marca tendencia o es apenas otro capítulo?`;
   }
 
   if (character === "vargpt") {
-    const refereeAnswer = answer
-      .replace("Memoria de PaulGPT:", "Consta en acta:")
-      .replace("PaulGPT memory check:", "VARGPT ruling:");
-
     if (locale === "en") {
-      return `VARGPT decision: ${refereeAnswer}\n\nClear ruling, no extra drama.`;
+      return `VARGPT decision: review limited to confirmed FutbolWeb facts.\n\n${answer}\n\nRegulatory note: if there is no concrete play in the data, I do not invent a VAR review.`;
     }
 
-    return `Decisión VARGPT: ${refereeAnswer}\n\nClaro, reglamentario y sin vender humo.`;
+    return `Decisión VARGPT: revisión limitada a hechos confirmados en FutbolWeb.\n\n${answer}\n\nNota reglamentaria: si no hay jugada concreta en el dato, no invento revisión VAR.`;
   }
 
   if (character === "optimistagpt") {
     if (locale === "en") {
-      return `OptimistaGPT: there is always a good angle when the facts are clear.\n${answer}\n\nBright side, scoreboard first.`;
+      return `OptimistaGPT: I will take the bright side without moving the goalposts.\n\n${answer}\n\nHope is allowed here, as long as the facts stay in charge.`;
     }
 
-    return `OptimistaGPT: siempre hay un lado bueno cuando el dato está claro.\n${answer}\n\nLado positivo, marcador primero.`;
+    return `OptimistaGPT: me quedo con el lado positivo sin mover el arco.\n\n${answer}\n\nHay esperanza, sí, pero mandan los datos.`;
   }
 
   if (character === "tribunerogpt") {
     if (locale === "en") {
-      return `TribuneroGPT from the stand: quick take for the timeline.\n${answer}\n\nWhat are we saying in the group chat? Real data, no betting talk.`;
+      return `TribuneroGPT:\n${answer}\n\nSend that to the group chat. Real football, no betting talk.`;
     }
 
-    return `TribuneroGPT desde la tribuna: lectura corta para prender el chat.\n${answer}\n\n¿Qué dice la banda? Datos reales y cero apuestas.`;
+    return `TribuneroGPT:\n${answer}\n\nMándalo al WhatsApp. Fútbol del bueno y cero apuestas.`;
   }
-
-  const roastAnswer = answer
-    .replace("Memoria de PaulGPT:", "Archivo del Insultista:")
-    .replace("PaulGPT memory check:", "InsultistaGPT memory check:");
 
   if (locale === "en") {
-    return `InsultistaGPT from the stand: tiny roast, clean studs.\n${roastAnswer}\n\nHealthy roast: football spice, zero cheap shots.`;
+    return `VacileGPT from the stand: clean banter, facts untouched.\n\n${answer}\n\nA little football spice, no personal shots.`;
   }
 
-  return `InsultistaGPT desde la tribuna: vacilecito con los guayos limpios.\n${roastAnswer}\n\nVacile sano: picante futbolero, cero golpes bajos.`;
+  return `VacileGPT desde la tribuna: vacile sano, dato intacto.\n\n${answer}\n\nPicante futbolero, sin insultos ni ataques personales.`;
 }
 
 function answerFromContext(context: OracleContext, locale: Locale) {
