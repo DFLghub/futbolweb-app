@@ -13,6 +13,8 @@ import type { OracleCharacter } from "@/lib/oracle-characters";
 
 export type OracleIntent =
   | "next_match"
+  | "current_status"
+  | "source_status"
   | "team_schedule"
   | "latest_result"
   | "group_standings"
@@ -102,15 +104,23 @@ export function detectOracleIntent(question: string, locale: Locale): OracleInte
     return "ranking";
   }
 
+  if (/\b(dato real|estimado|fuente|source|best effort|fallback|confiable|real data)\b/.test(normalized)) {
+    return "source_status";
+  }
+
   if (/\b(grupo|group|posiciones|standings|lider|leader)\b/.test(normalized)) {
     return "group_standings";
+  }
+
+  if (/\b(que esta pasando|que pasa ahora|en vivo|live|ahora|now|marcador|score)\b/.test(normalized)) {
+    return "current_status";
   }
 
   if (/\b(ultimo resultado|latest result|resultado|quien gano|who won|finalizado)\b/.test(normalized)) {
     return "latest_result";
   }
 
-  if (/\b(proximo|siguiente|next match|upcoming|cuando juega|when does|calendario|schedule)\b/.test(normalized)) {
+  if (/\b(proximo|siguiente|viene|next match|upcoming|cuando juega|when does|calendario|schedule)\b/.test(normalized)) {
     return findTeam(question, locale) ? "team_schedule" : "next_match";
   }
 
@@ -190,6 +200,26 @@ export async function buildOracleContext(
     }
   }
 
+  if (intent === "current_status") {
+    if (reality.liveMatches.length > 0) {
+      facts.push(`${locale === "en" ? "Live or in-window matches" : "Partidos en vivo o en ventana actual"}:\n${reality.liveMatches.map((match) => formatMatch(match, locale)).join("\n")}`);
+    }
+
+    if (reality.latestFinishedMatch) {
+      facts.push(`${locale === "en" ? "Latest confirmed result" : "Último resultado confirmado"}: ${formatMatch(reality.latestFinishedMatch, locale)}.`);
+    }
+
+    if (reality.nextMatch) {
+      facts.push(`${locale === "en" ? "Next known match" : "Próximo partido conocido"}: ${formatMatch(reality.nextMatch, locale)}.`);
+    }
+
+    limitations.push(
+      locale === "en"
+        ? "Live ESPN context is best-effort. Confirmed results come from FutbolWeb match_results; fixtures come from the loaded FIFA schedule."
+        : "El contexto ESPN en vivo es best-effort. Los resultados confirmados vienen de match_results de FutbolWeb; los partidos vienen del calendario FIFA cargado.",
+    );
+  }
+
   if (intent === "next_match") {
     if (reality.nextMatch) {
       facts.push(`${locale === "en" ? "Next match" : "Próximo partido"}: ${formatMatch(reality.nextMatch, locale)}.`);
@@ -230,10 +260,23 @@ export async function buildOracleContext(
     const top = ranking.slice(0, 5);
 
     if (top.length > 0) {
-      facts.push(`${locale === "en" ? "Current prediction ranking" : "Ranking actual de pronósticos"}:\n${top.map((participant) => `#${participant.position} ${participant.name} · ${participant.points} pts`).join("\n")}`);
+      facts.push(`${locale === "en" ? "Current prediction ranking" : "Ranking actual de pronósticos"}:\n${top.map((participant) => `#${participant.position} ${participant.name}${participant.groupCode ? ` · ${participant.groupCode}` : ""} · ${participant.points} pts`).join("\n")}`);
     } else {
       limitations.push(locale === "en" ? "No scored ranking rows are available yet." : "Todavía no hay filas puntuadas en el ranking.");
     }
+  }
+
+  if (intent === "source_status") {
+    facts.push(
+      locale === "en"
+        ? "Confirmed scores use FutbolWeb match_results. Fixtures and kickoff times use the loaded FIFA schedule. Prediction ranking uses ranking_summary recalculated globally by FutbolWeb. ESPN live context is used only as best-effort when it responds."
+        : "Los marcadores confirmados usan match_results de FutbolWeb. Los partidos y horarios usan el calendario FIFA cargado. El ranking de pronósticos usa ranking_summary recalculado globalmente por FutbolWeb. ESPN en vivo se usa solo como best-effort cuando responde.",
+    );
+    limitations.push(
+      locale === "en"
+        ? "FutbolWeb does not yet have official play-by-play incidents, lineups, injuries, or guaranteed minute-by-minute live data."
+        : "FutbolWeb todavía no tiene incidencias oficiales jugada a jugada, alineaciones, lesiones ni dato minuto a minuto garantizado.",
+    );
   }
 
   if (intent === "var_rules") {

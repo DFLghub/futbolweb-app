@@ -517,6 +517,10 @@ function answerFromContext(context: OracleContext, locale: Locale) {
     return `No pude conectar esa pregunta con un dato específico de FutbolWeb todavía.${contextLines ? `\n${contextLines}` : ""}\nPrueba con: ¿Cuál es el próximo partido?`;
   }
 
+  if (context.detectedIntent === "current_status" || context.detectedIntent === "source_status") {
+    return [facts, limitations].filter(Boolean).join("\n");
+  }
+
   if (context.facts.length > 0) {
     return facts;
   }
@@ -708,9 +712,11 @@ export async function answerOracleQuestion(
 
   if (
     context.detectedIntent === "incident_detail" ||
+    context.detectedIntent === "current_status" ||
     context.detectedIntent === "latest_result" ||
     context.detectedIntent === "next_match" ||
     context.detectedIntent === "ranking" ||
+    context.detectedIntent === "source_status" ||
     context.detectedIntent === "var_rules" ||
     context.detectedIntent === "rules" ||
     context.detectedIntent === "unknown"
