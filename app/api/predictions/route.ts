@@ -371,7 +371,7 @@ export async function POST(request: Request) {
       .from("prediction_intake")
       .insert({
         ...prediction,
-        status: "pending_review",
+        status: "accepted",
         source: "web",
       })
       .select(predictionSelect)
