@@ -1,0 +1,41 @@
+name: Daily Supabase Backup
+
+on:
+  schedule:
+    - cron: '0 12 * * *'  # 12pm UTC = 8am Miami
+  workflow_dispatch:        # permite correrlo manualmente
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Export prediction_intake
+        run: |
+          curl -s "${{ secrets.SUPABASE_URL }}/rest/v1/prediction_intake?select=*" \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Accept: text/csv" \
+            > prediction_intake_$(date +%Y%m%d).csv
+
+      - name: Export prediction_scores
+        run: |
+          curl -s "${{ secrets.SUPABASE_URL }}/rest/v1/prediction_scores?select=*" \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Accept: text/csv" \
+            > prediction_scores_$(date +%Y%m%d).csv
+
+      - name: Export match_results
+        run: |
+          curl -s "${{ secrets.SUPABASE_URL }}/rest/v1/match_results?select=*" \
+            -H "apikey: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}" \
+            -H "Accept: text/csv" \
+            > match_results_$(date +%Y%m%d).csv
+
+      - name: Upload as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: supabase-backup-${{ github.run_number }}
+          path: '*.csv'
+          retention-days: 30
