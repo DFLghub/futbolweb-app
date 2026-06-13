@@ -41,7 +41,7 @@ export default async function TodayPage() {
       ? [tournamentState.nextMatch]
       : [];
   const mobileVisibleMatches = visibleMatches.slice(0, 3);
-  const nextFeaturedMatch = tournamentState.nextMatch;
+  const nextFeaturedMatch = tournamentState.liveMatches[0] ?? tournamentState.nextMatch;
   const latestFinishedMatch = tournamentState.latestFinishedMatch;
   const hasTodayMatches = todayMatches.length > 0;
   const todaySummary = dict.today.todayStateSummary
