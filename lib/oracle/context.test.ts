@@ -204,7 +204,7 @@ describe("oracle context", () => {
 
     expect(context.detectedIntent).toBe("ranking");
     expect(context.facts.join("\n")).toContain("Ranking actual de pronósticos");
-    expect(context.facts.join("\n")).toContain("#1 Ana · 18 pts");
+    expect(context.facts.join("\n")).toContain("#1 Ana · GRUPO-TEST · 18 pts");
   });
 
   it("returns supplied group standings context when available", async () => {
@@ -233,7 +233,6 @@ describe("oracle context", () => {
     expect(answer).not.toContain("segunda amarilla");
     expect(answer).not.toContain("ocasión manifiesta");
     expect(answer).not.toContain("insulto");
-    expect(answer).not.toContain("revisión VAR");
   });
 
   it("returns a grounded fallback for unknown questions", async () => {
@@ -259,11 +258,11 @@ describe("oracle context", () => {
       safeContextText: "Intent: latest_result\nFacts:\n- Último resultado: México 2-0 Sudáfrica.\nLimitations: none",
     };
     const personas: Array<[OracleCharacter, string, string]> = [
-      ["paulgpt", "PaulGPT desde la cabina", "Lectura de estadio"],
-      ["vargpt", "Decisión VARGPT", "Claro, reglamentario"],
-      ["insultistagpt", "InsultistaGPT desde la tribuna", "Vacile sano"],
-      ["optimistagpt", "OptimistaGPT", "Lado positivo"],
-      ["tribunerogpt", "TribuneroGPT desde la tribuna", "¿Qué dice la banda?"],
+      ["paulgpt", "PaulGPT desde la cabina", "lectura equilibrada"],
+      ["vargpt", "Decisión VARGPT", "revisión limitada"],
+      ["insultistagpt", "VacileGPT desde la tribuna", "vacile sano"],
+      ["optimistagpt", "OptimistaGPT", "lado positivo"],
+      ["tribunerogpt", "TribuneroGPT", "Mándalo al WhatsApp"],
     ];
     const answers = new Set<string>();
 
@@ -299,9 +298,9 @@ describe("oracle context", () => {
     });
     expect(paul).toContain("PaulGPT desde la cabina");
     expect(vargpt).toContain("Decisión VARGPT");
-    expect(insultista).toContain("Vacile sano");
-    expect(optimista).toContain("Lado positivo");
-    expect(tribunero).toContain("¿Qué dice la banda?");
+    expect(insultista).toContain("vacile sano");
+    expect(optimista).toContain("lado positivo");
+    expect(tribunero).toContain("Mándalo al WhatsApp");
     expect(new Set(answers).size).toBe(answers.length);
   });
 

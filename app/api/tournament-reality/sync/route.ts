@@ -20,7 +20,7 @@ function isAuthorized(request: Request) {
   return request.headers.get("authorization") === `Bearer ${secret}`;
 }
 
-export async function POST(request: Request) {
+async function runTournamentRealitySync(request: Request) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
@@ -47,4 +47,12 @@ export async function POST(request: Request) {
       { status: 502 },
     );
   }
+}
+
+export async function GET(request: Request) {
+  return runTournamentRealitySync(request);
+}
+
+export async function POST(request: Request) {
+  return runTournamentRealitySync(request);
 }
