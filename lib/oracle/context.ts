@@ -116,7 +116,7 @@ export function detectOracleIntent(question: string, locale: Locale): OracleInte
     return "current_status";
   }
 
-  if (/\b(ultimo resultado|latest result|resultado|quien gano|who won|finalizado)\b/.test(normalized)) {
+  if (/\b(ultimo resultado|latest result|resultado|quien gano|who won|finalizado|que paso|como quedo|como les fue|como salio|que tal quedo|what happened|how did|how was|que resultado|cuanto quedo)\b/.test(normalized)) {
     return "latest_result";
   }
 
