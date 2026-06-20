@@ -7,9 +7,9 @@ el MASTER_INDEX del proyecto DFL (Deep Feelings Labs).
 
 - **Archivo:** `MASTER_INDEX.md`
 - **Ubicación en Drive:** `DFL-ChatGPT/MASTER_INDEX.md`
-- **ID de Drive:** `1nTrS2RkYeDL_2QZG1gyYCHP7zKnuGsHA`
-- **URL:** https://drive.google.com/file/d/1nTrS2RkYeDL_2QZG1gyYCHP7zKnuGsHA/view
-- **Versión:** v0.1 (2026-06-14)
+- **ID de Drive:** `1lPhXRGyF_bWJCmmCeVAQDe8NtIauwZEy`
+- **URL:** https://drive.google.com/file/d/1lPhXRGyF_bWJCmmCeVAQDe8NtIauwZEy/view
+- **Versión:** v0.2 (2026-06-20)
 
 ## Bitácora consolidada
 
