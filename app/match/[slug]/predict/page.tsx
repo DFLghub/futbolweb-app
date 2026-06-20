@@ -80,6 +80,12 @@ export default async function PredictPage({ params, searchParams }: PredictPageP
   const matchLabel = formatMatchLabel(slug, dict.predict.unknownMatch, knownMatch);
   const homeTeamName = knownMatch?.homeTeam.name || dict.predict.fallbackHome;
   const awayTeamName = knownMatch?.awayTeam.name || dict.predict.fallbackAway;
+  const knockoutTeamOptions = knownMatchBase?.isKnockout
+    ? [
+        { value: homeTeamName, label: `${knownMatch?.homeTeam.flagEmoji ?? ""} ${homeTeamName}`.trim() },
+        { value: awayTeamName, label: `${knownMatch?.awayTeam.flagEmoji ?? ""} ${awayTeamName}`.trim() },
+      ]
+    : undefined;
   const relatedGroupId = groupCodeToStandingGroupId(knownMatchBase?.groupCode);
   const localizedStandings = localizeWorldCupGroupStandings(mockWorldCupGroupStandings, locale);
   const relatedGroup = localizedStandings.find((groupStanding) => {
@@ -136,6 +142,7 @@ export default async function PredictPage({ params, searchParams }: PredictPageP
               editingPredictionId={edit?.trim() || undefined}
               homeTeamName={homeTeamName}
               initialGroupCode={initialGroupCode}
+              knockoutTeamOptions={knockoutTeamOptions}
               matchLabel={matchLabel}
               matchSlug={slug}
             />

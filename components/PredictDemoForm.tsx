@@ -19,6 +19,11 @@ type SavedPrediction = {
   created_at: string;
 };
 
+type KnockoutTeamOption = {
+  value: string;
+  label: string;
+};
+
 type PredictDemoFormProps = {
   matchSlug: string;
   matchLabel: string;
@@ -26,6 +31,7 @@ type PredictDemoFormProps = {
   awayTeamName: string;
   editingPredictionId?: string;
   initialGroupCode?: string;
+  knockoutTeamOptions?: KnockoutTeamOption[];
 };
 
 const emptyForm = {
@@ -35,6 +41,7 @@ const emptyForm = {
   favoriteTeam: "",
   scoreA: "",
   scoreB: "",
+  advancingTeam: "",
   comment: "",
   groupCode: "",
 };
@@ -103,6 +110,7 @@ export default function PredictDemoForm({
   awayTeamName,
   editingPredictionId,
   initialGroupCode = "",
+  knockoutTeamOptions,
 }: PredictDemoFormProps) {
   const { dict, locale } = useI18n();
   const formDict = dict.predict.form;
@@ -231,6 +239,9 @@ export default function PredictDemoForm({
             favorite_team: form.favoriteTeam,
             score_a: scoreA,
             score_b: scoreB,
+            advancing_team: knockoutTeamOptions && scoreA === scoreB && form.advancingTeam
+              ? form.advancingTeam
+              : undefined,
             comment: form.comment,
             group_code: form.groupCode,
             client_submission_id: clientSubmissionId,
@@ -488,6 +499,32 @@ export default function PredictDemoForm({
             </div>
           </div>
         </div>
+
+        {knockoutTeamOptions && form.scoreA !== "" && form.scoreB !== "" && Number(form.scoreA) === Number(form.scoreB) ? (
+          <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-3">
+            <label className="text-xs font-bold uppercase tracking-[0.08em] text-amber-700" htmlFor="advancingTeam">
+              {formDict.advancingTeam}
+            </label>
+            <select
+              className="mt-2 min-h-10 w-full rounded-md border border-amber-300 bg-white px-3 py-2 text-sm font-semibold text-slate-800 outline-none transition focus:border-amber-500 focus:ring-2 focus:ring-amber-100"
+              id="advancingTeam"
+              name="advancingTeam"
+              onChange={(event) => updateField("advancingTeam", event.target.value)}
+              required
+              value={form.advancingTeam}
+            >
+              <option value="">{formDict.advancingTeamPlaceholder}</option>
+              {knockoutTeamOptions.map((team) => (
+                <option key={team.value} value={team.value}>
+                  {team.label}
+                </option>
+              ))}
+            </select>
+            <p className="mt-2 text-xs font-semibold text-amber-700">
+              {formDict.advancingTeamHelp}
+            </p>
+          </div>
+        ) : null}
 
         <div className="rounded-md border border-slate-200 bg-slate-50 px-3 py-3">
           <label className="text-xs font-bold uppercase tracking-[0.08em] text-slate-500" htmlFor="comment">

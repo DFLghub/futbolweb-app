@@ -17,6 +17,7 @@ export type WorldCupMatch = FootballMatch & {
   matchNumber: number;
   stage: string;
   stageEn: string;
+  isKnockout?: boolean;
   group: string;
   homeTeamCode: string | null;
   awayTeamCode: string | null;

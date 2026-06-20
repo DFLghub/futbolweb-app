@@ -10,13 +10,14 @@ type PredictionPayload = {
   favorite_team?: unknown;
   score_a?: unknown;
   score_b?: unknown;
+  advancing_team?: unknown;
   comment?: unknown;
   group_code?: unknown;
   client_submission_id?: unknown;
 };
 
 const predictionSelect =
-  "id, match_slug, alias, whatsapp_phone, favorite_team, score_a, score_b, comment, group_code, created_at";
+  "id, match_slug, alias, whatsapp_phone, favorite_team, score_a, score_b, advancing_team, comment, group_code, created_at";
 
 type SavedPrediction = {
   id: string;
@@ -275,6 +276,13 @@ function parsePredictionPayload(payload: unknown, dict: Dictionary) {
     ),
     score_a: requiredScore(predictionPayload, "score_a", dict.api.scoreA, dict),
     score_b: requiredScore(predictionPayload, "score_b", dict.api.scoreB, dict),
+    advancing_team: optionalText(
+      predictionPayload,
+      "advancing_team",
+      "advancing_team",
+      80,
+      dict,
+    ),
     comment: optionalText(predictionPayload, "comment", dict.api.comment, 160, dict),
     group_code: normalizeGroupCode(
       optionalText(predictionPayload, "group_code", dict.api.groupCode, 40, dict),
