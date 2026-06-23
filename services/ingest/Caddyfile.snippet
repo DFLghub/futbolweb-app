@@ -1,0 +1,13 @@
+n8n.deepfeelingslabs.com {
+    reverse_proxy 127.0.0.1:5678
+}
+
+ingest.deepfeelingslabs.com {
+    reverse_proxy 127.0.0.1:8080
+}
+
+andama.deepfeelingslabs.com {
+    root * /var/www/andama
+    encode gzip
+    file_server
+}
