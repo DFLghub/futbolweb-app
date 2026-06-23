@@ -1,0 +1,16 @@
+[Unit]
+Description=YT Ingest Pipeline — multimedia ingestion HTTP server
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/ingest/server.py
+WorkingDirectory=/opt/ingest
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=yt-ingest
+
+[Install]
+WantedBy=multi-user.target
