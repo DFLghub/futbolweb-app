@@ -162,10 +162,10 @@ export default async function PredictPage({ params, searchParams }: PredictPageP
                   >
                     {dict.standings.selectorLabel}
                   </Link>
-                  {relatedGroupId ? (
+                  {initialGroupCode ? (
                     <Link
                       className="rounded-md border border-green-600 bg-green-600 px-3 py-2 text-xs font-black text-white shadow-sm transition hover:bg-green-700"
-                      href={`/match/${slug}/grupo?group=${encodeURIComponent(relatedGroupId)}`}
+                      href={`/match/${slug}/grupo?group=${encodeURIComponent(initialGroupCode)}`}
                     >
                       {dict.groupPredictions.viewLink}
                     </Link>
