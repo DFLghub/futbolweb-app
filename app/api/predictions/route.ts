@@ -4,6 +4,7 @@ import { formatMessage, getDictionary, localeCookieName, normalizeLocale, type D
 import { normalizeGroupCode } from "@/lib/group-code";
 import { GROUP_MATCH_PREDICTIONS_TAG } from "@/lib/group-match-predictions";
 import { PREDICTION_COUNT_TAG } from "@/lib/prediction-count";
+import { PREDICTION_GROUP_STANDINGS_TAG } from "@/lib/prediction-group-standings";
 import { worldCup2026Matches } from "@/lib/world-cup-2026-matches";
 
 type PredictionPayload = {
@@ -435,6 +436,7 @@ export async function POST(request: Request) {
 
     revalidateTag(PREDICTION_COUNT_TAG);
     revalidateTag(GROUP_MATCH_PREDICTIONS_TAG);
+    revalidateTag(PREDICTION_GROUP_STANDINGS_TAG);
 
     return Response.json({ ok: true, prediction: data });
   } catch (error) {

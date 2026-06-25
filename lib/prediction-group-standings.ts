@@ -61,7 +61,7 @@ export const getPredictionStandingGroupCodes = unstable_cache(
     }
   },
   ["prediction-intake-standing-group-codes"],
-  { revalidate: 60 },
+  { revalidate: 60, tags: ["prediction-group-standings"] },
 );
 
 export const getPredictionGroupStandings = unstable_cache(
@@ -171,5 +171,7 @@ export const getPredictionGroupStandings = unstable_cache(
     }
   },
   ["prediction-group-standings"],
-  { revalidate: 60 },
+  { revalidate: 60, tags: ["prediction-group-standings"] },
 );
+
+export const PREDICTION_GROUP_STANDINGS_TAG = "prediction-group-standings";
