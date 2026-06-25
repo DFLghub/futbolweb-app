@@ -491,6 +491,7 @@ const es = {
     pendingResult: "Pendiente",
     backToMatch: "Volver al partido",
     solistaGroup: "SOLISTA",
+    viewLink: "Ver pronósticos del grupo",
   },
 } as const;
 

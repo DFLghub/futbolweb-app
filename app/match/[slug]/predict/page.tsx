@@ -155,12 +155,22 @@ export default async function PredictPage({ params, searchParams }: PredictPageP
                   <p className="text-xs font-black uppercase text-slate-500">{dict.nav.groups}</p>
                   <h2 className="text-xl font-black text-slate-950">{relatedGroup.groupName}</h2>
                 </div>
-                <Link
-                  className="rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-black text-slate-800 shadow-sm transition hover:bg-slate-50"
-                  href={`/standings?group=${encodeURIComponent(relatedGroup.groupId)}`}
-                >
-                  {dict.standings.selectorLabel}
-                </Link>
+                <div className="flex gap-2">
+                  <Link
+                    className="rounded-md border border-slate-300 bg-white px-3 py-2 text-xs font-black text-slate-800 shadow-sm transition hover:bg-slate-50"
+                    href={`/standings?group=${encodeURIComponent(relatedGroup.groupId)}`}
+                  >
+                    {dict.standings.selectorLabel}
+                  </Link>
+                  {relatedGroupId ? (
+                    <Link
+                      className="rounded-md border border-green-600 bg-green-600 px-3 py-2 text-xs font-black text-white shadow-sm transition hover:bg-green-700"
+                      href={`/match/${slug}/grupo?group=${encodeURIComponent(relatedGroupId)}`}
+                    >
+                      {dict.groupPredictions.viewLink}
+                    </Link>
+                  ) : null}
+                </div>
               </div>
               <GroupStandingsTable group={relatedGroup} />
             </aside>

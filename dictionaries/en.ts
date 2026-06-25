@@ -490,6 +490,7 @@ const en = {
     pendingResult: "Pending",
     backToMatch: "Back to match",
     solistaGroup: "SOLO",
+    viewLink: "View group predictions",
   },
 } as const;
 
