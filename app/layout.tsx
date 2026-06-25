@@ -13,6 +13,8 @@ export const viewport: Viewport = {
   themeColor,
 };
 
+const siteUrl = "https://www.futbolweb.app";
+
 export async function generateMetadata(): Promise<Metadata> {
   const dict = await getCurrentDictionary();
 
@@ -21,6 +23,20 @@ export async function generateMetadata(): Promise<Metadata> {
     description: dict.metadata.description,
     applicationName: appName,
     manifest: "/manifest.webmanifest",
+    openGraph: {
+      type: "website",
+      url: siteUrl,
+      siteName: appName,
+      title: dict.metadata.title,
+      description: dict.metadata.description,
+      images: [{ url: `${siteUrl}/icon-512.png`, width: 512, height: 512 }],
+    },
+    twitter: {
+      card: "summary",
+      title: dict.metadata.title,
+      description: dict.metadata.description,
+      images: [`${siteUrl}/icon-512.png`],
+    },
     appleWebApp: {
       capable: true,
       title: appName,
