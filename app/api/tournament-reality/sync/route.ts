@@ -1,9 +1,11 @@
+import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 import {
   fetchEspnWorldCupFinalResults,
   upsertOfficialMatchResults,
 } from "@/lib/espn-world-cup";
+import { STANDINGS_CACHE_TAG } from "@/lib/real-group-standings";
 import { runScoringForPendingResults } from "@/lib/scoring-propagation";
 import {
   getCompletedMatchResults,
@@ -30,6 +32,8 @@ async function runTournamentRealitySync(request: Request) {
     const upserted = await upsertOfficialMatchResults(results);
     const completedResults = getCompletedMatchResults(await getOfficialMatchResults());
     const propagation = await runScoringForPendingResults(completedResults);
+
+    revalidateTag(STANDINGS_CACHE_TAG);
 
     return NextResponse.json({
       ok: true,

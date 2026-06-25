@@ -108,8 +108,10 @@ export async function getRealGroupStandings(now = new Date()): Promise<GroupStan
   return standings;
 }
 
+export const STANDINGS_CACHE_TAG = "real-group-standings";
+
 export const getCachedRealGroupStandings = unstable_cache(
   () => getRealGroupStandings(),
-  ["real-group-standings"],
-  { revalidate: 60 },
+  [STANDINGS_CACHE_TAG],
+  { revalidate: 60, tags: [STANDINGS_CACHE_TAG] },
 );
