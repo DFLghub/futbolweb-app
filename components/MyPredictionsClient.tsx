@@ -318,14 +318,24 @@ function PredictionCard({
           <p className="text-xs font-semibold text-slate-500">
             {match ? formatMessage(labels.cutoffHint, { time: formatMatchTime(match.kickoffUtc, locale) }) : labels.unknownCutoffHint}
           </p>
-          {isEditable ? (
-            <Link
-              className="inline-flex min-h-11 items-center justify-center rounded-md bg-emerald-600 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:bg-emerald-700"
-              href={editHref}
-            >
-              {labels.editButton}
-            </Link>
-          ) : null}
+          <div className="flex flex-wrap gap-2">
+            {prediction.group_code ? (
+              <Link
+                className="inline-flex min-h-11 items-center justify-center rounded-md border border-green-600 bg-green-600 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:bg-green-700"
+                href={`/match/${encodeURIComponent(prediction.match_slug)}/grupo?group=${encodeURIComponent(prediction.group_code)}`}
+              >
+                {labels.viewGroupPredictions}
+              </Link>
+            ) : null}
+            {isEditable ? (
+              <Link
+                className="inline-flex min-h-11 items-center justify-center rounded-md bg-emerald-600 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:bg-emerald-700"
+                href={editHref}
+              >
+                {labels.editButton}
+              </Link>
+            ) : null}
+          </div>
         </div>
       </div>
     </article>

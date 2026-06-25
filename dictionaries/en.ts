@@ -381,6 +381,7 @@ const en = {
     vs: "vs",
     pointsLabel: "Points",
     pendingScoreLabel: "Score pending",
+    viewGroupPredictions: "View group predictions",
   },
   api: {
     invalidPrediction: "Send a valid prediction.",
