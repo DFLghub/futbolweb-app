@@ -15,8 +15,10 @@ async function fetchPredictionCount(): Promise<number> {
   }
 }
 
+export const PREDICTION_COUNT_TAG = "prediction-count";
+
 export const getCachedPredictionCount = unstable_cache(
   fetchPredictionCount,
-  ["prediction-count"],
-  { revalidate: 120 },
+  [PREDICTION_COUNT_TAG],
+  { revalidate: 120, tags: [PREDICTION_COUNT_TAG] },
 );

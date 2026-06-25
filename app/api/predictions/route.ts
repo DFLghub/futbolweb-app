@@ -1,6 +1,9 @@
+import { revalidateTag } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { formatMessage, getDictionary, localeCookieName, normalizeLocale, type Dictionary } from "@/lib/i18n";
 import { normalizeGroupCode } from "@/lib/group-code";
+import { GROUP_MATCH_PREDICTIONS_TAG } from "@/lib/group-match-predictions";
+import { PREDICTION_COUNT_TAG } from "@/lib/prediction-count";
 import { worldCup2026Matches } from "@/lib/world-cup-2026-matches";
 
 type PredictionPayload = {
@@ -429,6 +432,9 @@ export async function POST(request: Request) {
     }
 
     await recordPredictionSubmittedEvent(supabase, data);
+
+    revalidateTag(PREDICTION_COUNT_TAG);
+    revalidateTag(GROUP_MATCH_PREDICTIONS_TAG);
 
     return Response.json({ ok: true, prediction: data });
   } catch (error) {

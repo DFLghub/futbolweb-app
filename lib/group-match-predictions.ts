@@ -65,5 +65,7 @@ export const getGroupMatchPredictions = unstable_cache(
     }
   },
   ["group-match-predictions"],
-  { revalidate: 60 },
+  { revalidate: 60, tags: ["group-match-predictions"] },
 );
+
+export const GROUP_MATCH_PREDICTIONS_TAG = "group-match-predictions";

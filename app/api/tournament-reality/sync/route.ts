@@ -5,6 +5,7 @@ import {
   fetchEspnWorldCupFinalResults,
   upsertOfficialMatchResults,
 } from "@/lib/espn-world-cup";
+import { GROUP_MATCH_PREDICTIONS_TAG } from "@/lib/group-match-predictions";
 import { STANDINGS_CACHE_TAG } from "@/lib/real-group-standings";
 import { runScoringForPendingResults } from "@/lib/scoring-propagation";
 import {
@@ -34,6 +35,7 @@ async function runTournamentRealitySync(request: Request) {
     const propagation = await runScoringForPendingResults(completedResults);
 
     revalidateTag(STANDINGS_CACHE_TAG);
+    revalidateTag(GROUP_MATCH_PREDICTIONS_TAG);
 
     return NextResponse.json({
       ok: true,
