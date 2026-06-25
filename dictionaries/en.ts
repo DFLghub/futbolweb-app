@@ -379,6 +379,8 @@ const en = {
     unknownCutoffHint: "We cannot confirm whether this match is still open.",
     cutoffHint: "Closes 5 minutes before kickoff: {time}",
     vs: "vs",
+    pointsLabel: "Points",
+    pendingScoreLabel: "Score pending",
   },
   api: {
     invalidPrediction: "Send a valid prediction.",

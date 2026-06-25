@@ -7,6 +7,8 @@ type MyPredictionsQuery = {
 const predictionSelect =
   "id, match_slug, alias, favorite_team, score_a, score_b, comment, group_code, status, created_at";
 
+const scoreSelect = "prediction_id, points, score_detail";
+
 function cleanPhone(value: string) {
   return value.replace(/[\s().-]/g, "");
 }
@@ -55,7 +57,31 @@ export async function GET(request: Request) {
       return friendlyError("Could not load predictions.", 500);
     }
 
-    return Response.json({ ok: true, predictions: data ?? [] });
+    const predictions = data ?? [];
+    const predictionIds = predictions.map((p) => p.id);
+    const scoresByPredictionId = new Map<string, { points: number; score_detail: string }>();
+
+    if (predictionIds.length > 0) {
+      const { data: scores } = await supabase
+        .from("prediction_scores")
+        .select(scoreSelect)
+        .in("prediction_id", predictionIds);
+
+      for (const score of scores ?? []) {
+        scoresByPredictionId.set(score.prediction_id, {
+          points: Number(score.points),
+          score_detail: score.score_detail,
+        });
+      }
+    }
+
+    return Response.json({
+      ok: true,
+      predictions: predictions.map((p) => ({
+        ...p,
+        score: scoresByPredictionId.get(p.id) ?? null,
+      })),
+    });
   } catch (error) {
     console.error("[my-predictions-api] unhandled error", {
       message: error instanceof Error ? error.message : String(error),

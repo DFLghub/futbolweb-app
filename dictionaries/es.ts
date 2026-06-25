@@ -379,6 +379,8 @@ const es = {
     unknownCutoffHint: "No podemos confirmar si este partido sigue abierto.",
     cutoffHint: "Cierra 5 minutos antes del pitazo: {time}",
     vs: "vs",
+    pointsLabel: "Puntos",
+    pendingScoreLabel: "Calificación pendiente",
   },
   api: {
     invalidPrediction: "Envía un pronóstico válido.",

@@ -14,6 +14,11 @@ type StoredIdentity = {
   groupCode: string;
 };
 
+type PredictionScore = {
+  points: number;
+  score_detail: string;
+};
+
 type SavedPrediction = {
   id: string;
   match_slug: string;
@@ -25,6 +30,7 @@ type SavedPrediction = {
   group_code: string | null;
   status: string;
   created_at: string;
+  score: PredictionScore | null;
 };
 
 type LoadState = "checking-identity" | "missing-identity" | "loading" | "loaded" | "error";
@@ -286,6 +292,21 @@ function PredictionCard({
           />
           <InfoItem label={labels.groupLabel} value={prediction.group_code || labels.solistaGroup} />
         </dl>
+
+        {prediction.score ? (
+          <div className="mt-3 flex items-center gap-3 rounded-md border border-emerald-200 bg-emerald-50 px-3 py-2">
+            <span className="text-2xl font-black text-emerald-700">
+              {prediction.score.points % 1 === 0
+                ? `${prediction.score.points}`
+                : `${prediction.score.points}`} <span className="text-sm font-semibold">{labels.pointsLabel}</span>
+            </span>
+            <span className="text-sm font-semibold text-emerald-800">{prediction.score.score_detail}</span>
+          </div>
+        ) : match && match.status === "final" ? (
+          <p className="mt-3 rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800">
+            {labels.pendingScoreLabel}
+          </p>
+        ) : null}
 
         {prediction.comment ? (
           <p className="mt-3 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-semibold text-slate-700">
