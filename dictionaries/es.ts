@@ -222,6 +222,7 @@ const es = {
     solistaDescription: "¿No tienes grupo? Juega como SOLISTA. Participas individualmente, apareces en el Ranking Global y también puedes compararte con otros SOLISTA.",
     groupDescription: "Posiciones dentro del grupo {group}. Cada punto se presume.",
     globalLink: "Ver ranking global",
+    groupStandingsLink: "Ver posiciones del grupo",
     liveGlobal: "En vivo — datos reales",
     liveSolista: "Modo SOLISTA",
     liveGroup: "Grupo {group}",

@@ -6,6 +6,7 @@ import OracleAskBox from "@/components/OracleAskBox";
 import SimpleNav from "@/components/SimpleNav";
 import SupportContactBlock from "@/components/SupportContactBlock";
 import { getCurrentDictionary, getCurrentLocale } from "@/lib/i18n-server";
+import { getCachedPredictionCount } from "@/lib/prediction-count";
 import { getTournamentReality, type TournamentReality } from "@/lib/tournament-reality";
 
 function daysUntilWorldCup(now: Date) {
@@ -29,6 +30,7 @@ export default async function TodayPage() {
   }
 
   const daysLeft = daysUntilWorldCup(now);
+  const predictionCount = await getCachedPredictionCount();
   const todayMatches = [
     ...tournamentState.todayFinishedMatches,
     ...tournamentState.liveMatches,
@@ -243,7 +245,7 @@ export default async function TodayPage() {
               </p>
             </div>
             <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-center">
-              <p className="text-3xl font-black text-slate-950">143</p>
+              <p className="text-3xl font-black text-slate-950">{predictionCount}</p>
               <p className="text-xs font-black uppercase tracking-[0.14em] text-emerald-700">
                 {dict.today.demoPredictionsLabel}
               </p>

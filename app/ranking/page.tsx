@@ -55,12 +55,22 @@ export default async function RankingPage({ searchParams }: PageProps) {
             <p className="mt-3 max-w-2xl text-base leading-7 text-slate-300">{description}</p>
 
             {isFiltered && (
-              <a
-                href="/ranking"
-                className="mt-3 inline-block text-sm font-semibold text-cyan-400 underline underline-offset-4 hover:text-cyan-300"
-              >
-                {dict.ranking.globalLink}
-              </a>
+              <div className="mt-3 flex flex-wrap gap-4">
+                <a
+                  href="/ranking"
+                  className="text-sm font-semibold text-cyan-400 underline underline-offset-4 hover:text-cyan-300"
+                >
+                  {dict.ranking.globalLink}
+                </a>
+                {!isSolista && groupCode && (
+                  <a
+                    href={`/group-standings?group=${encodeURIComponent(groupCode)}`}
+                    className="text-sm font-semibold text-emerald-400 underline underline-offset-4 hover:text-emerald-300"
+                  >
+                    {dict.ranking.groupStandingsLink}
+                  </a>
+                )}
+              </div>
             )}
           </div>
 
