@@ -1,7 +1,7 @@
 import type { Locale } from "@/lib/i18n";
 import type { RankingParticipant } from "@/lib/ranking-types";
 import { getRanking } from "@/lib/real-ranking";
-import { getRealGroupStandings } from "@/lib/real-group-standings";
+import { getCachedRealGroupStandings } from "@/lib/real-group-standings";
 import type { GroupStanding } from "@/lib/mock-group-standings";
 import { getTournamentReality, type RealityMatch, type TournamentReality } from "@/lib/tournament-reality";
 import {
@@ -241,7 +241,7 @@ export async function buildOracleContext(
   }
 
   if (intent === "group_standings") {
-    const standings = inputs?.groupStandings ?? await getRealGroupStandings();
+    const standings = inputs?.groupStandings ?? await getCachedRealGroupStandings();
     const localizedStandings = localizeWorldCupGroupStandings(standings, locale);
     const groupLetter = getGroupLetter(question) ?? (
       team

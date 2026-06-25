@@ -2,7 +2,7 @@ import type { Locale } from "@/lib/i18n";
 import { localizeWorldCupGroupStandings, localizeWorldCupMatches, worldCup2026Matches } from "@/lib/world-cup-2026-matches";
 import { mockWorldCupGroupStandings } from "@/lib/mock-group-standings";
 import { getTournamentReality, type RealityMatch, type TournamentReality } from "@/lib/tournament-reality";
-import { getRealGroupStandings } from "@/lib/real-group-standings";
+import { getCachedRealGroupStandings } from "@/lib/real-group-standings";
 import { getLiveMatchContext, needsLiveContext } from "@/lib/live-match-context";
 import {
   defaultOracleCharacter,
@@ -594,7 +594,7 @@ async function getGroupStandingByLetter(groupLetter: string, locale: Locale) {
   let standings = mockWorldCupGroupStandings;
 
   try {
-    standings = await getRealGroupStandings();
+    standings = await getCachedRealGroupStandings();
   } catch (error) {
     console.error("[oracle] fallback to mock standings", error);
   }

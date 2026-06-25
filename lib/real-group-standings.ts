@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { mockWorldCupGroupStandings, type GroupStanding } from "@/lib/mock-group-standings";
 import {
   getCompletedMatchResults,
@@ -106,3 +107,9 @@ export async function getRealGroupStandings(now = new Date()): Promise<GroupStan
 
   return standings;
 }
+
+export const getCachedRealGroupStandings = unstable_cache(
+  () => getRealGroupStandings(),
+  ["real-group-standings"],
+  { revalidate: 60 },
+);

@@ -8,6 +8,7 @@ import { groupCodeToStandingGroupId } from "@/lib/group-code";
 import { getTimezoneLabel } from "@/lib/football-utils";
 import { getCurrentDictionary, getCurrentLocale } from "@/lib/i18n-server";
 import { mockWorldCupGroupStandings } from "@/lib/mock-group-standings";
+import { getCachedRealGroupStandings } from "@/lib/real-group-standings";
 import {
   localizeWorldCupGroupStandings,
   localizeWorldCupMatch,
@@ -87,7 +88,13 @@ export default async function PredictPage({ params, searchParams }: PredictPageP
       ]
     : undefined;
   const relatedGroupId = groupCodeToStandingGroupId(knownMatchBase?.groupCode);
-  const localizedStandings = localizeWorldCupGroupStandings(mockWorldCupGroupStandings, locale);
+  let rawStandings = mockWorldCupGroupStandings;
+  try {
+    rawStandings = await getCachedRealGroupStandings();
+  } catch {
+    // fallback to mock on error
+  }
+  const localizedStandings = localizeWorldCupGroupStandings(rawStandings, locale);
   const relatedGroup = localizedStandings.find((groupStanding) => {
     return groupStanding.groupId === relatedGroupId;
   });

@@ -4,7 +4,7 @@ import SimpleNav from "@/components/SimpleNav";
 import { groupCodeToStandingGroupId } from "@/lib/group-code";
 import { getCurrentDictionary, getCurrentLocale } from "@/lib/i18n-server";
 import { mockWorldCupGroupStandings } from "@/lib/mock-group-standings";
-import { getRealGroupStandings } from "@/lib/real-group-standings";
+import { getCachedRealGroupStandings } from "@/lib/real-group-standings";
 import { localizeWorldCupGroupStandings } from "@/lib/world-cup-2026-matches";
 
 type StandingsPageProps = {
@@ -21,7 +21,7 @@ export default async function StandingsPage({ searchParams }: StandingsPageProps
   let standings = mockWorldCupGroupStandings;
 
   try {
-    standings = await getRealGroupStandings();
+    standings = await getCachedRealGroupStandings();
   } catch (error) {
     console.error("[standings-page] fallback to mock standings", error);
   }
