@@ -479,6 +479,18 @@ const en = {
     ctaRanking: "View ranking",
     ctaHome: "Back to today",
   },
+  groupPredictions: {
+    title: "Group predictions",
+    vs: "vs",
+    resultLabel: "Result",
+    aliasHeader: "Player",
+    predictionHeader: "Prediction",
+    pointsHeader: "Points",
+    noPredictions: "No predictions registered for this group and match yet.",
+    pendingResult: "Pending",
+    backToMatch: "Back to match",
+    solistaGroup: "SOLO",
+  },
 } as const;
 
 export default en;

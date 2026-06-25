@@ -480,6 +480,18 @@ const es = {
     ctaRanking: "Ver ranking",
     ctaHome: "Volver a hoy",
   },
+  groupPredictions: {
+    title: "Pronósticos del grupo",
+    vs: "vs",
+    resultLabel: "Resultado",
+    aliasHeader: "Jugador",
+    predictionHeader: "Pronóstico",
+    pointsHeader: "Puntos",
+    noPredictions: "Todavía no hay pronósticos registrados para este grupo y partido.",
+    pendingResult: "Pendiente",
+    backToMatch: "Volver al partido",
+    solistaGroup: "SOLISTA",
+  },
 } as const;
 
 export default es;
