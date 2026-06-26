@@ -434,9 +434,9 @@ export async function POST(request: Request) {
 
     await recordPredictionSubmittedEvent(supabase, data);
 
-    revalidateTag(PREDICTION_COUNT_TAG);
-    revalidateTag(GROUP_MATCH_PREDICTIONS_TAG);
-    revalidateTag(PREDICTION_GROUP_STANDINGS_TAG);
+    revalidateTag(PREDICTION_COUNT_TAG, "default");
+    revalidateTag(GROUP_MATCH_PREDICTIONS_TAG, "default");
+    revalidateTag(PREDICTION_GROUP_STANDINGS_TAG, "default");
 
     return Response.json({ ok: true, prediction: data });
   } catch (error) {

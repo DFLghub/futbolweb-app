@@ -17,14 +17,17 @@ function formatGoalDifference(goalDifference: number) {
 
 export default function GroupStandingsTable({ group }: GroupStandingsTableProps) {
   const { dict } = useI18n();
+  const hasResults = group.teams.some((team) => team.played > 0);
 
   return (
     <section className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm shadow-slate-200/70">
       <header className="border-b border-slate-200 bg-slate-50 px-4 py-3">
         <h2 className="text-2xl font-black text-slate-950">{group.groupName}</h2>
-        <p className="mt-1 text-xs font-semibold text-slate-500">
-          {dict.standings.tableNote}
-        </p>
+        {!hasResults ? (
+          <p className="mt-1 text-xs font-semibold text-slate-500">
+            {dict.standings.tableNote}
+          </p>
+        ) : null}
       </header>
 
       <div className="hidden grid-cols-[52px_1.4fr_repeat(7,52px)_72px] gap-2 border-b border-slate-200 px-4 py-2 text-xs font-black uppercase tracking-[0.1em] text-slate-500 md:grid">

@@ -35,9 +35,9 @@ async function runTournamentRealitySync(request: Request) {
     const completedResults = getCompletedMatchResults(await getOfficialMatchResults());
     const propagation = await runScoringForPendingResults(completedResults);
 
-    revalidateTag(STANDINGS_CACHE_TAG);
-    revalidateTag(GROUP_MATCH_PREDICTIONS_TAG);
-    revalidateTag(PREDICTION_GROUP_STANDINGS_TAG);
+    revalidateTag(STANDINGS_CACHE_TAG, "default");
+    revalidateTag(GROUP_MATCH_PREDICTIONS_TAG, "default");
+    revalidateTag(PREDICTION_GROUP_STANDINGS_TAG, "default");
 
     return NextResponse.json({
       ok: true,
