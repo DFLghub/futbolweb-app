@@ -41,3 +41,7 @@ yarn-error.log*
 next-env.d.ts
 DFL-secrets/
 *.doc
+
+# factory artifacts — analysis outputs and audits, not runtime
+graphify-out/
+Blueprint_v*_vs_claude_Fusion_Audit_v*.md
