@@ -83,3 +83,23 @@ Si el usuario pide detenerse, detenerse.
 Si el agente propone algo fuera de alcance, pedir autorizacion.
 
 Si hay ambiguedad critica, preguntar antes de modificar.
+
+## 11. Bootstrap DFL — obligatorio en toda sesion
+
+Este repo opera bajo el ecosistema DFL/amOS. Al iniciar cualquier sesion:
+
+1. El hook SessionStart inyecta el contexto `@$go` automaticamente desde `context.deepfeelingslabs.com/go`.
+2. Si el hook no aparece: `curl -s https://context.deepfeelingslabs.com/go` y procesar el payload completo.
+3. `mem_search("contexto DFL")` via Engram MCP para observaciones adicionales.
+4. `PROXIMO_AGENTE_DEBE` en cada observacion de `recent_decisions` = instruccion de accion inmediata.
+
+**Despues de recibir el payload de /go: operar directamente.**
+Prohibido solicitar MASTER_INDEX, MASTER_BITACORA o archivos adicionales de /opt/dfl-knowledge/ antes de haber procesado el payload. El payload contiene suficiente contexto para arrancar.
+
+Distincion critica: `@$go` es el comando del agente. `/go` es la ruta HTTP. No son lo mismo.
+
+Protocolo de Precedencia activo: **A > B > C > D > E** (Engram = capa D — nunca invalida A ni B).
+
+No inventar contexto DFL — consultarlo. No modificar sin PRP: puntajeTigreKnockout, Supabase, Vercel config, scoring.
+
+@/opt/dfl-knowledge/DFL_Agent_Onboarding_Config.md

@@ -3,24 +3,36 @@ import { describe, expect, it } from "vitest";
 import {
   getScoringPropagationStatus,
   runScoringForPendingResults,
+  scoringRpcNameForResult,
 } from "@/lib/scoring-propagation";
+import type { MatchResultRow } from "@/lib/tournament-reality";
 
-const mexicoResult = {
+const mexicoResult: MatchResultRow = {
   match_slug: "mexico-south-africa-2026-06-11",
   score_a: 2,
   score_b: 0,
 };
 
-const koreaResult = {
+const koreaResult: MatchResultRow = {
   match_slug: "south-korea-czechia-2026-06-11",
   score_a: 1,
   score_b: 1,
 };
 
-const canadaResult = {
+const canadaResult: MatchResultRow = {
   match_slug: "canada-bosnia-and-herzegovina-2026-06-12",
   score_a: 3,
   score_b: 1,
+};
+
+const finalResult: MatchResultRow = {
+  match_slug: "mundial-2026-partido-104",
+  score_a: 1,
+  score_b: 1,
+  is_knockout: true,
+  score_a_120: 2,
+  score_b_120: 1,
+  advancing_team: "Argentina",
 };
 
 function scoringCompleted(matchSlug: string, createdAt = "2026-06-11T22:00:00Z") {
@@ -44,7 +56,7 @@ function rankingUpdated(matchSlug: string, createdAt = "2026-06-11T22:01:00Z") {
 }
 
 function createClient(overrides = {}) {
-  const scoringCalls: string[] = [];
+  const scoringCalls: MatchResultRow[] = [];
 
   return {
     client: {
@@ -54,8 +66,8 @@ function createClient(overrides = {}) {
         scoringCompleted(mexicoResult.match_slug),
         rankingUpdated(mexicoResult.match_slug),
       ],
-      runScoringForMatch: async (matchSlug: string) => {
-        scoringCalls.push(matchSlug);
+      runScoringForMatch: async (result: MatchResultRow) => {
+        scoringCalls.push(result);
         return [{ alias: "Alejo" }];
       },
       ...overrides,
@@ -82,11 +94,16 @@ describe("scoring propagation", () => {
     expect(status.scored.map((match) => match.matchSlug)).toEqual([mexicoResult.match_slug]);
   });
 
-  it("calls the existing run_scoring_for_match path for pending confirmed results", async () => {
+  it("selects the group scorer for group results and knockout scorer for knockout results", () => {
+    expect(scoringRpcNameForResult(mexicoResult)).toBe("run_scoring_for_match");
+    expect(scoringRpcNameForResult(finalResult)).toBe("run_scoring_for_match_knockout");
+  });
+
+  it("passes the full pending result into scorer dispatch", async () => {
     const { client, scoringCalls } = createClient();
     const result = await runScoringForPendingResults([mexicoResult, koreaResult], client);
 
-    expect(scoringCalls).toEqual([koreaResult.match_slug]);
+    expect(scoringCalls).toEqual([koreaResult]);
     expect(result.scoringRuns).toEqual([
       {
         matchSlug: koreaResult.match_slug,
@@ -94,6 +111,21 @@ describe("scoring propagation", () => {
       },
     ]);
     expect(result.scoringFailures).toEqual([]);
+  });
+
+  it("passes knockout metadata through propagation before scoring", async () => {
+    const { client, scoringCalls } = createClient({
+      getStateChangeEvents: async () => [],
+    });
+    const result = await runScoringForPendingResults([finalResult], client);
+
+    expect(scoringCalls).toEqual([finalResult]);
+    expect(result.scoringRuns).toEqual([
+      {
+        matchSlug: finalResult.match_slug,
+        scoredRows: 1,
+      },
+    ]);
   });
 
   it("is idempotent when ScoringCompleted exists before the second propagation run", async () => {
@@ -106,8 +138,8 @@ describe("scoring propagation", () => {
       getRankingParticipantCount: async () => 3,
       getScoredCountsByMatch: async () => new Map<string, number>(),
       getStateChangeEvents: async () => events,
-      runScoringForMatch: async (matchSlug: string) => {
-        scoringCalls.push(matchSlug);
+      runScoringForMatch: async (result: MatchResultRow) => {
+        scoringCalls.push(result.match_slug);
         events = [
           scoringCompleted(koreaResult.match_slug, "2026-06-12T02:30:00Z"),
           rankingUpdated(koreaResult.match_slug, "2026-06-12T02:31:00Z"),
@@ -152,10 +184,10 @@ describe("scoring propagation", () => {
       getRankingParticipantCount: async () => 3,
       getScoredCountsByMatch: async () => new Map<string, number>(),
       getStateChangeEvents: async () => [],
-      runScoringForMatch: async (matchSlug: string) => {
-        scoringCalls.push(matchSlug);
+      runScoringForMatch: async (result: MatchResultRow) => {
+        scoringCalls.push(result.match_slug);
 
-        if (matchSlug === koreaResult.match_slug) {
+        if (result.match_slug === koreaResult.match_slug) {
           throw new Error("RPC failed");
         }
 

@@ -52,7 +52,7 @@ type ScoringPropagationClient = {
   getRankingParticipantCount: () => Promise<number>;
   getScoredCountsByMatch: () => Promise<Map<string, number>>;
   getStateChangeEvents: () => Promise<StateChangeEventRow[]>;
-  runScoringForMatch: (matchSlug: string) => Promise<Array<{ alias: string }>>;
+  runScoringForMatch: (result: MatchResultRow) => Promise<Array<{ alias: string }>>;
 };
 
 function getSupabaseConfig() {
@@ -120,7 +120,7 @@ async function getScoredCountsByMatch() {
 
 async function getStateChangeEvents() {
   return supabaseRest<StateChangeEventRow[]>(
-    "state_change_events?select=event_type,match_slug,payload,source,created_at&order=created_at.desc&limit=200",
+    "state_change_events?select=event_type,match_slug,payload,source,created_at&order=created_at.desc&limit=2000",
   );
 }
 
@@ -129,13 +129,17 @@ async function getRankingParticipantCount() {
   return rows.length;
 }
 
+export function scoringRpcNameForResult(result: Pick<MatchResultRow, "is_knockout">) {
+  return result.is_knockout ? "run_scoring_for_match_knockout" : "run_scoring_for_match";
+}
+
 const defaultClient: ScoringPropagationClient = {
   getRankingParticipantCount,
   getScoredCountsByMatch,
   getStateChangeEvents,
-  runScoringForMatch: (matchSlug) => supabaseRpc<Array<{ alias: string }>>(
-    "run_scoring_for_match",
-    { p_match_slug: matchSlug },
+  runScoringForMatch: (result) => supabaseRpc<Array<{ alias: string }>>(
+    scoringRpcNameForResult(result),
+    { p_match_slug: result.match_slug },
   ),
 };
 
@@ -193,12 +197,24 @@ export async function runScoringForPendingResults(
   const runs: ScoringRunResult[] = [];
   const failures: ScoringRunFailure[] = [];
 
+  const resultsBySlug = new Map(results.map((result) => [result.match_slug, result]));
+
   for (const pendingMatch of status.pendingScoring) {
+    const pendingResult = resultsBySlug.get(pendingMatch.matchSlug);
+
+    if (!pendingResult) {
+      failures.push({
+        matchSlug: pendingMatch.matchSlug,
+        error: "Missing confirmed result for pending scoring match",
+      });
+      continue;
+    }
+
     try {
-      const scoredRows = await client.runScoringForMatch(pendingMatch.matchSlug);
+      const scoredRows = await client.runScoringForMatch(pendingResult);
 
       runs.push({
-        matchSlug: pendingMatch.matchSlug,
+        matchSlug: pendingResult.match_slug,
         scoredRows: scoredRows.length,
       });
     } catch (error) {

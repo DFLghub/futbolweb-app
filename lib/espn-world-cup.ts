@@ -1,4 +1,4 @@
-import { worldCup2026Matches } from "@/lib/world-cup-2026-matches";
+import { worldCup2026Matches, type WorldCupMatch } from "@/lib/world-cup-2026-matches";
 import type { MatchResultRow } from "@/lib/tournament-reality";
 
 const ESPN_SCOREBOARD_URL =
@@ -9,23 +9,48 @@ type EspnScoreboard = {
 };
 
 type EspnEvent = {
-  competitions?: Array<{
-    competitors?: EspnCompetitor[];
-    status?: {
-      type?: {
-        completed?: boolean;
-        state?: string;
-      };
-    };
-  }>;
+  competitions?: EspnCompetition[];
   date?: string;
+  id?: string;
+};
+
+type EspnCompetition = {
+  competitors?: EspnCompetitor[];
+  details?: EspnPlayDetail[];
+  status?: {
+    period?: number;
+    type?: {
+      completed?: boolean;
+      detail?: string;
+      name?: string;
+      shortDetail?: string;
+      state?: string;
+    };
+  };
 };
 
 type EspnCompetitor = {
   homeAway?: "home" | "away";
   score?: string;
+  winner?: boolean;
   team?: {
     abbreviation?: string;
+    displayName?: string;
+    id?: string;
+    shortDisplayName?: string;
+  };
+};
+
+type EspnPlayDetail = {
+  clock?: {
+    value?: number;
+  };
+  ownGoal?: boolean;
+  scoringPlay?: boolean;
+  scoreValue?: number;
+  shootout?: boolean;
+  team?: {
+    id?: string;
   };
 };
 
@@ -33,7 +58,16 @@ function dateKeyInUtc(date: Date) {
   return date.toISOString().slice(0, 10);
 }
 
+function isKnockoutMatch(match: WorldCupMatch) {
+  return match.isKnockout === true || match.stageEn !== "First Stage";
+}
+
 function findKnownMatch(event: EspnEvent) {
+  if (event.id) {
+    const byFifaId = worldCup2026Matches.find((match) => match.fifaId === event.id);
+    if (byFifaId) return byFifaId;
+  }
+
   const competition = event.competitions?.[0];
   const home = competition?.competitors?.find((competitor) => competitor.homeAway === "home");
   const away = competition?.competitors?.find((competitor) => competitor.homeAway === "away");
@@ -50,6 +84,108 @@ function findKnownMatch(event: EspnEvent) {
       match.awayTeamCode === away.team?.abbreviation
     );
   }) ?? null;
+}
+
+function scoreFromCompetitor(competitor: EspnCompetitor | undefined) {
+  const score = Number(competitor?.score);
+  return Number.isInteger(score) ? score : null;
+}
+
+function displayTeamName(match: WorldCupMatch, competitor: EspnCompetitor, side: "home" | "away") {
+  const scheduledName = side === "home" ? match.homeTeam.name : match.awayTeam.name;
+
+  if (scheduledName && scheduledName !== "Por definir") {
+    return scheduledName;
+  }
+
+  return competitor.team?.displayName || competitor.team?.shortDisplayName || competitor.team?.abbreviation || null;
+}
+
+function deriveAdvancingTeam(match: WorldCupMatch, home: EspnCompetitor, away: EspnCompetitor) {
+  if (home.winner === true) return displayTeamName(match, home, "home");
+  if (away.winner === true) return displayTeamName(match, away, "away");
+  return null;
+}
+
+function deriveRegulationScore(
+  competition: EspnCompetition,
+  home: EspnCompetitor,
+  away: EspnCompetitor,
+): { scoreA: number; scoreB: number } | null {
+  const details = competition.details ?? [];
+  const homeTeamId = home.team?.id;
+  const awayTeamId = away.team?.id;
+
+  if (!homeTeamId || !awayTeamId || details.length === 0) {
+    return null;
+  }
+
+  let scoreA = 0;
+  let scoreB = 0;
+  let sawGoal = false;
+
+  for (const detail of details) {
+    if (!detail.scoringPlay || detail.shootout || detail.clock?.value === undefined || detail.clock.value > 5400) {
+      continue;
+    }
+
+    const scoreValue = Number.isInteger(detail.scoreValue) ? detail.scoreValue : 1;
+    if (detail.team?.id === homeTeamId) {
+      scoreA += detail.ownGoal ? 0 : scoreValue;
+      scoreB += detail.ownGoal ? scoreValue : 0;
+      sawGoal = true;
+    } else if (detail.team?.id === awayTeamId) {
+      scoreA += detail.ownGoal ? scoreValue : 0;
+      scoreB += detail.ownGoal ? 0 : scoreValue;
+      sawGoal = true;
+    }
+  }
+
+  if (!sawGoal) {
+    return null;
+  }
+
+  return { scoreA, scoreB };
+}
+
+function buildMatchResult(
+  knownMatch: WorldCupMatch,
+  competition: EspnCompetition,
+  home: EspnCompetitor,
+  away: EspnCompetitor,
+  finalScoreA: number,
+  finalScoreB: number,
+): MatchResultRow | null {
+  const knockout = isKnockoutMatch(knownMatch);
+
+  if (!knockout) {
+    return {
+      match_slug: knownMatch.slug,
+      score_a: finalScoreA,
+      score_b: finalScoreB,
+      is_knockout: false,
+      score_a_120: null,
+      score_b_120: null,
+      advancing_team: null,
+    };
+  }
+
+  const regulationScore = deriveRegulationScore(competition, home, away);
+  const advancingTeam = deriveAdvancingTeam(knownMatch, home, away);
+
+  if (!advancingTeam) {
+    return null;
+  }
+
+  return {
+    match_slug: knownMatch.slug,
+    score_a: regulationScore?.scoreA ?? finalScoreA,
+    score_b: regulationScore?.scoreB ?? finalScoreB,
+    is_knockout: true,
+    score_a_120: finalScoreA,
+    score_b_120: finalScoreB,
+    advancing_team: advancingTeam,
+  };
 }
 
 export async function fetchEspnWorldCupFinalResults(): Promise<MatchResultRow[]> {
@@ -74,18 +210,17 @@ export async function fetchEspnWorldCupFinalResults(): Promise<MatchResultRow[]>
     const knownMatch = findKnownMatch(event);
     const home = competition?.competitors?.find((competitor) => competitor.homeAway === "home");
     const away = competition?.competitors?.find((competitor) => competitor.homeAway === "away");
-    const scoreA = Number(home?.score);
-    const scoreB = Number(away?.score);
+    const scoreA = scoreFromCompetitor(home);
+    const scoreB = scoreFromCompetitor(away);
 
-    if (!completed || !knownMatch || !Number.isInteger(scoreA) || !Number.isInteger(scoreB)) {
+    if (!completed || !knownMatch || !competition || !home || !away || scoreA === null || scoreB === null) {
       continue;
     }
 
-    results.push({
-      match_slug: knownMatch.slug,
-      score_a: scoreA,
-      score_b: scoreB,
-    });
+    const result = buildMatchResult(knownMatch, competition, home, away, scoreA, scoreB);
+    if (result) {
+      results.push(result);
+    }
   }
 
   return results;
@@ -115,6 +250,10 @@ export async function upsertOfficialMatchResults(results: MatchResultRow[]) {
       match_slug: result.match_slug,
       score_a: result.score_a,
       score_b: result.score_b,
+      is_knockout: result.is_knockout ?? false,
+      score_a_120: result.score_a_120 ?? null,
+      score_b_120: result.score_b_120 ?? null,
+      advancing_team: result.advancing_team ?? null,
       confirmed_by: "espn-scoreboard-sync",
     }))),
   });

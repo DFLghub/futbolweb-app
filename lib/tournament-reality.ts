@@ -6,6 +6,10 @@ export type MatchResultRow = {
   match_slug: string;
   score_a: number;
   score_b: number;
+  is_knockout?: boolean;
+  score_a_120?: number | null;
+  score_b_120?: number | null;
+  advancing_team?: string | null;
 };
 
 export type RealityMatchStatus =
@@ -41,7 +45,7 @@ export type TournamentReality = {
 };
 
 const MATCH_DURATION_MS = 2 * 60 * 60 * 1000;
-const MATCH_RESULTS_SELECT = "match_slug,score_a,score_b";
+const MATCH_RESULTS_SELECT = "match_slug,score_a,score_b,is_knockout,score_a_120,score_b_120,advancing_team";
 
 function dateKeyInEasternTime(date: Date) {
   return new Intl.DateTimeFormat("en-CA", {
