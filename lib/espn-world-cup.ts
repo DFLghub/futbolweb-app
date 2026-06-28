@@ -129,14 +129,14 @@ function deriveRegulationScore(
       continue;
     }
 
-    const scoreValue = Number.isInteger(detail.scoreValue) ? detail.scoreValue : 1;
+    const scoreValue = typeof detail.scoreValue === "number" && Number.isInteger(detail.scoreValue) ? detail.scoreValue : 1;
     if (detail.team?.id === homeTeamId) {
-      scoreA += detail.ownGoal ? 0 : scoreValue;
-      scoreB += detail.ownGoal ? scoreValue : 0;
+      scoreA += (detail.ownGoal ?? false) ? 0 : scoreValue;
+      scoreB += (detail.ownGoal ?? false) ? scoreValue : 0;
       sawGoal = true;
     } else if (detail.team?.id === awayTeamId) {
-      scoreA += detail.ownGoal ? scoreValue : 0;
-      scoreB += detail.ownGoal ? 0 : scoreValue;
+      scoreA += (detail.ownGoal ?? false) ? scoreValue : 0;
+      scoreB += (detail.ownGoal ?? false) ? 0 : scoreValue;
       sawGoal = true;
     }
   }
