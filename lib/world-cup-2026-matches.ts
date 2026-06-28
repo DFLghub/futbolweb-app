@@ -2784,19 +2784,17 @@ export const worldCup2026Matches: WorldCupMatch[] = [
     "group": "Dieciseisavos de final",
     "groupCode": "Dieciseisavos de final",
     "homeTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "España",
+      "flagEmoji": "🇪🇸"
     },
     "awayTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Austria",
+      "flagEmoji": "🇦🇹"
     },
-    "homeTeamCode": null,
-    "awayTeamCode": null,
-    "homePlaceholder": "1H",
-    "awayPlaceholder": "2J",
-    "homeFlag": "🏳️",
-    "awayFlag": "🏳️",
+    "homeTeamCode": "ESP",
+    "awayTeamCode": "AUT",
+    "homeFlag": "🇪🇸",
+    "awayFlag": "🇦🇹",
     "venue": "Los Angeles Stadium",
     "venueName": "Los Angeles Stadium",
     "city": "Los Angeles",
@@ -2819,19 +2817,17 @@ export const worldCup2026Matches: WorldCupMatch[] = [
     "group": "Dieciseisavos de final",
     "groupCode": "Dieciseisavos de final",
     "homeTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Suiza",
+      "flagEmoji": "🇨🇭"
     },
     "awayTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Argelia",
+      "flagEmoji": "🇩🇿"
     },
-    "homeTeamCode": null,
-    "awayTeamCode": null,
-    "homePlaceholder": "1B",
-    "awayPlaceholder": "3EFGIJ",
-    "homeFlag": "🏳️",
-    "awayFlag": "🏳️",
+    "homeTeamCode": "SUI",
+    "awayTeamCode": "ALG",
+    "homeFlag": "🇨🇭",
+    "awayFlag": "🇩🇿",
     "venue": "BC Place Vancouver",
     "venueName": "BC Place Vancouver",
     "city": "Vancouver",
