@@ -291,6 +291,9 @@ function PredictionCard({
               scoreB: prediction.score_b,
             })}
           />
+          {prediction.advancing_team ? (
+            <InfoItem label={labels.advancingTeamLabel} value={prediction.advancing_team} />
+          ) : null}
           <InfoItem label={labels.groupLabel} value={prediction.group_code || labels.solistaGroup} />
         </dl>
 

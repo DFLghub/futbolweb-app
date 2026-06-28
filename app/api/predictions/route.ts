@@ -393,7 +393,10 @@ export async function POST(request: Request) {
     }
 
     if (existingPredictionIdentity) {
-      return friendlyError(dict.api.duplicatePrediction, 409);
+      return Response.json(
+        { ok: false, code: "duplicate", message: dict.api.duplicatePrediction, prediction: existingPredictionIdentity },
+        { status: 409 },
+      );
     }
 
     const { data, error } = await supabase
@@ -431,7 +434,10 @@ export async function POST(request: Request) {
         } = await findExistingPredictionIdentity(supabase, prediction);
 
         if (!existingPredictionIdentityAfterConflictError && existingPredictionIdentityAfterConflict) {
-          return friendlyError(dict.api.duplicatePrediction, 409);
+          return Response.json(
+            { ok: false, code: "duplicate", message: dict.api.duplicatePrediction, prediction: existingPredictionIdentityAfterConflict },
+            { status: 409 },
+          );
         }
 
         if (existingPredictionIdentityAfterConflictError) {

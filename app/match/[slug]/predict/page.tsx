@@ -98,6 +98,11 @@ export default async function PredictPage({ params, searchParams }: PredictPageP
         { value: awayTeamName, label: `${knownMatch?.awayTeam.flagEmoji ?? ""} ${awayTeamName}`.trim() },
       ]
     : undefined;
+  const predictionCutoffMs = 5 * 60 * 1000;
+  const matchIsOpen = knownMatchBase
+    ? knownMatchBase.status !== "final" &&
+      new Date(knownMatchBase.kickoffUtc).getTime() - predictionCutoffMs > new Date().getTime()
+    : true;
   const relatedGroupId = groupCodeToStandingGroupId(knownMatchBase?.groupCode);
   let rawStandings = mockWorldCupGroupStandings;
   try {
@@ -161,6 +166,7 @@ export default async function PredictPage({ params, searchParams }: PredictPageP
               homeTeamName={homeTeamName}
               initialGroupCode={initialGroupCode}
               knockoutTeamOptions={knockoutTeamOptions}
+              matchIsOpen={matchIsOpen}
               matchLabel={matchLabel}
               matchSlug={slug}
             />

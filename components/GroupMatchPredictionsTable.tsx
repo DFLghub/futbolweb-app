@@ -6,6 +6,7 @@ type Dict = {
   pointsHeader: string;
   noPredictions: string;
   pendingResult: string;
+  advancingTeamLabel: string;
 };
 
 function PointsBadge({ points, scoreDetail }: { points: number; scoreDetail: string | null }) {
@@ -28,6 +29,7 @@ export default function GroupMatchPredictionsTable({
   predictions: GroupMatchPrediction[];
   isScored: boolean;
 }) {
+  const hasAdvancingTeam = predictions.some((p) => p.advancingTeam);
   if (predictions.length === 0) {
     return (
       <p className="mt-6 text-sm font-semibold text-slate-500">{dict.noPredictions}</p>
@@ -49,6 +51,11 @@ export default function GroupMatchPredictionsTable({
             <p className="mt-1 text-3xl font-black text-slate-950">
               {p.scoreA} – {p.scoreB}
             </p>
+            {p.advancingTeam ? (
+              <p className="mt-0.5 text-xs font-semibold text-amber-700">
+                {dict.advancingTeamLabel}: {p.advancingTeam}
+              </p>
+            ) : null}
             {p.points !== null ? (
               <div className="mt-2">
                 <PointsBadge points={p.points} scoreDetail={p.scoreDetail} />
@@ -88,7 +95,10 @@ export default function GroupMatchPredictionsTable({
               <tr key={p.id} className="hover:bg-slate-50/60">
                 <td className="px-4 py-3 font-black text-slate-950">{p.alias}</td>
                 <td className="px-4 py-3 text-center font-black text-slate-950">
-                  {p.scoreA} – {p.scoreB}
+                  <span>{p.scoreA} – {p.scoreB}</span>
+                  {p.advancingTeam && hasAdvancingTeam ? (
+                    <span className="ml-2 text-xs font-semibold text-amber-700">({p.advancingTeam})</span>
+                  ) : null}
                 </td>
                 {isScored ? (
                   <td className="px-4 py-3 text-right">

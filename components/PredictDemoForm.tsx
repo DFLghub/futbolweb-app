@@ -33,6 +33,7 @@ type PredictDemoFormProps = {
   editingPredictionId?: string;
   initialGroupCode?: string;
   knockoutTeamOptions?: KnockoutTeamOption[];
+  matchIsOpen?: boolean;
 };
 
 const emptyForm = {
@@ -112,6 +113,7 @@ export default function PredictDemoForm({
   editingPredictionId,
   initialGroupCode = "",
   knockoutTeamOptions,
+  matchIsOpen = true,
 }: PredictDemoFormProps) {
   const { dict, locale } = useI18n();
   const formDict = dict.predict.form;
@@ -125,13 +127,19 @@ export default function PredictDemoForm({
   const [copyMessage, setCopyMessage] = useState("");
   const [hasStoredIdentity, setHasStoredIdentity] = useState(false);
   const [savedPrediction, setSavedPrediction] = useState<SavedPrediction | null>(null);
+  const [existingPrediction, setExistingPrediction] = useState<SavedPrediction | null>(null);
+  const [isPredictionCheckDone, setIsPredictionCheckDone] = useState(false);
   const [clientSubmissionId, setClientSubmissionId] = useState(() => createClientSubmissionId());
+
+  // activeEditId: prefers the proactively detected existing prediction, then the URL-provided one
+  const activeEditId = existingPrediction?.id || editingPredictionId;
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       const storedIdentity = readStoredParticipantIdentity();
 
       if (!storedIdentity) {
+        setIsPredictionCheckDone(true);
         return;
       }
 
@@ -147,10 +155,6 @@ export default function PredictDemoForm({
           : storedIdentity.groupCode,
       }));
 
-      if (!editingPredictionId) {
-        return;
-      }
-
       const whatsappPhone = storedIdentity.whatsappPhone.replace(/[\s().-]/g, "");
 
       fetch(`/api/my-predictions?whatsapp_phone=${encodeURIComponent(whatsappPhone)}`)
@@ -161,28 +165,40 @@ export default function PredictDemoForm({
             return;
           }
 
-          const editablePrediction = result.predictions.find((prediction: SavedPrediction) => {
-            return prediction.id === editingPredictionId && prediction.match_slug === matchSlug;
-          }) as SavedPrediction | undefined;
+          // When editingPredictionId provided use that specific prediction; otherwise find by matchSlug
+          const found = editingPredictionId
+            ? (result.predictions as SavedPrediction[]).find(
+                (p) => p.id === editingPredictionId && p.match_slug === matchSlug,
+              )
+            : (result.predictions as SavedPrediction[]).find(
+                (p) => p.match_slug === matchSlug,
+              );
 
-          if (!editablePrediction) {
+          if (!found) {
             return;
           }
 
+          const isDraw = found.score_a === found.score_b;
+
           setForm((current) => ({
             ...current,
-            alias: editablePrediction.alias,
+            alias: found.alias,
             whatsappPhone,
-            favoriteTeam: editablePrediction.favorite_team || current.favoriteTeam,
-            scoreA: String(editablePrediction.score_a),
-            scoreB: String(editablePrediction.score_b),
-            advancingTeam: editablePrediction.advancing_team || "",
-            comment: editablePrediction.comment || "",
-            groupCode: editablePrediction.group_code || "",
+            favoriteTeam: found.favorite_team || current.favoriteTeam,
+            scoreA: String(found.score_a),
+            scoreB: String(found.score_b),
+            advancingTeam: isDraw && found.advancing_team ? found.advancing_team : "",
+            comment: found.comment || "",
+            groupCode: found.group_code || current.groupCode,
           }));
+
+          setExistingPrediction(found);
         })
         .catch(() => {
-          // The regular prediction form remains usable if the edit prefill cannot load.
+          // Regular form remains usable if detection fails.
+        })
+        .finally(() => {
+          setIsPredictionCheckDone(true);
         });
     }, 0);
 
@@ -198,12 +214,18 @@ export default function PredictDemoForm({
   function forgetStoredIdentity() {
     removeStoredParticipantIdentity();
     setHasStoredIdentity(false);
+    setExistingPrediction(null);
+    setIsPredictionCheckDone(true);
     setForm((current) => ({
       ...current,
       alias: "",
       whatsappPhone: "",
       supportedTeam: "",
       favoriteTeam: "",
+      scoreA: "",
+      scoreB: "",
+      advancingTeam: "",
+      comment: "",
       groupCode: initialGroupCode ? normalizedInitialGroupCode : "",
     }));
     setErrorMessage("");
@@ -226,11 +248,11 @@ export default function PredictDemoForm({
 
     try {
       const response = await fetch(
-        editingPredictionId
-          ? `/api/predictions/${encodeURIComponent(editingPredictionId)}`
+        activeEditId
+          ? `/api/predictions/${encodeURIComponent(activeEditId)}`
           : "/api/predictions",
         {
-          method: editingPredictionId ? "PATCH" : "POST",
+          method: activeEditId ? "PATCH" : "POST",
           headers: {
             "Content-Type": "application/json",
           },
@@ -243,7 +265,7 @@ export default function PredictDemoForm({
             score_b: scoreB,
             advancing_team: knockoutTeamOptions && scoreA === scoreB && form.advancingTeam
               ? form.advancingTeam
-              : undefined,
+              : null,
             comment: form.comment,
             group_code: form.groupCode,
             client_submission_id: clientSubmissionId,
@@ -253,13 +275,33 @@ export default function PredictDemoForm({
 
       const result = await response.json();
 
+      // Graceful handling of 409 duplicate: show existing prediction instead of error
+      if (response.status === 409 && result.code === "duplicate" && result.prediction) {
+        const dup = result.prediction as SavedPrediction;
+        const isDraw = dup.score_a === dup.score_b;
+        setExistingPrediction(dup);
+        setForm((current) => ({
+          ...current,
+          alias: dup.alias,
+          whatsappPhone: dup.whatsapp_phone?.replace(/[\s().-]/g, "") || current.whatsappPhone,
+          favoriteTeam: dup.favorite_team || current.favoriteTeam,
+          scoreA: String(dup.score_a),
+          scoreB: String(dup.score_b),
+          advancingTeam: isDraw && dup.advancing_team ? dup.advancing_team : "",
+          comment: dup.comment || "",
+          groupCode: dup.group_code || current.groupCode,
+        }));
+        setIsSubmitting(false);
+        return;
+      }
+
       if (!response.ok || !result.ok) {
         setErrorMessage(
           response.status === 503 || result.code === "high_traffic"
             ? formDict.highTrafficError
             : typeof result.message === "string"
             ? result.message
-            : editingPredictionId
+            : activeEditId
             ? formDict.updateGenericError
             : formDict.genericError,
         );
@@ -267,6 +309,7 @@ export default function PredictDemoForm({
       }
 
       setSavedPrediction(result.prediction);
+      setExistingPrediction(result.prediction);
       setClientSubmissionId(createClientSubmissionId());
       setHasStoredIdentity(writeStoredParticipantIdentity({
         alias: form.alias,
@@ -313,6 +356,54 @@ export default function PredictDemoForm({
     }
   }
 
+  // Match closed — show read-only state once prediction check is complete
+  if (!matchIsOpen) {
+    if (!isPredictionCheckDone) {
+      return (
+        <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/70 sm:p-6">
+          <p className="text-sm font-semibold text-slate-500">{dict.myPredictions.loadingText}</p>
+        </section>
+      );
+    }
+
+    if (existingPrediction) {
+      const isDraw = existingPrediction.score_a === existingPrediction.score_b;
+      return (
+        <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/70 sm:p-6">
+          <div className="rounded-md border border-slate-300 bg-slate-100 px-3 py-2 text-xs font-black uppercase tracking-[0.1em] text-slate-500">
+            {dict.myPredictions.closedStatus}
+          </div>
+          <p className="mt-4 text-sm font-bold text-slate-700">{formDict.closedWithPrediction}</p>
+          <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+            <p className="text-3xl font-black text-slate-950">
+              {existingPrediction.score_a} – {existingPrediction.score_b}
+            </p>
+            {isDraw && existingPrediction.advancing_team ? (
+              <p className="mt-1 text-sm font-semibold text-amber-700">
+                {formatMessage(formDict.confirmedAdvancingTeam, { team: existingPrediction.advancing_team })}
+              </p>
+            ) : null}
+            {existingPrediction.alias ? (
+              <p className="mt-2 text-xs font-semibold text-emerald-700">{existingPrediction.alias}</p>
+            ) : null}
+            {existingPrediction.comment ? (
+              <p className="mt-2 text-xs font-semibold italic text-slate-500">&ldquo;{existingPrediction.comment}&rdquo;</p>
+            ) : null}
+          </div>
+        </section>
+      );
+    }
+
+    return (
+      <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/70 sm:p-6">
+        <div className="rounded-md border border-slate-300 bg-slate-100 px-3 py-2 text-xs font-black uppercase tracking-[0.1em] text-slate-500">
+          {dict.myPredictions.closedStatus}
+        </div>
+        <p className="mt-4 text-sm font-semibold text-slate-600">{formDict.closedNoPrediction}</p>
+      </section>
+    );
+  }
+
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm shadow-slate-200/70 sm:p-6">
       <form className="grid gap-4" onSubmit={handleSubmit}>
@@ -328,6 +419,25 @@ export default function PredictDemoForm({
             >
               {formDict.forgetIdentity}
             </button>
+          </div>
+        ) : null}
+
+        {existingPrediction ? (
+          <div className="rounded-md border border-amber-200 bg-amber-50 px-3 py-3">
+            <p className="text-xs font-bold text-amber-800">
+              {formDict.existingPredictionNotice}
+            </p>
+            <p className="mt-1 text-sm font-black text-slate-950">
+              {formatMessage(formDict.existingScore, {
+                scoreA: existingPrediction.score_a,
+                scoreB: existingPrediction.score_b,
+              })}
+            </p>
+            {existingPrediction.advancing_team ? (
+              <p className="mt-0.5 text-xs font-semibold text-amber-700">
+                {formatMessage(formDict.existingAdvancingTeam, { team: existingPrediction.advancing_team })}
+              </p>
+            ) : null}
           </div>
         ) : null}
 
@@ -554,10 +664,10 @@ export default function PredictDemoForm({
           type="submit"
         >
           {isSubmitting
-            ? editingPredictionId
+            ? activeEditId
               ? formDict.updating
               : formDict.submitting
-            : editingPredictionId
+            : activeEditId
             ? formDict.updateSubmit
             : formDict.submit}
         </button>
@@ -566,8 +676,19 @@ export default function PredictDemoForm({
       {savedPrediction ? (
         <div className="mt-5 rounded-md border border-emerald-200 bg-emerald-50 p-4">
           <p className="text-sm font-bold text-emerald-800">
-            {editingPredictionId ? formDict.updated : formDict.received}
+            {activeEditId ? formDict.updated : formDict.received}
           </p>
+          <p className="mt-2 text-xl font-black text-slate-950">
+            {formatMessage(formDict.confirmedScore, {
+              scoreA: savedPrediction.score_a,
+              scoreB: savedPrediction.score_b,
+            })}
+          </p>
+          {savedPrediction.advancing_team ? (
+            <p className="mt-1 text-sm font-semibold text-amber-700">
+              {formatMessage(formDict.confirmedAdvancingTeam, { team: savedPrediction.advancing_team })}
+            </p>
+          ) : null}
           <button
             className="mt-4 min-h-11 w-full rounded-md border border-emerald-300 bg-white px-4 py-3 text-sm font-black text-emerald-800 transition hover:bg-emerald-100"
             onClick={copyForWhatsApp}

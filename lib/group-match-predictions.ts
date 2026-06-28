@@ -12,6 +12,7 @@ export type GroupMatchPrediction = {
   alias: string;
   scoreA: number;
   scoreB: number;
+  advancingTeam: string | null;
   comment: string | null;
   points: number | null;
   scoreDetail: string | null;
@@ -24,7 +25,7 @@ export const getGroupMatchPredictions = unstable_cache(
 
       let query = supabase
         .from("prediction_intake")
-        .select("id, alias, score_a, score_b, comment")
+        .select("id, alias, score_a, score_b, advancing_team, comment")
         .eq("match_slug", matchSlug)
         .in("status", ["pending_review", "accepted"])
         .order("created_at", { ascending: true });
@@ -56,6 +57,7 @@ export const getGroupMatchPredictions = unstable_cache(
         alias: p.alias as string,
         scoreA: p.score_a as number,
         scoreB: p.score_b as number,
+        advancingTeam: (p.advancing_team ?? null) as string | null,
         comment: (p.comment ?? null) as string | null,
         points: scoreMap.get(p.id as string)?.points ?? null,
         scoreDetail: scoreMap.get(p.id as string)?.scoreDetail ?? null,
