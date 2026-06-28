@@ -5,7 +5,7 @@ type MyPredictionsQuery = {
 };
 
 const predictionSelect =
-  "id, match_slug, alias, favorite_team, score_a, score_b, comment, group_code, status, created_at";
+  "id, match_slug, alias, favorite_team, score_a, score_b, advancing_team, comment, group_code, status, created_at";
 
 const scoreSelect = "prediction_id, points, score_detail";
 

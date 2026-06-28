@@ -38,39 +38,25 @@ function sign(n: number): -1 | 0 | 1 {
 
 function expectedScore(input: KnockoutScoringInput): number {
   const predictedDraw = input.predA === input.predB;
+  const predDir = sign(input.predA - input.predB);
+  const realDir = sign(input.real90A - input.real90B);
+  const exactA = input.predA === input.real90A;
+  const exactB = input.predB === input.real90B;
+  let regulationPoints = 0.0;
 
-  if (!predictedDraw) {
-    // non-draw prediction → evaluated against 90-min result only
-    const predDir = sign(input.predA - input.predB);
-    const realDir = sign(input.real90A - input.real90B);
-    const exactA = input.predA === input.real90A;
-    const exactB = input.predB === input.real90B;
-
-    if (predDir === realDir) {
-      if (exactA && exactB) return 3.0;
-      if (exactA || exactB) return 2.5;
-      return 2.0;
-    }
-    if (exactA || exactB) return 0.5;
-    return 0.0;
+  if (predDir === realDir) {
+    if (exactA && exactB) regulationPoints = 3.0;
+    else if (exactA || exactB) regulationPoints = 2.5;
+    else regulationPoints = 2.0;
+  } else if (exactA || exactB) {
+    regulationPoints = 0.5;
   }
 
-  // draw prediction → needs actual ET (real120 not null)
-  if (input.real120A === null || input.real120B === null) return 0.0;
-  const exact120 = input.predA === input.real120A && input.predB === input.real120B;
-  if (!exact120) return 0.0;
-  return input.predAdvancingTeam === input.realAdvancingTeam ? 3.0 : 2.5;
-}
+  if (!predictedDraw) {
+    return regulationPoints;
+  }
 
-// ─── case tag (for failure reports) ─────────────────────────────────────────
-
-function caseTag(input: KnockoutScoringInput): string {
-  const draw = input.predA === input.predB;
-  const had90Draw = input.real120A !== null;
-  if (!draw) return `non-draw-pred / real90=${input.real90A}-${input.real90B}${had90Draw ? "(+ET)" : ""}`;
-  if (!had90Draw) return `draw-pred / no-ET`;
-  const exact = input.predA === input.real120A && input.predB === input.real120B;
-  return `draw-pred / ET=${input.real120A}-${input.real120B} exact120=${exact} adv=${input.predAdvancingTeam}/${input.realAdvancingTeam}`;
+  return regulationPoints + (input.predAdvancingTeam === input.realAdvancingTeam ? 2.0 : 0.0);
 }
 
 // ─── generators ─────────────────────────────────────────────────────────────
@@ -147,7 +133,7 @@ function genCase1b_nonDrawPred_drawResult(r: () => number, n: number): Case[] {
   return cases;
 }
 
-/** Case 2a: draw prediction, match decided at 90' (no ET) → always 0 */
+/** Case 2a: draw prediction, match decided at 90' (no ET) → 90' score + advancing bonus */
 function genCase2a_drawPred_noET(r: () => number, n: number): Case[] {
   const cases: Case[] = [];
   for (let i = 0; i < n; i++) {
@@ -164,7 +150,7 @@ function genCase2a_drawPred_noET(r: () => number, n: number): Case[] {
       real120A: null, real120B: null,
       realAdvancingTeam: realAdv,
     };
-    cases.push({ input, expected: 0.0, label: "2a" });
+    cases.push({ input, expected: expectedScore(input), label: "2a" });
   }
   return cases;
 }
@@ -186,7 +172,7 @@ function genCase2b_drawPred_exactET(r: () => number, n: number): Case[] {
       real120A: s120, real120B: s120,
       realAdvancingTeam: realAdv,
     };
-    const expected = predAdv === realAdv ? 3.0 : 2.5;
+    const expected = expectedScore(input);
     cases.push({ input, expected, label: i % 2 === 0 ? "2b-adv-correct" : "2b-adv-wrong" });
   }
   return cases;
@@ -226,17 +212,17 @@ function genEdgeCases(): Case[] {
   // 0-0 at 90' → ET, predict 0-0, correct adv
   edges.push({
     input: { predA:0, predB:0, predAdvancingTeam:"arg", real90A:0, real90B:0, real120A:0, real120B:0, realAdvancingTeam:"arg" },
-    expected: 3.0, label: "edge-0-0-correct"
+    expected: 5.0, label: "edge-0-0-correct"
   });
   // 0-0 at 90' → ET, predict 0-0, wrong adv
   edges.push({
     input: { predA:0, predB:0, predAdvancingTeam:"bra", real90A:0, real90B:0, real120A:0, real120B:0, realAdvancingTeam:"arg" },
-    expected: 2.5, label: "edge-0-0-wrong-adv"
+    expected: 3.0, label: "edge-0-0-wrong-adv"
   });
   // predict 0-0, match was 0-0 at 90' but goals in ET → 1-0
   edges.push({
     input: { predA:0, predB:0, predAdvancingTeam:"arg", real90A:0, real90B:0, real120A:1, real120B:0, realAdvancingTeam:"arg" },
-    expected: 0.0, label: "edge-0-0-goal-in-ET"
+    expected: 5.0, label: "edge-0-0-goal-in-ET"
   });
   // very high score: predict 5-4, real 5-4
   edges.push({
@@ -266,7 +252,7 @@ function genEdgeCases(): Case[] {
   // draw prediction, realAdvancingTeam same string case sensitivity
   edges.push({
     input: { predA:1, predB:1, predAdvancingTeam:"ARG", real90A:1, real90B:1, real120A:1, real120B:1, realAdvancingTeam:"arg" },
-    expected: 2.5, label: "edge-case-sensitivity"
+    expected: 3.0, label: "edge-case-sensitivity"
   });
   return edges;
 }
@@ -311,24 +297,22 @@ describe("Synthetic harness — puntajeTigreKnockout", () => {
     expect(failed, `${failed} failures out of ${passed + failed}`).toBe(0);
   });
 
-  it("Case 2a: draw prediction, no ET (150 cases, always 0.0)", () => {
+  it("Case 2a: draw prediction, no ET (150 cases, 90' score + advancing bonus)", () => {
     const r = rng(7);
     const cases = genCase2a_drawPred_noET(r, 150);
     const { passed, failed, failures } = runHarness(cases);
     if (failures.length) console.error("FAILURES:\n" + failures.join("\n"));
     expect(failed, `${failed} failures out of ${passed + failed}`).toBe(0);
-    // all must be 0.0
-    expect(cases.every(c => c.expected === 0.0)).toBe(true);
+    expect(cases.every(c => c.expected === expectedScore(c.input))).toBe(true);
   });
 
-  it("Case 2b: draw prediction, exact 120' score (200 cases, 3.0 or 2.5)", () => {
+  it("Case 2b: draw prediction, exact 90' score plus independent advancing bonus", () => {
     const r = rng(13);
     const cases = genCase2b_drawPred_exactET(r, 200);
     const { passed, failed, failures } = runHarness(cases);
     if (failures.length) console.error("FAILURES:\n" + failures.join("\n"));
     expect(failed, `${failed} failures out of ${passed + failed}`).toBe(0);
-    // all must be either 3.0 or 2.5
-    expect(cases.every(c => c.expected === 3.0 || c.expected === 2.5)).toBe(true);
+    expect(cases.every(c => c.expected === 5.0 || c.expected === 3.0)).toBe(true);
   });
 
   it("Case 2c: draw prediction, score diverged in ET (150 cases)", () => {

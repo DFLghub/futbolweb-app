@@ -56,10 +56,10 @@ describe("Case 1 — non-draw prediction", () => {
   });
 });
 
-// ── CASE 2: draw prediction + advancing team ───────────────────────────────
+// ── CASE 2: draw prediction + independent advancing bonus ──────────────────
 
 describe("Case 2 — draw prediction", () => {
-  it("draw prediction, 120-min score exact, advancing team correct → 3.0", () => {
+  it("draw prediction, 90-min score exact, advancing team correct → 5.0", () => {
     expect(
       puntajeTigreKnockout({
         predA: 1, predB: 1,
@@ -68,10 +68,10 @@ describe("Case 2 — draw prediction", () => {
         real120A: 1, real120B: 1,
         realAdvancingTeam: "argentina",
       }),
-    ).toBe(3.0);
+    ).toBe(5.0);
   });
 
-  it("draw prediction, 120-min score exact, advancing team wrong → 2.5", () => {
+  it("draw prediction, 90-min score exact, advancing team wrong → 3.0", () => {
     expect(
       puntajeTigreKnockout({
         predA: 1, predB: 1,
@@ -80,11 +80,10 @@ describe("Case 2 — draw prediction", () => {
         real120A: 1, real120B: 1,
         realAdvancingTeam: "netherlands",
       }),
-    ).toBe(2.5);
+    ).toBe(3.0);
   });
 
-  it("draw prediction, 120-min score wrong → 0.0", () => {
-    // User predicted 1-1, but after ET the score became 2-2
+  it("draw prediction, 90-min score exact, 120-min score differs, advancing team correct → 5.0", () => {
     expect(
       puntajeTigreKnockout({
         predA: 1, predB: 1,
@@ -93,11 +92,10 @@ describe("Case 2 — draw prediction", () => {
         real120A: 2, real120B: 2,
         realAdvancingTeam: "argentina",
       }),
-    ).toBe(0.0);
+    ).toBe(5.0);
   });
 
-  it("draw prediction when match was NOT drawn at 90 min (real120 is null) → 0.0", () => {
-    // User predicted 2-2 but real was 3-1 at 90 min (no ET)
+  it("draw prediction with wrong 90-min score, advancing team correct → 2.0", () => {
     expect(
       puntajeTigreKnockout({
         predA: 2, predB: 2,
@@ -106,6 +104,18 @@ describe("Case 2 — draw prediction", () => {
         real120A: null, real120B: null,
         realAdvancingTeam: "mexico",
       }),
-    ).toBe(0.0);
+    ).toBe(2.0);
+  });
+
+  it("draw prediction with one exact 90-min marker and correct advancing team → 2.5", () => {
+    expect(
+      puntajeTigreKnockout({
+        predA: 2, predB: 2,
+        predAdvancingTeam: "canada",
+        real90A: 1, real90B: 2,
+        real120A: null, real120B: null,
+        realAdvancingTeam: "canada",
+      }),
+    ).toBe(2.5);
   });
 });

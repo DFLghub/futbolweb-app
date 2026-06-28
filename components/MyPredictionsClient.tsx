@@ -26,6 +26,7 @@ type SavedPrediction = {
   favorite_team: string | null;
   score_a: number;
   score_b: number;
+  advancing_team: string | null;
   comment: string | null;
   group_code: string | null;
   status: string;

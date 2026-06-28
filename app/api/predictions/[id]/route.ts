@@ -1,5 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { formatMessage, getDictionary, localeCookieName, normalizeLocale, type Dictionary } from "@/lib/i18n";
+import { getPredictionAdvancingTeam, isKnockoutPredictionMatch } from "@/lib/knockout-predictions";
 import { worldCup2026Matches } from "@/lib/world-cup-2026-matches";
 
 type PredictionUpdatePayload = {
@@ -8,6 +9,7 @@ type PredictionUpdatePayload = {
   favorite_team?: unknown;
   score_a?: unknown;
   score_b?: unknown;
+  advancing_team?: unknown;
   comment?: unknown;
 };
 
@@ -18,7 +20,7 @@ type PredictionUpdateRouteProps = {
 };
 
 const predictionSelect =
-  "id, match_slug, alias, whatsapp_phone, favorite_team, score_a, score_b, comment, group_code, created_at";
+  "id, match_slug, alias, whatsapp_phone, favorite_team, score_a, score_b, advancing_team, comment, group_code, created_at";
 
 function getRequestDictionary(request: Request) {
   const cookie = request.headers
@@ -158,9 +160,18 @@ function parsePredictionUpdatePayload(payload: unknown, dict: Dictionary) {
     ),
     score_a: requiredScore(predictionPayload, "score_a", dict.api.scoreA, dict),
     score_b: requiredScore(predictionPayload, "score_b", dict.api.scoreB, dict),
+    advancing_team: optionalText(
+      predictionPayload,
+      "advancing_team",
+      "advancing_team",
+      80,
+      dict,
+    ),
     comment: optionalText(predictionPayload, "comment", dict.api.comment, 160, dict),
   };
 }
+
+type ParsedPredictionUpdatePayload = ReturnType<typeof parsePredictionUpdatePayload>;
 
 export async function PATCH(request: Request, { params }: PredictionUpdateRouteProps) {
   const dict = getRequestDictionary(request);
@@ -173,7 +184,7 @@ export async function PATCH(request: Request, { params }: PredictionUpdateRouteP
     return friendlyError(dict.api.readError);
   }
 
-  let predictionUpdate;
+  let predictionUpdate: ParsedPredictionUpdatePayload;
 
   try {
     predictionUpdate = parsePredictionUpdatePayload(payload, dict);
@@ -211,6 +222,20 @@ export async function PATCH(request: Request, { params }: PredictionUpdateRouteP
       return friendlyError(dict.api.closedMatch, 400);
     }
 
+    try {
+      predictionUpdate = {
+        ...predictionUpdate,
+        advancing_team: getPredictionAdvancingTeam({
+          advancingTeam: predictionUpdate.advancing_team,
+          isKnockout: isKnockoutPredictionMatch(knownMatch),
+          scoreA: predictionUpdate.score_a,
+          scoreB: predictionUpdate.score_b,
+        }),
+      };
+    } catch {
+      return friendlyError(formatMessage(dict.api.required, { label: "advancing_team" }), 400);
+    }
+
     const { data, error } = await supabase
       .from("prediction_intake")
       .update({
@@ -218,6 +243,7 @@ export async function PATCH(request: Request, { params }: PredictionUpdateRouteP
         favorite_team: predictionUpdate.favorite_team,
         score_a: predictionUpdate.score_a,
         score_b: predictionUpdate.score_b,
+        advancing_team: predictionUpdate.advancing_team,
         comment: predictionUpdate.comment,
       })
       .eq("id", existingPrediction.id)

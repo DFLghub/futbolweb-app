@@ -3,6 +3,7 @@ import { createSupabaseServerClient } from "@/lib/supabase-server";
 import { formatMessage, getDictionary, localeCookieName, normalizeLocale, type Dictionary } from "@/lib/i18n";
 import { normalizeGroupCode } from "@/lib/group-code";
 import { GROUP_MATCH_PREDICTIONS_TAG } from "@/lib/group-match-predictions";
+import { getPredictionAdvancingTeam, isKnockoutPredictionMatch } from "@/lib/knockout-predictions";
 import { PREDICTION_COUNT_TAG } from "@/lib/prediction-count";
 import { PREDICTION_GROUP_STANDINGS_TAG } from "@/lib/prediction-group-standings";
 import { worldCup2026Matches } from "@/lib/world-cup-2026-matches";
@@ -301,6 +302,8 @@ function parsePredictionPayload(payload: unknown, dict: Dictionary) {
   };
 }
 
+type ParsedPredictionPayload = ReturnType<typeof parsePredictionPayload>;
+
 export async function POST(request: Request) {
   const dict = getRequestDictionary(request);
   let payload: unknown;
@@ -311,7 +314,7 @@ export async function POST(request: Request) {
     return friendlyError(dict.api.readError);
   }
 
-  let prediction;
+  let prediction: ParsedPredictionPayload;
 
   try {
     prediction = parsePredictionPayload(payload, dict);
@@ -329,6 +332,20 @@ export async function POST(request: Request) {
 
   if (!canAcceptPrediction(knownMatch)) {
     return friendlyError(dict.api.closedMatch, 400);
+  }
+
+  try {
+    prediction = {
+      ...prediction,
+      advancing_team: getPredictionAdvancingTeam({
+        advancingTeam: prediction.advancing_team,
+        isKnockout: isKnockoutPredictionMatch(knownMatch),
+        scoreA: prediction.score_a,
+        scoreB: prediction.score_b,
+      }),
+    };
+  } catch {
+    return friendlyError(formatMessage(dict.api.required, { label: "advancing_team" }), 400);
   }
 
   try {

@@ -30,22 +30,12 @@ function puntajeTigreGroupStage(predA: number, predB: number, realA: number, rea
 }
 
 export function puntajeTigreKnockout(input: KnockoutScoringInput): number {
-  const predictedDraw = input.predA === input.predB;
+  const regulationScore = puntajeTigreGroupStage(input.predA, input.predB, input.real90A, input.real90B);
 
-  if (!predictedDraw) {
-    // Case 1: non-draw prediction — evaluate against 90-min result
-    return puntajeTigreGroupStage(input.predA, input.predB, input.real90A, input.real90B);
+  if (input.predA !== input.predB) {
+    return regulationScore;
   }
 
-  // Case 2: draw prediction — evaluate against 120-min result
-  if (input.real120A === null || input.real120B === null) {
-    // No extra time (match wasn't drawn at 90 min) — draw prediction earns nothing
-    return 0.0;
-  }
-
-  const exact120 = input.predA === input.real120A && input.predB === input.real120B;
-
-  if (!exact120) return 0.0;
-
-  return input.predAdvancingTeam === input.realAdvancingTeam ? 3.0 : 2.5;
+  const advancingBonus = input.predAdvancingTeam === input.realAdvancingTeam ? 2.0 : 0.0;
+  return regulationScore + advancingBonus;
 }

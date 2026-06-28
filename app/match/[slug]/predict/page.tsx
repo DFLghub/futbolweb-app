@@ -7,6 +7,7 @@ import SimpleNav from "@/components/SimpleNav";
 import { groupCodeToStandingGroupId } from "@/lib/group-code";
 import { getTimezoneLabel } from "@/lib/football-utils";
 import { getCurrentDictionary, getCurrentLocale } from "@/lib/i18n-server";
+import { isKnockoutPredictionMatch } from "@/lib/knockout-predictions";
 import { mockWorldCupGroupStandings } from "@/lib/mock-group-standings";
 import { getCachedRealGroupStandings } from "@/lib/real-group-standings";
 import {
@@ -81,7 +82,7 @@ export default async function PredictPage({ params, searchParams }: PredictPageP
   const matchLabel = formatMatchLabel(slug, dict.predict.unknownMatch, knownMatch);
   const homeTeamName = knownMatch?.homeTeam.name || dict.predict.fallbackHome;
   const awayTeamName = knownMatch?.awayTeam.name || dict.predict.fallbackAway;
-  const knockoutTeamOptions = knownMatchBase?.isKnockout
+  const knockoutTeamOptions = isKnockoutPredictionMatch(knownMatchBase)
     ? [
         { value: homeTeamName, label: `${knownMatch?.homeTeam.flagEmoji ?? ""} ${homeTeamName}`.trim() },
         { value: awayTeamName, label: `${knownMatch?.awayTeam.flagEmoji ?? ""} ${awayTeamName}`.trim() },

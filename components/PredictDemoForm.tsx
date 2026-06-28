@@ -14,6 +14,7 @@ type SavedPrediction = {
   favorite_team: string | null;
   score_a: number;
   score_b: number;
+  advancing_team: string | null;
   comment: string | null;
   group_code: string | null;
   created_at: string;
@@ -175,6 +176,7 @@ export default function PredictDemoForm({
             favoriteTeam: editablePrediction.favorite_team || current.favoriteTeam,
             scoreA: String(editablePrediction.score_a),
             scoreB: String(editablePrediction.score_b),
+            advancingTeam: editablePrediction.advancing_team || "",
             comment: editablePrediction.comment || "",
             groupCode: editablePrediction.group_code || "",
           }));

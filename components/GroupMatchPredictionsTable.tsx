@@ -58,7 +58,7 @@ export default function GroupMatchPredictionsTable({
             ) : null}
             {p.comment ? (
               <p className="mt-2 border-t border-slate-100 pt-2 text-xs font-semibold italic text-slate-500">
-                "{p.comment}"
+                &ldquo;{p.comment}&rdquo;
               </p>
             ) : null}
           </div>
