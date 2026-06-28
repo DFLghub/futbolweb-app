@@ -2421,19 +2421,17 @@ export const worldCup2026Matches: WorldCupMatch[] = [
     "group": "Dieciseisavos de final",
     "groupCode": "Dieciseisavos de final",
     "homeTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Sudáfrica",
+      "flagEmoji": "🇿🇦"
     },
     "awayTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Canadá",
+      "flagEmoji": "🇨🇦"
     },
-    "homeTeamCode": null,
-    "awayTeamCode": null,
-    "homePlaceholder": "2A",
-    "awayPlaceholder": "2B",
-    "homeFlag": "🏳️",
-    "awayFlag": "🏳️",
+    "homeTeamCode": "RSA",
+    "awayTeamCode": "CAN",
+    "homeFlag": "🇿🇦",
+    "awayFlag": "🇨🇦",
     "venue": "Los Angeles Stadium",
     "venueName": "Los Angeles Stadium",
     "city": "Los Angeles",
@@ -2456,19 +2454,17 @@ export const worldCup2026Matches: WorldCupMatch[] = [
     "group": "Dieciseisavos de final",
     "groupCode": "Dieciseisavos de final",
     "homeTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Alemania",
+      "flagEmoji": "🇩🇪"
     },
     "awayTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Paraguay",
+      "flagEmoji": "🇵🇾"
     },
-    "homeTeamCode": null,
-    "awayTeamCode": null,
-    "homePlaceholder": "1E",
-    "awayPlaceholder": "3ABCDF",
-    "homeFlag": "🏳️",
-    "awayFlag": "🏳️",
+    "homeTeamCode": "GER",
+    "awayTeamCode": "PAR",
+    "homeFlag": "🇩🇪",
+    "awayFlag": "🇵🇾",
     "venue": "Boston Stadium",
     "venueName": "Boston Stadium",
     "city": "Boston",
@@ -2491,19 +2487,17 @@ export const worldCup2026Matches: WorldCupMatch[] = [
     "group": "Dieciseisavos de final",
     "groupCode": "Dieciseisavos de final",
     "homeTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Países Bajos",
+      "flagEmoji": "🇳🇱"
     },
     "awayTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Marruecos",
+      "flagEmoji": "🇲🇦"
     },
-    "homeTeamCode": null,
-    "awayTeamCode": null,
-    "homePlaceholder": "1F",
-    "awayPlaceholder": "2C",
-    "homeFlag": "🏳️",
-    "awayFlag": "🏳️",
+    "homeTeamCode": "NED",
+    "awayTeamCode": "MAR",
+    "homeFlag": "🇳🇱",
+    "awayFlag": "🇲🇦",
     "venue": "Monterrey Stadium",
     "venueName": "Monterrey Stadium",
     "city": "Monterrey",
@@ -2526,19 +2520,17 @@ export const worldCup2026Matches: WorldCupMatch[] = [
     "group": "Dieciseisavos de final",
     "groupCode": "Dieciseisavos de final",
     "homeTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Brasil",
+      "flagEmoji": "🇧🇷"
     },
     "awayTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Japón",
+      "flagEmoji": "🇯🇵"
     },
-    "homeTeamCode": null,
-    "awayTeamCode": null,
-    "homePlaceholder": "1C",
-    "awayPlaceholder": "2F",
-    "homeFlag": "🏳️",
-    "awayFlag": "🏳️",
+    "homeTeamCode": "BRA",
+    "awayTeamCode": "JPN",
+    "homeFlag": "🇧🇷",
+    "awayFlag": "🇯🇵",
     "venue": "Houston Stadium",
     "venueName": "Houston Stadium",
     "city": "Houston",
@@ -2561,19 +2553,17 @@ export const worldCup2026Matches: WorldCupMatch[] = [
     "group": "Dieciseisavos de final",
     "groupCode": "Dieciseisavos de final",
     "homeTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Francia",
+      "flagEmoji": "🇫🇷"
     },
     "awayTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Suecia",
+      "flagEmoji": "🇸🇪"
     },
-    "homeTeamCode": null,
-    "awayTeamCode": null,
-    "homePlaceholder": "1I",
-    "awayPlaceholder": "3CDFGH",
-    "homeFlag": "🏳️",
-    "awayFlag": "🏳️",
+    "homeTeamCode": "FRA",
+    "awayTeamCode": "SWE",
+    "homeFlag": "🇫🇷",
+    "awayFlag": "🇸🇪",
     "venue": "New York/New Jersey Stadium",
     "venueName": "New York/New Jersey Stadium",
     "city": "New Jersey",
@@ -2596,19 +2586,17 @@ export const worldCup2026Matches: WorldCupMatch[] = [
     "group": "Dieciseisavos de final",
     "groupCode": "Dieciseisavos de final",
     "homeTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Costa de Marfil",
+      "flagEmoji": "🇨🇮"
     },
     "awayTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Noruega",
+      "flagEmoji": "🇳🇴"
     },
-    "homeTeamCode": null,
-    "awayTeamCode": null,
-    "homePlaceholder": "2E",
-    "awayPlaceholder": "2I",
-    "homeFlag": "🏳️",
-    "awayFlag": "🏳️",
+    "homeTeamCode": "CIV",
+    "awayTeamCode": "NOR",
+    "homeFlag": "🇨🇮",
+    "awayFlag": "🇳🇴",
     "venue": "Dallas Stadium",
     "venueName": "Dallas Stadium",
     "city": "Dallas",
@@ -2631,19 +2619,17 @@ export const worldCup2026Matches: WorldCupMatch[] = [
     "group": "Dieciseisavos de final",
     "groupCode": "Dieciseisavos de final",
     "homeTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "México",
+      "flagEmoji": "🇲🇽"
     },
     "awayTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Ecuador",
+      "flagEmoji": "🇪🇨"
     },
-    "homeTeamCode": null,
-    "awayTeamCode": null,
-    "homePlaceholder": "1A",
-    "awayPlaceholder": "3CEFHI",
-    "homeFlag": "🏳️",
-    "awayFlag": "🏳️",
+    "homeTeamCode": "MEX",
+    "awayTeamCode": "ECU",
+    "homeFlag": "🇲🇽",
+    "awayFlag": "🇪🇨",
     "venue": "Mexico City Stadium",
     "venueName": "Mexico City Stadium",
     "city": "Mexico City",
@@ -2666,19 +2652,17 @@ export const worldCup2026Matches: WorldCupMatch[] = [
     "group": "Dieciseisavos de final",
     "groupCode": "Dieciseisavos de final",
     "homeTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Inglaterra",
+      "flagEmoji": "🏴"
     },
     "awayTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "RD Congo",
+      "flagEmoji": "🇨🇩"
     },
-    "homeTeamCode": null,
-    "awayTeamCode": null,
-    "homePlaceholder": "1L",
-    "awayPlaceholder": "3EHIJK",
-    "homeFlag": "🏳️",
-    "awayFlag": "🏳️",
+    "homeTeamCode": "ENG",
+    "awayTeamCode": "COD",
+    "homeFlag": "🏴",
+    "awayFlag": "🇨🇩",
     "venue": "Atlanta Stadium",
     "venueName": "Atlanta Stadium",
     "city": "Atlanta",
@@ -2701,19 +2685,17 @@ export const worldCup2026Matches: WorldCupMatch[] = [
     "group": "Dieciseisavos de final",
     "groupCode": "Dieciseisavos de final",
     "homeTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Estados Unidos",
+      "flagEmoji": "🇺🇸"
     },
     "awayTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Bosnia y Herzegovina",
+      "flagEmoji": "🇧🇦"
     },
-    "homeTeamCode": null,
-    "awayTeamCode": null,
-    "homePlaceholder": "1D",
-    "awayPlaceholder": "3BEFIJ",
-    "homeFlag": "🏳️",
-    "awayFlag": "🏳️",
+    "homeTeamCode": "USA",
+    "awayTeamCode": "BIH",
+    "homeFlag": "🇺🇸",
+    "awayFlag": "🇧🇦",
     "venue": "San Francisco Bay Area Stadium",
     "venueName": "San Francisco Bay Area Stadium",
     "city": "San Francisco Bay Area",
@@ -2736,19 +2718,17 @@ export const worldCup2026Matches: WorldCupMatch[] = [
     "group": "Dieciseisavos de final",
     "groupCode": "Dieciseisavos de final",
     "homeTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Bélgica",
+      "flagEmoji": "🇧🇪"
     },
     "awayTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Senegal",
+      "flagEmoji": "🇸🇳"
     },
-    "homeTeamCode": null,
-    "awayTeamCode": null,
-    "homePlaceholder": "1G",
-    "awayPlaceholder": "3AEHIJ",
-    "homeFlag": "🏳️",
-    "awayFlag": "🏳️",
+    "homeTeamCode": "BEL",
+    "awayTeamCode": "SEN",
+    "homeFlag": "🇧🇪",
+    "awayFlag": "🇸🇳",
     "venue": "Seattle Stadium",
     "venueName": "Seattle Stadium",
     "city": "Seattle",
@@ -2771,19 +2751,17 @@ export const worldCup2026Matches: WorldCupMatch[] = [
     "group": "Dieciseisavos de final",
     "groupCode": "Dieciseisavos de final",
     "homeTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Portugal",
+      "flagEmoji": "🇵🇹"
     },
     "awayTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Croacia",
+      "flagEmoji": "🇭🇷"
     },
-    "homeTeamCode": null,
-    "awayTeamCode": null,
-    "homePlaceholder": "2K",
-    "awayPlaceholder": "2L",
-    "homeFlag": "🏳️",
-    "awayFlag": "🏳️",
+    "homeTeamCode": "POR",
+    "awayTeamCode": "CRO",
+    "homeFlag": "🇵🇹",
+    "awayFlag": "🇭🇷",
     "venue": "Toronto Stadium",
     "venueName": "Toronto Stadium",
     "city": "Toronto",
@@ -2876,19 +2854,17 @@ export const worldCup2026Matches: WorldCupMatch[] = [
     "group": "Dieciseisavos de final",
     "groupCode": "Dieciseisavos de final",
     "homeTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Argentina",
+      "flagEmoji": "🇦🇷"
     },
     "awayTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Cabo Verde",
+      "flagEmoji": "🇨🇻"
     },
-    "homeTeamCode": null,
-    "awayTeamCode": null,
-    "homePlaceholder": "1J",
-    "awayPlaceholder": "2H",
-    "homeFlag": "🏳️",
-    "awayFlag": "🏳️",
+    "homeTeamCode": "ARG",
+    "awayTeamCode": "CPV",
+    "homeFlag": "🇦🇷",
+    "awayFlag": "🇨🇻",
     "venue": "Miami Stadium",
     "venueName": "Miami Stadium",
     "city": "Miami",
@@ -2911,19 +2887,17 @@ export const worldCup2026Matches: WorldCupMatch[] = [
     "group": "Dieciseisavos de final",
     "groupCode": "Dieciseisavos de final",
     "homeTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Colombia",
+      "flagEmoji": "🇨🇴"
     },
     "awayTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Ghana",
+      "flagEmoji": "🇬🇭"
     },
-    "homeTeamCode": null,
-    "awayTeamCode": null,
-    "homePlaceholder": "1K",
-    "awayPlaceholder": "3DEIJL",
-    "homeFlag": "🏳️",
-    "awayFlag": "🏳️",
+    "homeTeamCode": "COL",
+    "awayTeamCode": "GHA",
+    "homeFlag": "🇨🇴",
+    "awayFlag": "🇬🇭",
     "venue": "Kansas City Stadium",
     "venueName": "Kansas City Stadium",
     "city": "Kansas City",
@@ -2946,19 +2920,17 @@ export const worldCup2026Matches: WorldCupMatch[] = [
     "group": "Dieciseisavos de final",
     "groupCode": "Dieciseisavos de final",
     "homeTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Australia",
+      "flagEmoji": "🇦🇺"
     },
     "awayTeam": {
-      "name": "Por definir",
-      "flagEmoji": "🏳️"
+      "name": "Egipto",
+      "flagEmoji": "🇪🇬"
     },
-    "homeTeamCode": null,
-    "awayTeamCode": null,
-    "homePlaceholder": "2D",
-    "awayPlaceholder": "2G",
-    "homeFlag": "🏳️",
-    "awayFlag": "🏳️",
+    "homeTeamCode": "AUS",
+    "awayTeamCode": "EGY",
+    "homeFlag": "🇦🇺",
+    "awayFlag": "🇪🇬",
     "venue": "Dallas Stadium",
     "venueName": "Dallas Stadium",
     "city": "Dallas",
