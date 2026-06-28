@@ -38,25 +38,30 @@ function sign(n: number): -1 | 0 | 1 {
 
 function expectedScore(input: KnockoutScoringInput): number {
   const predictedDraw = input.predA === input.predB;
-  const predDir = sign(input.predA - input.predB);
-  const realDir = sign(input.real90A - input.real90B);
-  const exactA = input.predA === input.real90A;
-  const exactB = input.predB === input.real90B;
-  let regulationPoints = 0.0;
-
-  if (predDir === realDir) {
-    if (exactA && exactB) regulationPoints = 3.0;
-    else if (exactA || exactB) regulationPoints = 2.5;
-    else regulationPoints = 2.0;
-  } else if (exactA || exactB) {
-    regulationPoints = 0.5;
-  }
 
   if (!predictedDraw) {
-    return regulationPoints;
+    const predDir = sign(input.predA - input.predB);
+    const realDir = sign(input.real90A - input.real90B);
+    const exactA = input.predA === input.real90A;
+    const exactB = input.predB === input.real90B;
+
+    if (predDir === realDir) {
+      if (exactA && exactB) return 3.0;
+      if (exactA || exactB) return 2.5;
+      return 2.0;
+    }
+    if (exactA || exactB) return 0.5;
+    return 0.0;
   }
 
-  return regulationPoints + (input.predAdvancingTeam === input.realAdvancingTeam ? 2.0 : 0.0);
+  const referenceA = input.real120A ?? input.real90A;
+  const referenceB = input.real120B ?? input.real90B;
+  const baseDrawScore = input.real90A === input.real90B ? 3.0 : 0.0;
+  const markerPenalty =
+    (input.predA === referenceA ? 0.0 : 0.5) +
+    (input.predB === referenceB ? 0.0 : 0.5);
+  const markerScore = Math.max(0.0, baseDrawScore - markerPenalty);
+  return markerScore + (input.predAdvancingTeam === input.realAdvancingTeam ? 2.0 : 0.0);
 }
 
 // ─── generators ─────────────────────────────────────────────────────────────
@@ -222,7 +227,7 @@ function genEdgeCases(): Case[] {
   // predict 0-0, match was 0-0 at 90' but goals in ET → 1-0
   edges.push({
     input: { predA:0, predB:0, predAdvancingTeam:"arg", real90A:0, real90B:0, real120A:1, real120B:0, realAdvancingTeam:"arg" },
-    expected: 5.0, label: "edge-0-0-goal-in-ET"
+    expected: 4.5, label: "edge-0-0-goal-in-ET"
   });
   // very high score: predict 5-4, real 5-4
   edges.push({

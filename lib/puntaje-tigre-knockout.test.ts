@@ -92,10 +92,10 @@ describe("Case 2 — draw prediction", () => {
         real120A: 2, real120B: 2,
         realAdvancingTeam: "argentina",
       }),
-    ).toBe(5.0);
+    ).toBe(4.0);
   });
 
-  it("draw prediction with wrong 90-min score, advancing team correct → 2.0", () => {
+  it("draw prediction with wrong 90-min result, advancing team correct → 2.0", () => {
     expect(
       puntajeTigreKnockout({
         predA: 2, predB: 2,
@@ -116,6 +116,6 @@ describe("Case 2 — draw prediction", () => {
         real120A: null, real120B: null,
         realAdvancingTeam: "canada",
       }),
-    ).toBe(2.5);
+    ).toBe(2.0);
   });
 });

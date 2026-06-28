@@ -19,9 +19,30 @@ DECLARE
   real_dir          INTEGER;
   exact_a           BOOLEAN;
   exact_b           BOOLEAN;
-  regulation_points NUMERIC(4,1);
+  reference_a       INTEGER;
+  reference_b       INTEGER;
+  marker_points     NUMERIC(4,1);
+  marker_penalty    NUMERIC(4,1);
   advancing_bonus   NUMERIC(4,1);
 BEGIN
+  IF pred_a = pred_b THEN
+    reference_a := COALESCE(real_120_a, real_90_a);
+    reference_b := COALESCE(real_120_b, real_90_b);
+    marker_points := CASE
+      WHEN real_90_a = real_90_b THEN 3.0
+      ELSE 0.0
+    END;
+    marker_penalty :=
+      CASE WHEN pred_a = reference_a THEN 0.0 ELSE 0.5 END +
+      CASE WHEN pred_b = reference_b THEN 0.0 ELSE 0.5 END;
+    advancing_bonus := CASE
+      WHEN pred_advancing = real_advancing THEN 2.0
+      ELSE 0.0
+    END;
+
+    RETURN GREATEST(0.0, marker_points - marker_penalty) + advancing_bonus;
+  END IF;
+
   pred_dir := CASE
     WHEN pred_a > pred_b THEN -1
     WHEN pred_a < pred_b THEN  1
@@ -37,28 +58,17 @@ BEGIN
 
   IF pred_dir = real_dir THEN
     IF exact_a AND exact_b THEN
-      regulation_points := 3.0;
+      RETURN 3.0;
     ELSIF exact_a OR exact_b THEN
-      regulation_points := 2.5;
+      RETURN 2.5;
     ELSE
-      regulation_points := 2.0;
+      RETURN 2.0;
     END IF;
   ELSIF exact_a OR exact_b THEN
-    regulation_points := 0.5;
+    RETURN 0.5;
   ELSE
-    regulation_points := 0.0;
+    RETURN 0.0;
   END IF;
-
-  IF pred_a <> pred_b THEN
-    RETURN regulation_points;
-  END IF;
-
-  advancing_bonus := CASE
-    WHEN pred_advancing = real_advancing THEN 2.0
-    ELSE 0.0
-  END;
-
-  RETURN regulation_points + advancing_bonus;
 END;
 $$ LANGUAGE plpgsql IMMUTABLE;
 

@@ -30,12 +30,17 @@ function puntajeTigreGroupStage(predA: number, predB: number, realA: number, rea
 }
 
 export function puntajeTigreKnockout(input: KnockoutScoringInput): number {
-  const regulationScore = puntajeTigreGroupStage(input.predA, input.predB, input.real90A, input.real90B);
-
   if (input.predA !== input.predB) {
-    return regulationScore;
+    return puntajeTigreGroupStage(input.predA, input.predB, input.real90A, input.real90B);
   }
 
+  const referenceA = input.real120A ?? input.real90A;
+  const referenceB = input.real120B ?? input.real90B;
+  const baseDrawScore = input.real90A === input.real90B ? 3.0 : 0.0;
+  const markerPenalty =
+    (input.predA === referenceA ? 0.0 : 0.5) +
+    (input.predB === referenceB ? 0.0 : 0.5);
+  const markerScore = Math.max(0.0, baseDrawScore - markerPenalty);
   const advancingBonus = input.predAdvancingTeam === input.realAdvancingTeam ? 2.0 : 0.0;
-  return regulationScore + advancingBonus;
+  return markerScore + advancingBonus;
 }
