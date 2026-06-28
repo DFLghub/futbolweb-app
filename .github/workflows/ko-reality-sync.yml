@@ -1,0 +1,220 @@
+name: KO Reality Window Sync
+
+on:
+  schedule:
+    - cron: '50 19 28 6 *' # M73 mundial-2026-partido-073 +50m HT buffer
+    - cron: '40 20 28 6 *' # M73 mundial-2026-partido-073 +100m 90m buffer
+    - cron: '55 20 28 6 *' # M73 mundial-2026-partido-073 +115m ET half buffer
+    - cron: '10 21 28 6 *' # M73 mundial-2026-partido-073 +130m 120m buffer
+    - cron: '25 21 28 6 *' # M73 mundial-2026-partido-073 +145m pens/advancing buffer
+    - cron: '0 22 28 6 *' # M73 mundial-2026-partido-073 +180m late official confirmation
+    - cron: '20 21 29 6 *' # M74 mundial-2026-partido-074 +50m HT buffer
+    - cron: '10 22 29 6 *' # M74 mundial-2026-partido-074 +100m 90m buffer
+    - cron: '25 22 29 6 *' # M74 mundial-2026-partido-074 +115m ET half buffer
+    - cron: '40 22 29 6 *' # M74 mundial-2026-partido-074 +130m 120m buffer
+    - cron: '55 22 29 6 *' # M74 mundial-2026-partido-074 +145m pens/advancing buffer
+    - cron: '30 23 29 6 *' # M74 mundial-2026-partido-074 +180m late official confirmation
+    - cron: '50 1 30 6 *' # M75 mundial-2026-partido-075 +50m HT buffer
+    - cron: '40 2 30 6 *' # M75 mundial-2026-partido-075 +100m 90m buffer
+    - cron: '55 2 30 6 *' # M75 mundial-2026-partido-075 +115m ET half buffer
+    - cron: '10 3 30 6 *' # M75 mundial-2026-partido-075 +130m 120m buffer
+    - cron: '25 3 30 6 *' # M75 mundial-2026-partido-075 +145m pens/advancing buffer
+    - cron: '0 4 30 6 *' # M75 mundial-2026-partido-075 +180m late official confirmation
+    - cron: '50 17 29 6 *' # M76 mundial-2026-partido-076 +50m HT buffer
+    - cron: '40 18 29 6 *' # M76 mundial-2026-partido-076 +100m 90m buffer
+    - cron: '55 18 29 6 *' # M76 mundial-2026-partido-076 +115m ET half buffer
+    - cron: '10 19 29 6 *' # M76 mundial-2026-partido-076 +130m 120m buffer
+    - cron: '25 19 29 6 *' # M76 mundial-2026-partido-076 +145m pens/advancing buffer
+    - cron: '0 20 29 6 *' # M76 mundial-2026-partido-076 +180m late official confirmation
+    - cron: '50 21 30 6 *' # M77 mundial-2026-partido-077 +50m HT buffer
+    - cron: '40 22 30 6 *' # M77 mundial-2026-partido-077 +100m 90m buffer
+    - cron: '55 22 30 6 *' # M77 mundial-2026-partido-077 +115m ET half buffer
+    - cron: '10 23 30 6 *' # M77 mundial-2026-partido-077 +130m 120m buffer
+    - cron: '25 23 30 6 *' # M77 mundial-2026-partido-077 +145m pens/advancing buffer
+    - cron: '0 0 1 7 *' # M77 mundial-2026-partido-077 +180m late official confirmation
+    - cron: '50 17 30 6 *' # M78 mundial-2026-partido-078 +50m HT buffer
+    - cron: '40 18 30 6 *' # M78 mundial-2026-partido-078 +100m 90m buffer
+    - cron: '55 18 30 6 *' # M78 mundial-2026-partido-078 +115m ET half buffer
+    - cron: '10 19 30 6 *' # M78 mundial-2026-partido-078 +130m 120m buffer
+    - cron: '25 19 30 6 *' # M78 mundial-2026-partido-078 +145m pens/advancing buffer
+    - cron: '0 20 30 6 *' # M78 mundial-2026-partido-078 +180m late official confirmation
+    - cron: '50 1 1 7 *' # M79 mundial-2026-partido-079 +50m HT buffer
+    - cron: '40 2 1 7 *' # M79 mundial-2026-partido-079 +100m 90m buffer
+    - cron: '55 2 1 7 *' # M79 mundial-2026-partido-079 +115m ET half buffer
+    - cron: '10 3 1 7 *' # M79 mundial-2026-partido-079 +130m 120m buffer
+    - cron: '25 3 1 7 *' # M79 mundial-2026-partido-079 +145m pens/advancing buffer
+    - cron: '0 4 1 7 *' # M79 mundial-2026-partido-079 +180m late official confirmation
+    - cron: '50 16 1 7 *' # M80 mundial-2026-partido-080 +50m HT buffer
+    - cron: '40 17 1 7 *' # M80 mundial-2026-partido-080 +100m 90m buffer
+    - cron: '55 17 1 7 *' # M80 mundial-2026-partido-080 +115m ET half buffer
+    - cron: '10 18 1 7 *' # M80 mundial-2026-partido-080 +130m 120m buffer
+    - cron: '25 18 1 7 *' # M80 mundial-2026-partido-080 +145m pens/advancing buffer
+    - cron: '0 19 1 7 *' # M80 mundial-2026-partido-080 +180m late official confirmation
+    - cron: '50 0 2 7 *' # M81 mundial-2026-partido-081 +50m HT buffer
+    - cron: '40 1 2 7 *' # M81 mundial-2026-partido-081 +100m 90m buffer
+    - cron: '55 1 2 7 *' # M81 mundial-2026-partido-081 +115m ET half buffer
+    - cron: '10 2 2 7 *' # M81 mundial-2026-partido-081 +130m 120m buffer
+    - cron: '25 2 2 7 *' # M81 mundial-2026-partido-081 +145m pens/advancing buffer
+    - cron: '0 3 2 7 *' # M81 mundial-2026-partido-081 +180m late official confirmation
+    - cron: '50 20 1 7 *' # M82 mundial-2026-partido-082 +50m HT buffer
+    - cron: '40 21 1 7 *' # M82 mundial-2026-partido-082 +100m 90m buffer
+    - cron: '55 21 1 7 *' # M82 mundial-2026-partido-082 +115m ET half buffer
+    - cron: '10 22 1 7 *' # M82 mundial-2026-partido-082 +130m 120m buffer
+    - cron: '25 22 1 7 *' # M82 mundial-2026-partido-082 +145m pens/advancing buffer
+    - cron: '0 23 1 7 *' # M82 mundial-2026-partido-082 +180m late official confirmation
+    - cron: '50 23 2 7 *' # M83 mundial-2026-partido-083 +50m HT buffer
+    - cron: '40 0 3 7 *' # M83 mundial-2026-partido-083 +100m 90m buffer
+    - cron: '55 0 3 7 *' # M83 mundial-2026-partido-083 +115m ET half buffer
+    - cron: '10 1 3 7 *' # M83 mundial-2026-partido-083 +130m 120m buffer
+    - cron: '25 1 3 7 *' # M83 mundial-2026-partido-083 +145m pens/advancing buffer
+    - cron: '0 2 3 7 *' # M83 mundial-2026-partido-083 +180m late official confirmation
+    - cron: '50 19 2 7 *' # M84 mundial-2026-partido-084 +50m HT buffer
+    - cron: '40 20 2 7 *' # M84 mundial-2026-partido-084 +100m 90m buffer
+    - cron: '55 20 2 7 *' # M84 mundial-2026-partido-084 +115m ET half buffer
+    - cron: '10 21 2 7 *' # M84 mundial-2026-partido-084 +130m 120m buffer
+    - cron: '25 21 2 7 *' # M84 mundial-2026-partido-084 +145m pens/advancing buffer
+    - cron: '0 22 2 7 *' # M84 mundial-2026-partido-084 +180m late official confirmation
+    - cron: '50 3 3 7 *' # M85 mundial-2026-partido-085 +50m HT buffer
+    - cron: '40 4 3 7 *' # M85 mundial-2026-partido-085 +100m 90m buffer
+    - cron: '55 4 3 7 *' # M85 mundial-2026-partido-085 +115m ET half buffer
+    - cron: '10 5 3 7 *' # M85 mundial-2026-partido-085 +130m 120m buffer
+    - cron: '25 5 3 7 *' # M85 mundial-2026-partido-085 +145m pens/advancing buffer
+    - cron: '0 6 3 7 *' # M85 mundial-2026-partido-085 +180m late official confirmation
+    - cron: '50 22 3 7 *' # M86 mundial-2026-partido-086 +50m HT buffer
+    - cron: '40 23 3 7 *' # M86 mundial-2026-partido-086 +100m 90m buffer
+    - cron: '55 23 3 7 *' # M86 mundial-2026-partido-086 +115m ET half buffer
+    - cron: '10 0 4 7 *' # M86 mundial-2026-partido-086 +130m 120m buffer
+    - cron: '25 0 4 7 *' # M86 mundial-2026-partido-086 +145m pens/advancing buffer
+    - cron: '0 1 4 7 *' # M86 mundial-2026-partido-086 +180m late official confirmation
+    - cron: '20 2 4 7 *' # M87 mundial-2026-partido-087 +50m HT buffer
+    - cron: '10 3 4 7 *' # M87 mundial-2026-partido-087 +100m 90m buffer
+    - cron: '25 3 4 7 *' # M87 mundial-2026-partido-087 +115m ET half buffer
+    - cron: '40 3 4 7 *' # M87 mundial-2026-partido-087 +130m 120m buffer
+    - cron: '55 3 4 7 *' # M87 mundial-2026-partido-087 +145m pens/advancing buffer
+    - cron: '30 4 4 7 *' # M87 mundial-2026-partido-087 +180m late official confirmation
+    - cron: '50 18 3 7 *' # M88 mundial-2026-partido-088 +50m HT buffer
+    - cron: '40 19 3 7 *' # M88 mundial-2026-partido-088 +100m 90m buffer
+    - cron: '55 19 3 7 *' # M88 mundial-2026-partido-088 +115m ET half buffer
+    - cron: '10 20 3 7 *' # M88 mundial-2026-partido-088 +130m 120m buffer
+    - cron: '25 20 3 7 *' # M88 mundial-2026-partido-088 +145m pens/advancing buffer
+    - cron: '0 21 3 7 *' # M88 mundial-2026-partido-088 +180m late official confirmation
+    - cron: '50 21 4 7 *' # M89 mundial-2026-partido-089 +50m HT buffer
+    - cron: '40 22 4 7 *' # M89 mundial-2026-partido-089 +100m 90m buffer
+    - cron: '55 22 4 7 *' # M89 mundial-2026-partido-089 +115m ET half buffer
+    - cron: '10 23 4 7 *' # M89 mundial-2026-partido-089 +130m 120m buffer
+    - cron: '25 23 4 7 *' # M89 mundial-2026-partido-089 +145m pens/advancing buffer
+    - cron: '0 0 5 7 *' # M89 mundial-2026-partido-089 +180m late official confirmation
+    - cron: '50 17 4 7 *' # M90 mundial-2026-partido-090 +50m HT buffer
+    - cron: '40 18 4 7 *' # M90 mundial-2026-partido-090 +100m 90m buffer
+    - cron: '55 18 4 7 *' # M90 mundial-2026-partido-090 +115m ET half buffer
+    - cron: '10 19 4 7 *' # M90 mundial-2026-partido-090 +130m 120m buffer
+    - cron: '25 19 4 7 *' # M90 mundial-2026-partido-090 +145m pens/advancing buffer
+    - cron: '0 20 4 7 *' # M90 mundial-2026-partido-090 +180m late official confirmation
+    - cron: '50 20 5 7 *' # M91 mundial-2026-partido-091 +50m HT buffer
+    - cron: '40 21 5 7 *' # M91 mundial-2026-partido-091 +100m 90m buffer
+    - cron: '55 21 5 7 *' # M91 mundial-2026-partido-091 +115m ET half buffer
+    - cron: '10 22 5 7 *' # M91 mundial-2026-partido-091 +130m 120m buffer
+    - cron: '25 22 5 7 *' # M91 mundial-2026-partido-091 +145m pens/advancing buffer
+    - cron: '0 23 5 7 *' # M91 mundial-2026-partido-091 +180m late official confirmation
+    - cron: '50 0 6 7 *' # M92 mundial-2026-partido-092 +50m HT buffer
+    - cron: '40 1 6 7 *' # M92 mundial-2026-partido-092 +100m 90m buffer
+    - cron: '55 1 6 7 *' # M92 mundial-2026-partido-092 +115m ET half buffer
+    - cron: '10 2 6 7 *' # M92 mundial-2026-partido-092 +130m 120m buffer
+    - cron: '25 2 6 7 *' # M92 mundial-2026-partido-092 +145m pens/advancing buffer
+    - cron: '0 3 6 7 *' # M92 mundial-2026-partido-092 +180m late official confirmation
+    - cron: '50 19 6 7 *' # M93 mundial-2026-partido-093 +50m HT buffer
+    - cron: '40 20 6 7 *' # M93 mundial-2026-partido-093 +100m 90m buffer
+    - cron: '55 20 6 7 *' # M93 mundial-2026-partido-093 +115m ET half buffer
+    - cron: '10 21 6 7 *' # M93 mundial-2026-partido-093 +130m 120m buffer
+    - cron: '25 21 6 7 *' # M93 mundial-2026-partido-093 +145m pens/advancing buffer
+    - cron: '0 22 6 7 *' # M93 mundial-2026-partido-093 +180m late official confirmation
+    - cron: '50 0 7 7 *' # M94 mundial-2026-partido-094 +50m HT buffer
+    - cron: '40 1 7 7 *' # M94 mundial-2026-partido-094 +100m 90m buffer
+    - cron: '55 1 7 7 *' # M94 mundial-2026-partido-094 +115m ET half buffer
+    - cron: '10 2 7 7 *' # M94 mundial-2026-partido-094 +130m 120m buffer
+    - cron: '25 2 7 7 *' # M94 mundial-2026-partido-094 +145m pens/advancing buffer
+    - cron: '0 3 7 7 *' # M94 mundial-2026-partido-094 +180m late official confirmation
+    - cron: '50 16 7 7 *' # M95 mundial-2026-partido-095 +50m HT buffer
+    - cron: '40 17 7 7 *' # M95 mundial-2026-partido-095 +100m 90m buffer
+    - cron: '55 17 7 7 *' # M95 mundial-2026-partido-095 +115m ET half buffer
+    - cron: '10 18 7 7 *' # M95 mundial-2026-partido-095 +130m 120m buffer
+    - cron: '25 18 7 7 *' # M95 mundial-2026-partido-095 +145m pens/advancing buffer
+    - cron: '0 19 7 7 *' # M95 mundial-2026-partido-095 +180m late official confirmation
+    - cron: '50 20 7 7 *' # M96 mundial-2026-partido-096 +50m HT buffer
+    - cron: '40 21 7 7 *' # M96 mundial-2026-partido-096 +100m 90m buffer
+    - cron: '55 21 7 7 *' # M96 mundial-2026-partido-096 +115m ET half buffer
+    - cron: '10 22 7 7 *' # M96 mundial-2026-partido-096 +130m 120m buffer
+    - cron: '25 22 7 7 *' # M96 mundial-2026-partido-096 +145m pens/advancing buffer
+    - cron: '0 23 7 7 *' # M96 mundial-2026-partido-096 +180m late official confirmation
+    - cron: '50 20 9 7 *' # M97 mundial-2026-partido-097 +50m HT buffer
+    - cron: '40 21 9 7 *' # M97 mundial-2026-partido-097 +100m 90m buffer
+    - cron: '55 21 9 7 *' # M97 mundial-2026-partido-097 +115m ET half buffer
+    - cron: '10 22 9 7 *' # M97 mundial-2026-partido-097 +130m 120m buffer
+    - cron: '25 22 9 7 *' # M97 mundial-2026-partido-097 +145m pens/advancing buffer
+    - cron: '0 23 9 7 *' # M97 mundial-2026-partido-097 +180m late official confirmation
+    - cron: '50 19 10 7 *' # M98 mundial-2026-partido-098 +50m HT buffer
+    - cron: '40 20 10 7 *' # M98 mundial-2026-partido-098 +100m 90m buffer
+    - cron: '55 20 10 7 *' # M98 mundial-2026-partido-098 +115m ET half buffer
+    - cron: '10 21 10 7 *' # M98 mundial-2026-partido-098 +130m 120m buffer
+    - cron: '25 21 10 7 *' # M98 mundial-2026-partido-098 +145m pens/advancing buffer
+    - cron: '0 22 10 7 *' # M98 mundial-2026-partido-098 +180m late official confirmation
+    - cron: '50 21 11 7 *' # M99 mundial-2026-partido-099 +50m HT buffer
+    - cron: '40 22 11 7 *' # M99 mundial-2026-partido-099 +100m 90m buffer
+    - cron: '55 22 11 7 *' # M99 mundial-2026-partido-099 +115m ET half buffer
+    - cron: '10 23 11 7 *' # M99 mundial-2026-partido-099 +130m 120m buffer
+    - cron: '25 23 11 7 *' # M99 mundial-2026-partido-099 +145m pens/advancing buffer
+    - cron: '0 0 12 7 *' # M99 mundial-2026-partido-099 +180m late official confirmation
+    - cron: '50 1 12 7 *' # M100 mundial-2026-partido-100 +50m HT buffer
+    - cron: '40 2 12 7 *' # M100 mundial-2026-partido-100 +100m 90m buffer
+    - cron: '55 2 12 7 *' # M100 mundial-2026-partido-100 +115m ET half buffer
+    - cron: '10 3 12 7 *' # M100 mundial-2026-partido-100 +130m 120m buffer
+    - cron: '25 3 12 7 *' # M100 mundial-2026-partido-100 +145m pens/advancing buffer
+    - cron: '0 4 12 7 *' # M100 mundial-2026-partido-100 +180m late official confirmation
+    - cron: '50 19 14 7 *' # M101 mundial-2026-partido-101 +50m HT buffer
+    - cron: '40 20 14 7 *' # M101 mundial-2026-partido-101 +100m 90m buffer
+    - cron: '55 20 14 7 *' # M101 mundial-2026-partido-101 +115m ET half buffer
+    - cron: '10 21 14 7 *' # M101 mundial-2026-partido-101 +130m 120m buffer
+    - cron: '25 21 14 7 *' # M101 mundial-2026-partido-101 +145m pens/advancing buffer
+    - cron: '0 22 14 7 *' # M101 mundial-2026-partido-101 +180m late official confirmation
+    - cron: '50 19 15 7 *' # M102 mundial-2026-partido-102 +50m HT buffer
+    - cron: '40 20 15 7 *' # M102 mundial-2026-partido-102 +100m 90m buffer
+    - cron: '55 20 15 7 *' # M102 mundial-2026-partido-102 +115m ET half buffer
+    - cron: '10 21 15 7 *' # M102 mundial-2026-partido-102 +130m 120m buffer
+    - cron: '25 21 15 7 *' # M102 mundial-2026-partido-102 +145m pens/advancing buffer
+    - cron: '0 22 15 7 *' # M102 mundial-2026-partido-102 +180m late official confirmation
+    - cron: '50 21 18 7 *' # M103 mundial-2026-partido-103 +50m HT buffer
+    - cron: '40 22 18 7 *' # M103 mundial-2026-partido-103 +100m 90m buffer
+    - cron: '55 22 18 7 *' # M103 mundial-2026-partido-103 +115m ET half buffer
+    - cron: '10 23 18 7 *' # M103 mundial-2026-partido-103 +130m 120m buffer
+    - cron: '25 23 18 7 *' # M103 mundial-2026-partido-103 +145m pens/advancing buffer
+    - cron: '0 0 19 7 *' # M103 mundial-2026-partido-103 +180m late official confirmation
+    - cron: '50 19 19 7 *' # M104 mundial-2026-partido-104 +50m HT buffer
+    - cron: '40 20 19 7 *' # M104 mundial-2026-partido-104 +100m 90m buffer
+    - cron: '55 20 19 7 *' # M104 mundial-2026-partido-104 +115m ET half buffer
+    - cron: '10 21 19 7 *' # M104 mundial-2026-partido-104 +130m 120m buffer
+    - cron: '25 21 19 7 *' # M104 mundial-2026-partido-104 +145m pens/advancing buffer
+    - cron: '0 22 19 7 *' # M104 mundial-2026-partido-104 +180m late official confirmation
+  workflow_dispatch:
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Trigger FutbolWeb KO reality sync
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "CRON_SECRET GitHub secret is required" >&2
+            exit 1
+          fi
+
+          RESPONSE=$(curl -sS --fail-with-body --max-time 60 \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            -H "Accept: application/json" \
+            https://www.futbolweb.app/api/tournament-reality/sync)
+
+          echo "$RESPONSE"
+          echo "$RESPONSE" | grep -q "\"ok\":true"
+

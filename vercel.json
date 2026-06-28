@@ -1,8 +1,0 @@
-{
-  "crons": [
-    {
-      "path": "/api/tournament-reality/sync",
-      "schedule": "0 0 * * *"
-    }
-  ]
-}
