@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { fetchEspnWorldCupFinalResults } from "@/lib/espn-world-cup";
+import { fetchEspnWorldCupFinalResults, fetchEspnWorldCupReality } from "@/lib/espn-world-cup";
 
 function response(body: unknown, ok = true, status = 200) {
   return {
@@ -139,6 +139,64 @@ describe("ESPN World Cup scoreboard sync", () => {
         advancing_team: "Argentina",
       },
     ]);
+  });
+
+  it("normalizes knockout ESPN events into canonical reality records", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(response({
+      events: [
+        {
+          id: "400021518",
+          name: "Round of 32",
+          date: "2026-06-28T19:00Z",
+          competitions: [
+            {
+              status: {
+                type: {
+                  completed: false,
+                  state: "in",
+                },
+              },
+              competitors: [
+                {
+                  homeAway: "home",
+                  score: "1",
+                  team: {
+                    abbreviation: "KOR",
+                    displayName: "South Korea",
+                    id: "kor",
+                  },
+                },
+                {
+                  homeAway: "away",
+                  score: "0",
+                  team: {
+                    abbreviation: "CZE",
+                    displayName: "Czechia",
+                    id: "cze",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    }));
+
+    const realities = await fetchEspnWorldCupReality();
+
+    expect(realities).toHaveLength(1);
+    expect(realities[0]).toMatchObject({
+      matchNumber: 73,
+      slug: "mundial-2026-partido-073",
+      status: "live",
+      score90A: null,
+      score90B: null,
+      score120A: null,
+      score120B: null,
+      penaltiesA: null,
+      penaltiesB: null,
+      sourceName: "ESPN FIFA World Cup scoreboard",
+    });
   });
 
   it("does not persist a completed knockout result when ESPN has no winner flag", async () => {

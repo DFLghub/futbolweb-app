@@ -2,10 +2,15 @@ import { revalidateTag } from "next/cache";
 import { NextResponse } from "next/server";
 
 import {
+  fetchEspnWorldCupReality,
   fetchEspnWorldCupFinalResults,
   upsertOfficialMatchResults,
 } from "@/lib/espn-world-cup";
 import { GROUP_MATCH_PREDICTIONS_TAG } from "@/lib/group-match-predictions";
+import {
+  buildFifaFixtureReality,
+  buildKnockoutBracketAssignments,
+} from "@/lib/knockout-reality";
 import { PREDICTION_GROUP_STANDINGS_TAG } from "@/lib/prediction-group-standings";
 import { STANDINGS_CACHE_TAG } from "@/lib/real-group-standings";
 import { runScoringForPendingResults } from "@/lib/scoring-propagation";
@@ -30,9 +35,12 @@ async function runTournamentRealitySync(request: Request) {
   }
 
   try {
+    const fifaFixtures = buildFifaFixtureReality();
+    const espnReality = await fetchEspnWorldCupReality();
     const results = await fetchEspnWorldCupFinalResults();
     const upserted = await upsertOfficialMatchResults(results);
     const completedResults = getCompletedMatchResults(await getOfficialMatchResults());
+    const bracketAssignments = buildKnockoutBracketAssignments(completedResults);
     const propagation = await runScoringForPendingResults(completedResults);
 
     revalidateTag(STANDINGS_CACHE_TAG, "default");
@@ -41,8 +49,11 @@ async function runTournamentRealitySync(request: Request) {
 
     return NextResponse.json({
       ok: true,
-      source: "ESPN FIFA World Cup scoreboard",
+      source: "FIFA fixtures + ESPN FIFA World Cup scoreboard",
+      fifaFixtures: fifaFixtures.length,
+      espnReality,
       imported: results.length,
+      bracketAssignments,
       ...propagation,
       upserted,
     });

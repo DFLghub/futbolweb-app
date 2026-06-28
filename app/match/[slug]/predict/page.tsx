@@ -8,8 +8,10 @@ import { groupCodeToStandingGroupId } from "@/lib/group-code";
 import { getTimezoneLabel } from "@/lib/football-utils";
 import { getCurrentDictionary, getCurrentLocale } from "@/lib/i18n-server";
 import { isKnockoutPredictionMatch } from "@/lib/knockout-predictions";
+import { applyKnockoutBracketAssignments } from "@/lib/knockout-reality";
 import { mockWorldCupGroupStandings } from "@/lib/mock-group-standings";
 import { getCachedRealGroupStandings } from "@/lib/real-group-standings";
+import { getOfficialMatchResults, type MatchResultRow } from "@/lib/tournament-reality";
 import {
   localizeWorldCupGroupStandings,
   localizeWorldCupMatch,
@@ -78,7 +80,15 @@ export default async function PredictPage({ params, searchParams }: PredictPageP
   const { edit, group } = await searchParams;
   const initialGroupCode = group?.trim() || "";
   const knownMatchBase = worldCup2026Matches.find((match) => match.slug === slug);
-  const knownMatch = knownMatchBase ? localizeWorldCupMatch(knownMatchBase, locale) : undefined;
+  let matchResults: MatchResultRow[] = [];
+  try {
+    matchResults = await getOfficialMatchResults();
+  } catch {
+    // Prediction remains usable if live result context is unavailable.
+  }
+  const knownMatch = knownMatchBase
+    ? applyKnockoutBracketAssignments([localizeWorldCupMatch(knownMatchBase, locale)], matchResults, locale)[0]
+    : undefined;
   const matchLabel = formatMatchLabel(slug, dict.predict.unknownMatch, knownMatch);
   const homeTeamName = knownMatch?.homeTeam.name || dict.predict.fallbackHome;
   const awayTeamName = knownMatch?.awayTeam.name || dict.predict.fallbackAway;

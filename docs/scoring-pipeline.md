@@ -112,3 +112,7 @@ This handles:
 3. ranking visibility through existing view.
 
 Use `/api/tournament-reality/propagation` to verify the propagation health after each sync.
+
+## Operational Pending
+
+- Confirm real KO point assignment after the first completed knockout match. The system is validated through UI, API, and synthetic RPC checks, but still needs evidence from a real result and production `prediction_scores`.

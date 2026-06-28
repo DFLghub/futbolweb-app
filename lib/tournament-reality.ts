@@ -1,5 +1,6 @@
 import type { FootballMatch } from "@/lib/football-utils";
 import type { Locale } from "@/lib/i18n";
+import { applyKnockoutBracketAssignments } from "@/lib/knockout-reality";
 import { localizeWorldCupMatches, worldCup2026Matches } from "@/lib/world-cup-2026-matches";
 
 export type MatchResultRow = {
@@ -107,7 +108,8 @@ export async function getTournamentReality(
   const nowTime = now.getTime();
   const todayKey = dateKeyInEasternTime(now);
   const generatedAt = now.toISOString();
-  const matches = localizeWorldCupMatches(worldCup2026Matches, locale).sort((left, right) => {
+  const localizedMatches = localizeWorldCupMatches(worldCup2026Matches, locale);
+  const matches = applyKnockoutBracketAssignments(localizedMatches, completedResults, locale).sort((left, right) => {
     return new Date(left.kickoffUtc).getTime() - new Date(right.kickoffUtc).getTime();
   });
 
